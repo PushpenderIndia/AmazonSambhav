@@ -4,6 +4,7 @@ from rest_framework.exceptions import AuthenticationFailed
 import jwt
 import environ
 import time
+import base64
 import backend.settings as settings
 
 env = environ.Env()
@@ -33,7 +34,11 @@ class ClerkAuthMiddleware:
         token = auth_header[1].decode()
         print(token)
 
-        decoded_token = jwt.decode(token, key=env('CLERK_PEM_PUBLIC_KEY'), algorithms=['RS256', ])
+        base64encoded_key = env('CLERK_PEM_PUBLIC_KEY')
+        base64encoded_key = base64encoded_key.encode()
+        base64decoded_key = base64.b64decode(base64encoded_key)
+
+        decoded_token = jwt.decode(token, key=base64decoded_key, algorithms=['RS256', ])
         print(decoded_token)
 
         if not decoded_token.get('azp',None) in settings.ALLOWED_PARTIES:
