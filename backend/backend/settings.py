@@ -82,13 +82,26 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+PRODUCTION = env.bool("PRODUCTION", default=False)
 
+if PRODUCTION:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'amazonsambhavdb',
+            'USER': 'amazonsambhavdb_user',
+            'PASSWORD': 'lTn4xqwVZ7FWiK1UhCPj4suKN4vL0Tls',
+            'HOST': 'dpg-csu8oeaj1k6c738g2m80-a',
+            'PORT': '5432',  # Default PostgreSQL port
+        }
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
