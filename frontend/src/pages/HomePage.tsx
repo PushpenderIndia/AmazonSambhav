@@ -2,14 +2,14 @@ import React from 'react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { ArrowRight, CheckCircle, Facebook, Instagram, Twitter, ShoppingCart, Zap, Globe, BarChart, Clock, DollarSign, Users } from 'lucide-react'
+import { ArrowRight, CheckCircle, Facebook, Instagram, Twitter, ShoppingCart, Zap, Globe, BarChart } from 'lucide-react'
 import { Link } from 'react-router-dom';
 import { SignedIn, SignedOut, SignInButton, useAuth, useClerk } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
 
 const Home: React.FC = () => {
-  const { isLoaded, getToken, signOut } = useAuth();
+  // const { isLoaded, getToken, signOut } = useAuth();
+  const { signOut } = useAuth();
 
   const { openSignIn } = useClerk();  // Destructure openSignIn function
 
@@ -30,21 +30,21 @@ const Home: React.FC = () => {
     navigate("/dashboard"); // Redirect to /dashboard route
   };
 
-  const getAllPosts = async () => {
-    const token = await getToken();
-    const response = await fetch(
-      `${import.meta.env.VITE_BACKEND_API_URL}/posts`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`, // Replace 'YOUR_AUTH_TOKEN' with the actual JWT token
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    const data = await response.json();
-    console.log(data);
-  };
+  // const getAllPosts = async () => {
+  //   const token = await getToken();
+  //   const response = await fetch(
+  //     `${import.meta.env.VITE_BACKEND_API_URL}/posts`,
+  //     {
+  //       method: "GET",
+  //       headers: {
+  //         Authorization: `Bearer ${token}`, // Replace 'YOUR_AUTH_TOKEN' with the actual JWT token
+  //         "Content-Type": "application/json",
+  //       },
+  //     }
+  //   );
+  //   const data = await response.json();
+  //   console.log(data);
+  // };
 
   return (
     <div className="flex flex-col min-h-screen bg-white text-blue-900">
