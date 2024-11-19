@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 import environ
+import dj_database_url
 
 env = environ.Env()
 environ.Env.read_env()
@@ -83,17 +84,13 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 PRODUCTION = env.bool("PRODUCTION", default=False)
+print(f"PRODUCTION: {PRODUCTION}")
 
 if PRODUCTION:
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'amazonsambhavdb',
-            'USER': 'amazonsambhavdb_user',
-            'PASSWORD': 'lTn4xqwVZ7FWiK1UhCPj4suKN4vL0Tls',
-            'HOST': 'dpg-csu8oeaj1k6c738g2m80-a',
-            'PORT': '5432',  # Default PostgreSQL port
-        }
+        'default': dj_database_url.parse(
+            env.str("DATABASE_URL")
+        )
     }
 else:
     DATABASES = {
