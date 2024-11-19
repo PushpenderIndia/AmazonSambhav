@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ArrowRight, CheckCircle, Facebook, Instagram, Twitter, ShoppingCart, Zap, Globe, BarChart } from 'lucide-react'
 import { Link } from 'react-router-dom';
-import { SignedIn, SignedOut, SignInButton, useAuth, useClerk } from "@clerk/clerk-react";
+import { SignedIn, SignedOut, useAuth, useClerk } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
 
 const Home: React.FC = () => {
