@@ -1,3 +1,7 @@
 venv
 node_modules
 .env
+ignores/
+insta/
+*.pt
+__pycache__
