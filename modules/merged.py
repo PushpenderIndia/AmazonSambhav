@@ -23,10 +23,11 @@ class InstagramProcessor:
         Downloads Instagram post media and description using Instaloader.
 
         :param url: The URL of the Instagram post.
-        :return: The post description if available.
+        :return: A tuple of post description and downloaded file paths.
         """
         loader = Instaloader(download_videos=True, save_metadata=False)
         post_description = None
+        downloaded_files = []
 
         try:
             # Extract shortcode and download the post
@@ -34,19 +35,24 @@ class InstagramProcessor:
             post = Post.from_shortcode(loader.context, shortcode)
             loader.download_post(post, target=self.base_folder)
 
-            # Find and read the post description file
+            # Collect all downloaded files
             for file in os.listdir(self.base_folder):
-                if file.endswith(".txt"):
-                    description_path = os.path.join(self.base_folder, file)
-                    with open(description_path, "r", encoding="utf-8") as desc_file:
+                if file.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.tiff', '.mp4', '.mov', '.avi', '.txt')):
+                    downloaded_files.append(os.path.join(self.base_folder, file))
+
+            # Find and read the post description file
+            for file_path in downloaded_files:
+                if file_path.endswith(".txt"):
+                    with open(file_path, "r", encoding="utf-8") as desc_file:
                         post_description = desc_file.read().strip()
+                    downloaded_files.remove(file_path)  # Remove description from media files
                     break
 
             print(f"Post downloaded successfully to {self.base_folder}.")
         except Exception as e:
             print(f"Error downloading the post: {e}")
 
-        return post_description
+        return post_description, downloaded_files
 
     def perform_ocr(self):
         """
@@ -75,22 +81,13 @@ class InstagramProcessor:
 
         return "\n".join(ocr_text)
 
-    def analyze_with_gemini(self):
+    def analyze_with_gemini(self, media_files):
         """
-        Analyze images and videos in the base folder using Gemini.
+        Analyze images and videos using Gemini.
 
+        :param media_files: List of media file paths.
         :return: Generated content describing the media files.
         """
-        # Collect all media files in the folder
-        media_files = glob.glob(os.path.join(self.base_folder, '*'))
-        media_files = [file for file in media_files if file.lower().endswith(
-            ('.png', '.jpg', '.jpeg', '.bmp', '.tiff', '.mp4', '.mov', '.avi')
-        )]
-
-        if not media_files:
-            print("No valid images or videos found for Gemini analysis.")
-            return None
-
         # Separate images and videos
         image_files = [file for file in media_files if file.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.tiff'))]
         video_files = [file for file in media_files if file.lower().endswith(('.mp4', '.mov', '.avi'))]
@@ -125,11 +122,11 @@ class InstagramProcessor:
         Main function to process an Instagram post: download, OCR, and Gemini analysis.
 
         :param url: The URL of the Instagram post.
-        :return: A dictionary with images, post description, OCR text, and analysis results.
+        :return: A dictionary with media paths, post description, OCR text, and analysis results.
         """
         # Step 1: Download Instagram post
         print("Downloading Instagram post...")
-        post_description = self.download_post(url)
+        post_description, media_files = self.download_post(url)
 
         # Step 2: Perform OCR
         print("Performing OCR on images...")
@@ -137,11 +134,12 @@ class InstagramProcessor:
 
         # Step 3: Analyze media with Gemini
         print("Analyzing media with Gemini...")
-        gemini_results = self.analyze_with_gemini()
+        gemini_results = self.analyze_with_gemini(media_files)
 
         # Compile results
         results = {
             "post_description": post_description,
+            "media_files": media_files,  # Include paths of downloaded media
             "ocr_text": ocr_text,
             "gemini_results": gemini_results,
         }
