@@ -4,7 +4,12 @@ from instaloader import Instaloader, Post
 from PIL import Image
 import pytesseract
 from gemini import GeminiAnalyzer  # Importing the GeminiAnalyzer class
+from dotenv import load_dotenv
+import google.generativeai as genai
+import json
 
+# Load environment variables (for API keys, etc.)
+load_dotenv()
 
 class InstagramProcessor:
     def __init__(self, base_folder="insta"):
@@ -17,6 +22,7 @@ class InstagramProcessor:
         if not os.path.exists(self.base_folder):
             os.makedirs(self.base_folder)
         self.gemini_analyzer = GeminiAnalyzer()  # Initialize GeminiAnalyzer
+        genai.configure(api_key=os.environ.get("GOOGLE_API_KEY"))
 
     def download_post(self, url):
         """
@@ -117,12 +123,54 @@ class InstagramProcessor:
 
         return results
 
+    def process_gemini_text(self, post_description, ocr_text, gemini_results, media_files):
+        """
+        Sends all extracted data to Gemini text model for summarization and extraction in JSON format.
+
+        :param post_description: Description of the Instagram post.
+        :param ocr_text: Text extracted from images using OCR.
+        :param gemini_results: Results from Gemini image and video analysis.
+        :param media_files: List of downloaded media files.
+        :return: A JSON containing structured product data.
+        """
+        # Combine all text inputs for the prompt
+        prompt = f"""
+You are a helpful assistant extracting structured product information. Given the following data:
+
+1. **Post Description**:
+{post_description}
+
+2. **OCR Text**:
+{ocr_text}
+
+3. **Gemini Results**:
+{gemini_results}
+
+Please return a JSON strictly in this format:
+{{
+   "images_list": {media_files},
+   "product_title": "",
+   "price": "",
+   "product_details": {{
+       "Key1": "Value1",
+       "Key2": "Value2"
+   }},
+   "about this item": "",
+   "Product description": ""
+}}
+The "product_details" field is dynamic, and its keys will vary depending on the product type. Fill in as much detail as possible based on the input. Also the product description should be long and very detailed paragraph about the product. If there is no prize in in the information above then assume a prize of the product yourself.
+"""
+        print("Sending data to Gemini text model...")
+        model = genai.GenerativeModel("gemini-1.5-flash")
+        response = model.generate_content(prompt)
+        return response.text
+
     def process_post(self, url):
         """
         Main function to process an Instagram post: download, OCR, and Gemini analysis.
 
         :param url: The URL of the Instagram post.
-        :return: A dictionary with media paths, post description, OCR text, and analysis results.
+        :return: A JSON with product details and other extracted information.
         """
         # Step 1: Download Instagram post
         print("Downloading Instagram post...")
@@ -136,15 +184,11 @@ class InstagramProcessor:
         print("Analyzing media with Gemini...")
         gemini_results = self.analyze_with_gemini(media_files)
 
-        # Compile results
-        results = {
-            "post_description": post_description,
-            "media_files": media_files,  # Include paths of downloaded media
-            "ocr_text": ocr_text,
-            "gemini_results": gemini_results,
-        }
+        # Step 4: Process Gemini text-only input
+        print("Processing data with Gemini text model...")
+        final_results = self.process_gemini_text(post_description, ocr_text, gemini_results, media_files)
 
-        return results
+        return final_results
 
 
 # Example usage
