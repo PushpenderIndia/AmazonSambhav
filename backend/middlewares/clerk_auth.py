@@ -6,6 +6,7 @@ import environ
 import time
 import base64
 import backend.settings as settings
+import requests
 
 env = environ.Env()
 environ.Env.read_env()
