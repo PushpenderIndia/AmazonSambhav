@@ -3,7 +3,7 @@ Description=gunicorn django daemon
 After=network.target
 
 [Service]
-User=pushpender_django
+User=root
 Group=www-data
 WorkingDirectory=/root/AmazonSambhav/backend
 ExecStart=/root/AmazonSambhav/backend/venv/bin/gunicorn --access-logfile - --workers 10 --timeout 30 --bind unix:/run/gunicorn_social2amazon.sock backend.wsgi:application
