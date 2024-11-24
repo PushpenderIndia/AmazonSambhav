@@ -4,6 +4,7 @@ from permissions.clerk import ClerkAuthenticated
 from .models import ConnectedSocialMedia, ProductListings
 from rest_framework.views import APIView
 from .serializers import ConnectedSocialMediaSerializer, ProductListingsSerializer
+from .Social2Amazon import Social2Amazon
 
 post_data = [
     {
@@ -119,3 +120,44 @@ class ProfileDataAPI(APIView):
             "first_name": first_name,
             "profile_image": profile_image
         })
+
+class Social2Amazon(APIView):
+    permission_classes = [ClerkAuthenticated]
+    def post(self, request):
+        insta_post_link = request.data.get('insta_post_link', '')
+        if not insta_post_link:
+            return Response({
+                "message": "Please provide a valid Instagram post link"
+            })
+        else:
+            connected_social_media = ConnectedSocialMedia.objects.first()
+            connected_social_media_count = 0
+
+            if connected_social_media:
+                links = [
+                    connected_social_media.instagram_link,
+                    connected_social_media.facebook_link,
+                    connected_social_media.tiktok_link,
+                ]
+                connected_social_media_count = sum(1 for link in links if link.strip())
+
+            if not connected_social_media or connected_social_media_count == 0:
+                return Response({
+                    "message": "Please connect your social media accounts"
+                })
+            else:
+                social2amazon = Social2Amazon()
+                product_data = social2amazon.process_post(insta_post_link)
+                ProductListings(
+                    product_id=product_data.get('product_id'),
+                    images_list=product_data.get('images_list'),
+                    product_title=product_data.get('product_title'),
+                    price=product_data.get('price'),
+                    product_details=product_data.get('product_details'),
+                    about_this_item=product_data.get('about_this_item'),
+                    product_description=product_data.get('product_description')
+                ).save()
+                return Response({
+                    "message": "Data added successfully",
+                })
+            
