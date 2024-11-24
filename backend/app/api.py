@@ -179,13 +179,12 @@ class Social2AmazonAPI(APIView):
                 social2amazon = Social2Amazon(GOOGLE_API_KEY="AIzaSyD9yTukD5YLJYm8r8d3nd0yNSF65Afb4JA")
                 product_data = social2amazon.process_post(insta_post_link)
                 ProductListings(
-                    product_id=product_data.get('product_id'),
                     images_list=product_data.get('images_list'),
                     product_title=product_data.get('product_title'),
                     price=product_data.get('price'),
                     product_details=product_data.get('product_details'),
-                    about_this_item=product_data.get('about_this_item'),
-                    product_description=product_data.get('product_description')
+                    about_this_item=product_data.get('about this item'),
+                    product_description=product_data.get('Product description')
                 ).save()
                 return Response({
                     "message": "Data added successfully",

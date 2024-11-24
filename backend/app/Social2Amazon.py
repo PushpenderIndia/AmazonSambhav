@@ -90,7 +90,7 @@ class GeminiAnalyzer:
             return self.process_images(file_paths)
 
 class Social2Amazon:
-    def __init__(self, base_folder="insta", GOOGLE_API_KEY=""):
+    def __init__(self, base_folder="static", GOOGLE_API_KEY=""):
         """
         Initializes the Social2Amazon class.
 
@@ -210,7 +210,10 @@ class Social2Amazon:
         """
         try:
             # Remove triple backticks if present
-            sanitized_text = response_text.strip().strip("```json").strip("```").strip()
+            if "```json" in response_text:
+                sanitized_text = response_text.strip().strip("```json").strip("```").strip()
+            else:
+                sanitized_text = response_text.strip().split("```")[1].strip("```")[0].strip()
             
             # Parse the sanitized text into JSON
             json_data = json.loads(sanitized_text)
