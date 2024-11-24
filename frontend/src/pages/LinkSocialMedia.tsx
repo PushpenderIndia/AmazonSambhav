@@ -248,12 +248,6 @@ const LinkSocialMedia: React.FC = () => {
                                                 <div className="text">Link Social Media</div>
                                             </a>
                                         </li>
-                                        <li className="menu-item">
-                                            <a href="report.html" className="">
-                                                <div className="icon"><i className="icon-pie-chart"></i></div>
-                                                <div className="text">Generated Listings</div>
-                                            </a>
-                                        </li>
                                     </ul>
                                 </div>
                             </div>

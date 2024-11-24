@@ -88,12 +88,23 @@ class DashboardStatsAPI(APIView):
         total_products = ProductListings.objects.count()
         approved_products = ProductListings.objects.filter(approved=True).count()
         disapproved_products = ProductListings.objects.filter(approved=False).count()
-        total_connected_social_media = ConnectedSocialMedia.objects.count()
+        
+        total_connected_social_media = ConnectedSocialMedia.objects.first()
+        connected_social_media_count = 0
+
+        if total_connected_social_media:
+            links = [
+                total_connected_social_media.instagram_link,
+                total_connected_social_media.facebook_link,
+                total_connected_social_media.tiktok_link,
+            ]
+            connected_social_media_count = sum(1 for link in links if link.strip())
+
         return Response({
             "total_listings": total_products,
             "approved_listings": approved_products,
             "disapproved_listings": disapproved_products,
-            "connected_social_media": total_connected_social_media
+            "connected_social_media": connected_social_media_count
         })
 
 class ProfileDataAPI(APIView):

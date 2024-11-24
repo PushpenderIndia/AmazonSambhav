@@ -38,10 +38,10 @@ const Dashboard: React.FC = () => {
 
     //   Fetch Dashboard stats
     const [dashboardStats, setDashboardStats] = useState({
-        total_listings: 0,
-        approved_listings: 0,
-        disapproved_listings: 0,
-        connected_social_media: 0,
+        total_listings: "Loading...",
+        approved_listings: "Loading...",
+        disapproved_listings: "Loading...",
+        connected_social_media: "Loading...",
     });
 
     // Function to fetch dashboard stats
@@ -114,12 +114,6 @@ const Dashboard: React.FC = () => {
                                             <a href="/linksocialmedia" className="">
                                                 <div className="icon"><i className="icon-image"></i></div>
                                                 <div className="text">Link Social Media</div>
-                                            </a>
-                                        </li>
-                                        <li className="menu-item">
-                                            <a href="report.html" className="">
-                                                <div className="icon"><i className="icon-pie-chart"></i></div>
-                                                <div className="text">Generated Listings</div>
                                             </a>
                                         </li>
                                     </ul>
@@ -263,24 +257,7 @@ const Dashboard: React.FC = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="tf-section mb-30">
-                                            <div className="">
-                                                {/* YHAA PASTE KRNA HAI NEW COMPONENTS  */}
-                                                <div className="wg-box mb-30">
-                                                    <div className="">
-                                                        <h5>Sale / Purchase return</h5>
-                                                        <div className="flex gap10">
-                                                            <h4>$84.86B</h4>
-                                                            <div className="box-icon-trending down">
-                                                                <i className="icon-trending-down"></i>
-                                                                <div className="body-title number">1.02%</div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div id="line-chart-15"></div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        
                                         {/* Recently viewed  */}
 
                                         {/* main-content-wrap  */}
