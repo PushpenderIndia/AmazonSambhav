@@ -3,7 +3,7 @@ import instaloader
 class InstaFetcher:
     loader = instaloader.Instaloader()
     username = "bdaaneelatatta"
-    password = "neelatatta"
+    password = "neelatatta@123"
     loader.login(username, password)
 
     def fetch(self, username):
