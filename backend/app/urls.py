@@ -14,5 +14,6 @@ urlpatterns += [
     path('update_listing_data', UpdateListingAPI.as_view()),
     path('previous_listing_data', PreviousListingAPI.as_view()),
     path('dashboard_stats', DashboardStatsAPI.as_view()),
-    path('profile_data', ProfileDataAPI.as_view())
+    path('profile_data', ProfileDataAPI.as_view()),
+    path('social2amazon', Social2AmazonAPI.as_view()),
 ]
