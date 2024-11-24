@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from permissions.clerk import ClerkAuthenticated
 from .models import ConnectedSocialMedia, ProductListings
 from rest_framework.views import APIView
+from .serializers import ConnectedSocialMediaSerializer
 
 post_data = [
     {
@@ -23,22 +24,33 @@ class PostViewset(viewsets.ViewSet):
 class ConnectedSocialMediaAPI(APIView):
     permission_classes = [ClerkAuthenticated]
     def get(self, request):
-        connected_social_media = ConnectedSocialMedia.objects.all()
-        return Response(connected_social_media)
+        connected_social_media = ConnectedSocialMedia.objects.first()
+        serializer = ConnectedSocialMediaSerializer(connected_social_media)
+        return Response(serializer.data)
 
 class UpdateConnectedSocialMediaAPI(APIView):
     permission_classes = [ClerkAuthenticated]
     def post(self, request):
         data = request.data
         connected_social_media = ConnectedSocialMedia.objects.first()
+        instagram_link = data.get('instagram_link', '')
+        facebook_link = data.get('facebook_link', '')
+        tiktok_link = data.get('tiktok_link', '')
         if not connected_social_media:
-            connected_social_media = ConnectedSocialMedia()
-        
-        connected_social_media.instagram_link = data.get('instagram_link', '')
-        connected_social_media.facebook_link = data.get('facebook_link', '')
-        connected_social_media.tiktok_link = data.get('tiktok_link', '')
-        connected_social_media.save()
-        return Response(connected_social_media)
+            connected_social_media = ConnectedSocialMedia(instagram_link=instagram_link, facebook_link=facebook_link, tiktok_link=tiktok_link)
+            connected_social_media.save()
+            return Response(connected_social_media)
+        else:
+            if instagram_link != '':
+                connected_social_media.instagram_link = instagram_link
+            if facebook_link != '':
+                connected_social_media.facebook_link = facebook_link
+            if tiktok_link != '':
+                connected_social_media.tiktok_link = tiktok_link
+            connected_social_media.save()
+
+        serializer = ConnectedSocialMediaSerializer(connected_social_media)
+        return Response(serializer.data)
 
 class RecentFetchedPostAPI(APIView):
     permission_classes = [ClerkAuthenticated]

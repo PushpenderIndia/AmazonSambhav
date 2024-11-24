@@ -33,7 +33,6 @@ class ClerkAuthMiddleware:
 
         # Get the authentication header from the request
         auth_header = get_authorization_header(request).split()
-        print(auth_header)
 
         user = {}
 
@@ -45,7 +44,6 @@ class ClerkAuthMiddleware:
 
         # Verify the authentication token with Clerk
         token = auth_header[1].decode()
-        print(token)
 
         base64encoded_key = env('CLERK_PEM_PUBLIC_KEY')
         base64encoded_key = base64encoded_key.encode()
