@@ -2,6 +2,9 @@ import instaloader
 
 class InstaFetcher:
     loader = instaloader.Instaloader()
+    username = "bdaaneelatatta"
+    password = "neelatatta"
+    loader.login(username, password)
 
     def fetch(self, username):
         try:
@@ -17,6 +20,7 @@ class InstaFetcher:
             return post_links
         except Exception as e:
             print(f"An error occurred: {e}")
+            return e
 
 if __name__ == "__main__":
     fetcher = InstaFetcher()
