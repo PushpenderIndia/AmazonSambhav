@@ -11,9 +11,108 @@ type ProductData = {
     "about this item": string;
     "Product description": string;
 };
-// Code for Social media connection : start
 const LinkSocialMedia: React.FC = () => {
+    // Code for Social media connection : start
+    const [socialMediaLinks, setSocialMediaLinks] = useState({
+        instagram_link: "",
+        facebook_link: "",
+        tiktok_link: ""
+    });
 
+    const [selectedPlatform, setSelectedPlatform] = useState<string | null>(null);
+    const [newLink, setNewLink] = useState<string>("");
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    useEffect(() => {
+        // Fetch connected social media accounts
+        const fetchSocialMediaLinks = async () => {
+            try {
+                const response = await fetch("/api/connected_social_media");
+                const data = await response.json();
+                setSocialMediaLinks(data);
+            } catch (error) {
+                console.error("Error fetching social media links:", error);
+            }
+        };
+
+        fetchSocialMediaLinks();
+    }, []);
+
+    const openModal = (platform: string) => {
+        setSelectedPlatform(platform);
+        setNewLink("");
+        setIsModalOpen(true);
+    };
+
+    const handleSubmit = async () => {
+        if (!newLink) return;
+
+        const requestBody: { [key: string]: string } = {};
+        if (selectedPlatform) {
+            requestBody[`${selectedPlatform}_link`] = newLink;
+        }
+
+        try {
+            const response = await fetch("https://127.0.0.1:8000/api/update_social_media", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(requestBody)
+            });
+
+            if (response.ok) {
+                setSocialMediaLinks((prev) => ({
+                    ...prev,
+                    [`${selectedPlatform}_link`]: newLink
+                }));
+                setIsModalOpen(false);
+            } else {
+                console.error("Error updating social media link");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    };
+    const renderCard = (platform: string, link: string) => (
+        <div className="col-md-4">
+            <div className="d-flex flex-column align-items-center border rounded p-4" style={{ fontFamily: "Open Sans, sans-serif" }}>
+                <div className="rounded-circle bg-primary d-flex justify-content-center align-items-center text-white social-media-icon mb-3" style={{ width: "60px", height: "60px" }}>
+                    <i className={`bi bi-${platform} fs-2`}></i>
+                </div>
+                <h6 className="mb-1 text-dark" style={{ fontSize: "1.4rem", fontWeight: "600" }}>{platform.charAt(0).toUpperCase() + platform.slice(1)}</h6>
+                {link ? (
+                    <>
+                        <p className="mb-3 text-center" style={{ fontSize: "1.3rem", lineHeight: "1.5" }}>
+                            Connected with the following account:
+                            <br />
+                            <a href={link} target="_blank" rel="noopener noreferrer">{link}</a>
+                        </p>
+                        <button
+                            className="btn btn-outline-primary px-4 py-2 fw-bold"
+                            style={{ fontSize: "1.2rem", fontWeight: "500" }}
+                            onClick={() => openModal(platform)}
+                        >
+                            Change Account
+                        </button>
+                    </>
+                ) : (
+                    <>
+                        <p className="text mb-3 text-center" style={{ fontSize: "1.3rem", lineHeight: "1.5" }}>
+                            Connect your {platform.charAt(0).toUpperCase() + platform.slice(1)} account
+                        </p>
+                        <button
+                            className="btn btn-outline-primary px-4 py-2 fw-bold"
+                            style={{ fontSize: "1.2rem", fontWeight: "500" }}
+                            onClick={() => openModal(platform)}
+                        >
+                            Connect
+                        </button>
+                    </>
+                )}
+            </div>
+        </div>
+    );
     // Code for social medai connection : end
 
     // code for post editing and preview : start
@@ -174,60 +273,51 @@ const LinkSocialMedia: React.FC = () => {
 
                                         <div className="wg-box mb-30">
                                                 <div>
-                                                    <div className="container px-4 py-4">
-                                                        <h4 className="mb-3 text-dark text-center" style={{ fontSize: '2rem', fontWeight: '600', fontFamily: 'Roboto, sans-serif' }}>
-                                                            Connect Your Social Media Accounts
-                                                        </h4>
-                                                        <p className="text-center mb-4" style={{ fontSize: '1.35rem', lineHeight: '1.6', fontFamily: 'Open Sans, sans-serif' }}>
-                                                            Link your accounts to start generating Amazon listings from your content.
-                                                        </p>
+                                                <div className="container px-4 py-4">
+            <h4 className="mb-3 text-dark text-center" style={{ fontSize: "2rem", fontWeight: "600", fontFamily: "Roboto, sans-serif" }}>
+                Connect Your Social Media Accounts
+            </h4>
+            <p className="text-center mb-4" style={{ fontSize: "1.35rem", lineHeight: "1.6", fontFamily: "Open Sans, sans-serif" }}>
+                Link your accounts to start generating Amazon listings from your content.
+            </p>
 
-                                                        {/* Social Media Cards */}
-                                                        <div className="row gx-4">
-                                                            {/* Instagram */}
-                                                            <div className="col-md-4">
-                                                                <div className="d-flex flex-column align-items-center border rounded p-4" style={{ fontFamily: 'Open Sans, sans-serif' }}>
-                                                                    <div className="rounded-circle bg-primary d-flex justify-content-center align-items-center text-white social-media-icon mb-3" style={{ width: '60px', height: '60px' }}>
-                                                                        <i className="bi bi-instagram fs-2"></i>
-                                                                    </div>
-                                                                    <h6 className="mb-1 text-dark" style={{ fontSize: '1.4rem', fontWeight: '600' }}>Instagram</h6>
-                                                                    <p className="text mb-3 text-center" style={{ fontSize: '1.3rem', lineHeight: '1.5' }}>
-                                                                        Connect your Instagram account
-                                                                    </p>
-                                                                    <button className="btn btn-outline-primary px-4 py-2 fw-bold" style={{ fontSize: '1.2rem', fontWeight: '500' }}>Connect</button>
-                                                                </div>
-                                                            </div>
+            {/* Social Media Cards */}
+            <div className="row gx-4">
+                {renderCard("instagram", socialMediaLinks.instagram_link)}
+                {renderCard("facebook", socialMediaLinks.facebook_link)}
+                {renderCard("tiktok", socialMediaLinks.tiktok_link)}
+            </div>
 
-                                                            {/* Facebook */}
-                                                            <div className="col-md-4">
-                                                                <div className="d-flex flex-column align-items-center border rounded p-4" style={{ fontFamily: 'Open Sans, sans-serif' }}>
-                                                                    <div className="rounded-circle bg-primary d-flex justify-content-center align-items-center text-white social-media-icon mb-3" style={{ width: '60px', height: '60px' }}>
-                                                                        <i className="bi bi-facebook fs-2"></i>
-                                                                    </div>
-                                                                    <h6 className="mb-1 text-dark" style={{ fontSize: '1.4rem', fontWeight: '600' }}>Facebook</h6>
-                                                                    <p className="mb-3 text-center" style={{ fontSize: '1.3rem', lineHeight: '1.5' }}>
-                                                                        Connect your Facebook account
-                                                                    </p>
-                                                                    <button className="btn btn-outline-primary px-4 py-2 fw-bold" style={{ fontSize: '1.2rem', fontWeight: '500' }}>Connect</button>
-                                                                </div>
-                                                            </div>
-
-                                                            {/* TikTok */}
-                                                            <div className="col-md-4">
-                                                                <div className="d-flex flex-column align-items-center border rounded p-4" style={{ fontFamily: 'Open Sans, sans-serif' }}>
-                                                                    <div className="rounded-circle bg-primary d-flex justify-content-center align-items-center text-white social-media-icon mb-3" style={{ width: '60px', height: '60px' }}>
-                                                                        <i className="bi bi-tiktok fs-2"></i>
-                                                                    </div>
-                                                                    <h6 className="mb-1 text-dark" style={{ fontSize: '1.4rem', fontWeight: '600' }}>TikTok</h6>
-                                                                    <p className="mb-3 text-center" style={{ fontSize: '1.3rem', lineHeight: '1.5' }}>
-                                                                        Connect your TikTok account
-                                                                    </p>
-                                                                    <button className="btn btn-outline-primary px-4 py-2 fw-bold" style={{ fontSize: '1.2rem', fontWeight: '500' }}>Connect</button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
+            {/* Modal */}
+            {isModalOpen && (
+                <div className="modal fade show d-block" tabIndex={-1} style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title">Connect {selectedPlatform?.charAt(0).toUpperCase() + selectedPlatform?.slice(1)} Account</h5>
+                                <button type="button" className="btn-close" onClick={() => setIsModalOpen(false)}></button>
+                            </div>
+                            <div className="modal-body">
+                                <div className="form-group">
+                                    <label htmlFor="socialMediaLink" className="form-label">Profile URL</label>
+                                    <input
+                                        type="url"
+                                        id="socialMediaLink"
+                                        className="form-control"
+                                        value={newLink}
+                                        onChange={(e) => setNewLink(e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-secondary" onClick={() => setIsModalOpen(false)}>Close</button>
+                                <button type="button" className="btn btn-primary" onClick={handleSubmit}>Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            )}
                                             </div>
                                         </div>
                                     </div>
@@ -442,7 +532,8 @@ const LinkSocialMedia: React.FC = () => {
                 </div>
                 {/* page  */}
             </div>
-
+            </div>
+            </div>
         </>
     );
 };
