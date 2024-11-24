@@ -122,6 +122,24 @@ class InstagramProcessor:
                 print(f"Error during video analysis: {e}")
 
         return results
+    
+    def sanitize_to_json(self, response_text):
+        """
+        Sanitize the response text by removing triple backticks and converting it into a JSON object.
+
+        :param response_text: The raw text response from Gemini.
+        :return: A JSON object parsed from the text.
+        """
+        try:
+            # Remove triple backticks if present
+            sanitized_text = response_text.strip().strip("```json").strip("```").strip()
+            
+            # Parse the sanitized text into JSON
+            json_data = json.loads(sanitized_text)
+            return json_data
+        except Exception as e:
+            print(f"Error parsing JSON: {e}")
+            return None
 
     def process_gemini_text(self, post_description, ocr_text, gemini_results, media_files):
         """
@@ -163,7 +181,8 @@ The "product_details" field is dynamic, and its keys will vary depending on the 
         print("Sending data to Gemini text model...")
         model = genai.GenerativeModel("gemini-1.5-flash")
         response = model.generate_content(prompt)
-        return response.text
+        return self.sanitize_to_json(response.text)
+
 
     def process_post(self, url):
         """
