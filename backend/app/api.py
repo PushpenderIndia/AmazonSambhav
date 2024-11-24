@@ -5,6 +5,7 @@ from .models import ConnectedSocialMedia, ProductListings
 from rest_framework.views import APIView
 from .serializers import ConnectedSocialMediaSerializer, ProductListingsSerializer
 from .Social2Amazon import Social2Amazon
+from .InstaFetcher import InstaFetcher
 
 post_data = [
     {
@@ -121,6 +122,35 @@ class ProfileDataAPI(APIView):
             "profile_image": profile_image
         })
 
+class FetchInstagramPostAPI(APIView):
+    permission_classes = [ClerkAuthenticated]
+    def get(self, request):
+        total_connected_social_media = ConnectedSocialMedia.objects.first()
+        if not total_connected_social_media:
+            return Response({
+                "message": "Please connect your social media accounts"
+            })
+        else:
+            instagram_link = total_connected_social_media.instagram_link
+            if not instagram_link:
+                return Response({
+                    "message": "Please provide a valid Instagram username"
+                })
+            else:
+                username = instagram_link.split(".com/")[1].strip()
+
+                if not username:
+                    return Response({
+                        "message": "Please provide a valid Instagram username"
+                    })
+                else:
+                    fetcher = InstaFetcher()
+                    post_links = fetcher.fetch(username)
+                    return Response({
+                        "message": "Posts fetched successfully",
+                        "post_links": post_links
+                    })
+
 class Social2AmazonAPI(APIView):
     permission_classes = [ClerkAuthenticated]
     def post(self, request):
@@ -146,7 +176,7 @@ class Social2AmazonAPI(APIView):
                     "message": "Please connect your social media accounts"
                 })
             else:
-                social2amazon = Social2Amazon()
+                social2amazon = Social2Amazon(GOOGLE_API_KEY="AIzaSyD9yTukD5YLJYm8r8d3nd0yNSF65Afb4JA")
                 product_data = social2amazon.process_post(insta_post_link)
                 ProductListings(
                     product_id=product_data.get('product_id'),

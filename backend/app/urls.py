@@ -2,6 +2,7 @@ from rest_framework import routers
 from .api import PostViewset
 from django.urls import path
 from .api import ConnectedSocialMediaAPI, UpdateConnectedSocialMediaAPI, RecentFetchedPostAPI, UpdateListingAPI, PreviousListingAPI, DashboardStatsAPI, ProfileDataAPI, Social2AmazonAPI
+from .api import FetchInstagramPostAPI
 
 router = routers.SimpleRouter()
 router.register(r'posts', PostViewset, basename="posts")
@@ -16,4 +17,5 @@ urlpatterns += [
     path('dashboard_stats', DashboardStatsAPI.as_view()),
     path('profile_data', ProfileDataAPI.as_view()),
     path('social2amazon', Social2AmazonAPI.as_view()),
+    path('fetch_latest_instagram_post', FetchInstagramPostAPI.as_view()),
 ]
