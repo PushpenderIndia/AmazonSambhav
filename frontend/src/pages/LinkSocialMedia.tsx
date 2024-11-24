@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useAuth } from "@clerk/clerk-react";
 // Define the type for the product data
 type ProductData = {
     product_id: string;
@@ -13,30 +14,78 @@ type ProductData = {
 };
 const LinkSocialMedia: React.FC = () => {
     // Code for Social media connection : start
+    const { isLoaded, getToken } = useAuth();
+
     const [socialMediaLinks, setSocialMediaLinks] = useState({
         instagram_link: "",
         facebook_link: "",
-        tiktok_link: ""
+        tiktok_link: "",
     });
 
     const [selectedPlatform, setSelectedPlatform] = useState<string | null>(null);
     const [newLink, setNewLink] = useState<string>("");
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    useEffect(() => {
-        // Fetch connected social media accounts
-        const fetchSocialMediaLinks = async () => {
-            try {
-                const response = await fetch("/api/connected_social_media");
-                const data = await response.json();
-                setSocialMediaLinks(data);
-            } catch (error) {
-                console.error("Error fetching social media links:", error);
+    // Fetch connected social media accounts
+    const fetchSocialMediaLinks = async () => {
+        try {
+            const token = await getToken();
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/connected_social_media`, {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+            });
+            if (!response.ok) {
+                throw new Error("Failed to fetch social media links");
             }
+            const data = await response.json();
+            setSocialMediaLinks(data);
+        } catch (error: any) {
+            console.error("Error fetching social media links:", error.message);
+        }
+    };
+
+    // Submit updated social media link
+    const handleSubmit = async () => {
+        if (!newLink || !selectedPlatform) return;
+
+        const requestBody: { [key: string]: string } = {
+            [`${selectedPlatform}_link`]: newLink,
         };
 
-        fetchSocialMediaLinks();
-    }, []);
+        try {
+            const token = await getToken();
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/update_social_media`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(requestBody),
+            });
+
+            if (response.ok) {
+                setSocialMediaLinks((prev) => ({
+                    ...prev,
+                    [`${selectedPlatform}_link`]: newLink,
+                }));
+                setIsModalOpen(false);
+            } else {
+                console.error("Error updating social media link");
+            }
+        } catch (error: any) {
+            console.error("Error:", error.message);
+        }
+    };
+
+    // Fetch social media links on component mount
+    useEffect(() => {
+        if (isLoaded) {
+            fetchSocialMediaLinks();
+        }
+    }, [isLoaded]);
 
     const openModal = (platform: string) => {
         setSelectedPlatform(platform);
@@ -44,36 +93,6 @@ const LinkSocialMedia: React.FC = () => {
         setIsModalOpen(true);
     };
 
-    const handleSubmit = async () => {
-        if (!newLink) return;
-
-        const requestBody: { [key: string]: string } = {};
-        if (selectedPlatform) {
-            requestBody[`${selectedPlatform}_link`] = newLink;
-        }
-
-        try {
-            const response = await fetch("https://127.0.0.1:8000/api/update_social_media", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(requestBody)
-            });
-
-            if (response.ok) {
-                setSocialMediaLinks((prev) => ({
-                    ...prev,
-                    [`${selectedPlatform}_link`]: newLink
-                }));
-                setIsModalOpen(false);
-            } else {
-                console.error("Error updating social media link");
-            }
-        } catch (error) {
-            console.error("Error:", error);
-        }
-    };
     const renderCard = (platform: string, link: string) => (
         <div className="col-md-4">
             <div className="d-flex flex-column align-items-center border rounded p-4" style={{ fontFamily: "Open Sans, sans-serif" }}>
@@ -125,7 +144,7 @@ const LinkSocialMedia: React.FC = () => {
     // Fetch data from API on component load
     useEffect(() => {
         fetchProductData();
-    }, []);
+    }, [isLoaded]);
 
     const fetchProductData = async () => {
         try {
@@ -214,7 +233,7 @@ const LinkSocialMedia: React.FC = () => {
                                 <div className="wrap">
                                     <div className="header-left">
                                         <a href="index.html">
-                                            <img className="" id="logo_header_mobile" alt="" src="images/logo/logo.png" data-light="images/logo/logo.png" data-dark="images/logo/logo-dark.png" data-width="154px" data-height="52px" data-retina="images/logo/logo@2x.png" />
+                                            <img className="logo" id="logo_header_mobile" alt="" src="images/logo/logo.png"/>
                                         </a>
                                         <div className="button-show-hide">
                                             <i className="icon-menu-left"></i>
@@ -271,268 +290,267 @@ const LinkSocialMedia: React.FC = () => {
                                     <div className="main-content-wrap">
                                         <div className="main-content-wrap">
 
-                                        <div className="wg-box mb-30">
+                                            <div className="wg-box mb-30">
                                                 <div>
-                                                <div className="container px-4 py-4">
-            <h4 className="mb-3 text-dark text-center" style={{ fontSize: "2rem", fontWeight: "600", fontFamily: "Roboto, sans-serif" }}>
-                Connect Your Social Media Accounts
-            </h4>
-            <p className="text-center mb-4" style={{ fontSize: "1.35rem", lineHeight: "1.6", fontFamily: "Open Sans, sans-serif" }}>
-                Link your accounts to start generating Amazon listings from your content.
-            </p>
+                                                    <div className="container px-4 py-4">
+                                                        <h4 className="mb-3 text-dark text-center" style={{ fontSize: "2rem", fontWeight: "600", fontFamily: "Roboto, sans-serif" }}>
+                                                            Connect Your Social Media Accounts
+                                                        </h4>
+                                                        <p className="text-center mb-4" style={{ fontSize: "1.35rem", lineHeight: "1.6", fontFamily: "Open Sans, sans-serif" }}>
+                                                            Link your accounts to start generating Amazon listings from your content.
+                                                        </p>
 
-            {/* Social Media Cards */}
-            <div className="row gx-4">
-                {renderCard("instagram", socialMediaLinks.instagram_link)}
-                {renderCard("facebook", socialMediaLinks.facebook_link)}
-                {renderCard("tiktok", socialMediaLinks.tiktok_link)}
-            </div>
+                                                        {/* Social Media Cards */}
+                                                        <div className="row gx-4">
+                                                            {renderCard("instagram", socialMediaLinks.instagram_link)}
+                                                            {renderCard("facebook", socialMediaLinks.facebook_link)}
+                                                            {renderCard("tiktok", socialMediaLinks.tiktok_link)}
+                                                        </div>
 
-            {/* Modal */}
-            {isModalOpen && (
-                <div className="modal fade show d-block" tabIndex={-1} style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}>
-                    <div className="modal-dialog">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title">Connect {selectedPlatform?.charAt(0).toUpperCase() + selectedPlatform?.slice(1)} Account</h5>
-                                <button type="button" className="btn-close" onClick={() => setIsModalOpen(false)}></button>
-                            </div>
-                            <div className="modal-body">
-                                <div className="form-group">
-                                    <label htmlFor="socialMediaLink" className="form-label">Profile URL</label>
-                                    <input
-                                        type="url"
-                                        id="socialMediaLink"
-                                        className="form-control"
-                                        value={newLink}
-                                        onChange={(e) => setNewLink(e.target.value)}
-                                    />
-                                </div>
-                            </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn btn-secondary" onClick={() => setIsModalOpen(false)}>Close</button>
-                                <button type="button" className="btn btn-primary" onClick={handleSubmit}>Submit</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-            )}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="wg-box mb-30 shadow-sm featured-content">
-                                        <div className="">
-                                            <div className="row">
-                                                {/* Left Column: Carousel */}
-                                                <div className="col-md-6 mb-4 mb-md-0">
-                                                    <div id="imageCarousel" className="carousel slide" data-bs-ride="carousel">
-                                                        <div className="carousel-inner rounded">
-                                                            {productData?.images_list?.map((image, index) => (
-                                                                <div
-                                                                    className={`carousel-item ${index === 0 ? "active" : ""}`}
-                                                                    key={index}
-                                                                >
-                                                                    <img src={image} className="d-block w-100" alt={`Slide ${index + 1}`} />
+                                                        {/* Modal */}
+                                                        {isModalOpen && (
+                                                            <div className="modal fade show d-block" tabIndex={-1} style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}>
+                                                                <div className="modal-dialog">
+                                                                    <div className="modal-content">
+                                                                        <div className="modal-header">
+                                                                            <h5 className="modal-title">Connect {selectedPlatform?.charAt(0).toUpperCase() + selectedPlatform?.slice(1)} Account</h5>
+                                                                            <button type="button" className="btn-close" onClick={() => setIsModalOpen(false)}></button>
+                                                                        </div>
+                                                                        <div className="modal-body">
+                                                                            <div className="form-group">
+                                                                                <label htmlFor="socialMediaLink" className="form-label">Profile URL</label>
+                                                                                <input
+                                                                                    type="url"
+                                                                                    id="socialMediaLink"
+                                                                                    className="form-control"
+                                                                                    value={newLink}
+                                                                                    onChange={(e) => setNewLink(e.target.value)}
+                                                                                />
+                                                                            </div>
+                                                                        </div>
+                                                                        <div className="modal-footer">
+                                                                            <button type="button" className="btn btn-secondary" onClick={() => setIsModalOpen(false)}>Close</button>
+                                                                            <button type="button" className="btn btn-primary" onClick={handleSubmit}>Submit</button>
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
-                                                            ))}
-                                                        </div>
-                                                        <button
-                                                            className="carousel-control-prev"
-                                                            type="button"
-                                                            data-bs-target="#imageCarousel"
-                                                            data-bs-slide="prev"
-                                                        >
-                                                            <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-                                                            <span className="visually-hidden">Previous</span>
-                                                        </button>
-                                                        <button
-                                                            className="carousel-control-next"
-                                                            type="button"
-                                                            data-bs-target="#imageCarousel"
-                                                            data-bs-slide="next"
-                                                        >
-                                                            <span className="carousel-control-next-icon" aria-hidden="true"></span>
-                                                            <span className="visually-hidden">Next</span>
-                                                        </button>
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 </div>
-
-                                                {/* Right Column: Title, Description, and Buttons */}
-                                                <div className="col-md-6 d-flex flex-column">
-                                                    <div>
-                                                        <div className="featured-content-title">
-                                                            {productData?.product_title || "Loading..."}
-                                                        </div>
-                                                        <p className="text-dark">
-                                                            {productData?.["Product description"] ||
-                                                                "Explore our curated selection of top-performing content."}
-                                                        </p>
-                                                    </div>
-                                                    <div className="mt-16">
-                                                        <p className="text-secondary-custom mb-3">
-                                                            Fetched {productData?.created_at || "some time ago"}
-                                                        </p>
-                                                        <div className="d-flex justify-content-end">
-                                                            <button
-                                                                className="btn btn-outline-primary me-2 link-btn"
-                                                                onClick={() => setIsPreviewModalOpen(true)}
-                                                            >
-                                                                Preview
-                                                            </button>
-                                                            <button
-                                                                className="btn btn-primary link-btn"
-                                                                onClick={() => setIsEditModalOpen(true)}
-                                                            >
-                                                                Edit Data
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                {/* Preview Modal */}
-                                                {isPreviewModalOpen && (
-                                                    <div className="modal-overlay" onClick={() => setIsPreviewModalOpen(false)}>
-                                                        <div
-                                                            className="modal-content"
-                                                            onClick={(e) => e.stopPropagation()}
-                                                        >
-                                                            <h5>Product Preview</h5>
-                                                            <p>Title: {productData?.product_title}</p>
-                                                            <p>Price: {productData?.price}</p>
-                                                            <p>Description: {productData?.["Product description"]}</p>
-                                                            <p>About This Item: {productData?.["about this item"]}</p>
-                                                            <button onClick={() => setIsPreviewModalOpen(false)}>Close</button>
-                                                        </div>
-                                                    </div>
-                                                )}
-
-                                                {/* Edit Modal */}
-                                                {isEditModalOpen && (
-                                                    <div className="modal-overlay" onClick={() => setIsEditModalOpen(false)}>
-                                                        <div
-                                                            className="modal-content"
-                                                            onClick={(e) => e.stopPropagation()}
-                                                        >
-                                                            <h5>Edit Product Data</h5>
-                                                            <form>
-                                                                <label>
-                                                                    Title:
-                                                                    <input
-                                                                        type="text"
-                                                                        name="product_title"
-                                                                        value={formData.product_title || ""}
-                                                                        onChange={handleFormChange}
-                                                                    />
-                                                                </label>
-                                                                <label>
-                                                                    Price:
-                                                                    <input
-                                                                        type="text"
-                                                                        name="price"
-                                                                        value={formData.price || ""}
-                                                                        onChange={handleFormChange}
-                                                                    />
-                                                                </label>
-                                                                <label>
-                                                                    Description:
-                                                                    <textarea
-                                                                        name="Product description"
-                                                                        value={formData["Product description"] || ""}
-                                                                        onChange={handleFormChange}
-                                                                    />
-                                                                </label>
-                                                                <button type="button" onClick={handleFormSubmit}>
-                                                                    Submit
+                                            </div>
+                                            <div className="wg-box mb-30 shadow-sm featured-content">
+                                                <div className="">
+                                                    <div className="row">
+                                                        {/* Left Column: Carousel */}
+                                                        <div className="col-md-6 mb-4 mb-md-0">
+                                                            <div id="imageCarousel" className="carousel slide" data-bs-ride="carousel">
+                                                                <div className="carousel-inner rounded">
+                                                                    {productData?.images_list?.map((image, index) => (
+                                                                        <div
+                                                                            className={`carousel-item ${index === 0 ? "active" : ""}`}
+                                                                            key={index}
+                                                                        >
+                                                                            <img src={image} className="d-block w-100" alt={`Slide ${index + 1}`} />
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                                <button
+                                                                    className="carousel-control-prev"
+                                                                    type="button"
+                                                                    data-bs-target="#imageCarousel"
+                                                                    data-bs-slide="prev"
+                                                                >
+                                                                    <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                                    <span className="visually-hidden">Previous</span>
                                                                 </button>
-                                                                <button type="button" onClick={() => setIsEditModalOpen(false)}>
-                                                                    Cancel
+                                                                <button
+                                                                    className="carousel-control-next"
+                                                                    type="button"
+                                                                    data-bs-target="#imageCarousel"
+                                                                    data-bs-slide="next"
+                                                                >
+                                                                    <span className="carousel-control-next-icon" aria-hidden="true"></span>
+                                                                    <span className="visually-hidden">Next</span>
                                                                 </button>
-                                                            </form>
+                                                            </div>
+                                                        </div>
+
+                                                        {/* Right Column: Title, Description, and Buttons */}
+                                                        <div className="col-md-6 d-flex flex-column">
+                                                            <div>
+                                                                <div className="featured-content-title">
+                                                                    {productData?.product_title || "Loading..."}
+                                                                </div>
+                                                                <p className="text-dark">
+                                                                    {productData?.["Product description"] ||
+                                                                        "Explore our curated selection of top-performing content."}
+                                                                </p>
+                                                            </div>
+                                                            <div className="mt-16">
+                                                                <p className="text-secondary-custom mb-3">
+                                                                    Fetched {productData?.created_at || "some time ago"}
+                                                                </p>
+                                                                <div className="d-flex justify-content-end">
+                                                                    <button
+                                                                        className="btn btn-outline-primary me-2 link-btn"
+                                                                        onClick={() => setIsPreviewModalOpen(true)}
+                                                                    >
+                                                                        Preview
+                                                                    </button>
+                                                                    <button
+                                                                        className="btn btn-primary link-btn"
+                                                                        onClick={() => setIsEditModalOpen(true)}
+                                                                    >
+                                                                        Edit Data
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        {/* Preview Modal */}
+                                                        {isPreviewModalOpen && (
+                                                            <div className="modal-overlay" onClick={() => setIsPreviewModalOpen(false)}>
+                                                                <div
+                                                                    className="modal-content"
+                                                                    onClick={(e) => e.stopPropagation()}
+                                                                >
+                                                                    <h5>Product Preview</h5>
+                                                                    <p>Title: {productData?.product_title}</p>
+                                                                    <p>Price: {productData?.price}</p>
+                                                                    <p>Description: {productData?.["Product description"]}</p>
+                                                                    <p>About This Item: {productData?.["about this item"]}</p>
+                                                                    <button onClick={() => setIsPreviewModalOpen(false)}>Close</button>
+                                                                </div>
+                                                            </div>
+                                                        )}
+
+                                                        {/* Edit Modal */}
+                                                        {isEditModalOpen && (
+                                                            <div className="modal-overlay" onClick={() => setIsEditModalOpen(false)}>
+                                                                <div
+                                                                    className="modal-content"
+                                                                    onClick={(e) => e.stopPropagation()}
+                                                                >
+                                                                    <h5>Edit Product Data</h5>
+                                                                    <form>
+                                                                        <label>
+                                                                            Title:
+                                                                            <input
+                                                                                type="text"
+                                                                                name="product_title"
+                                                                                value={formData.product_title || ""}
+                                                                                onChange={handleFormChange}
+                                                                            />
+                                                                        </label>
+                                                                        <label>
+                                                                            Price:
+                                                                            <input
+                                                                                type="text"
+                                                                                name="price"
+                                                                                value={formData.price || ""}
+                                                                                onChange={handleFormChange}
+                                                                            />
+                                                                        </label>
+                                                                        <label>
+                                                                            Description:
+                                                                            <textarea
+                                                                                name="Product description"
+                                                                                value={formData["Product description"] || ""}
+                                                                                onChange={handleFormChange}
+                                                                            />
+                                                                        </label>
+                                                                        <button type="button" onClick={handleFormSubmit}>
+                                                                            Submit
+                                                                        </button>
+                                                                        <button type="button" onClick={() => setIsEditModalOpen(false)}>
+                                                                            Cancel
+                                                                        </button>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {/* Linked Content Preview Section  */}
+                                            {/* Product Added Section */}
+                                            <div className="wg-box py-5 mb-30">
+                                                <div className="text-center featured-content-title mb-4">Previously added products</div>
+                                                <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                                                    <div className="col">
+                                                        <div className="card h-100 shadow-sm">
+                                                            <div className="card-img-container">
+                                                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLLOKocediUNjqq0L_QOZCtrVu8SYusAh6Ww&s" className="card-img-top" alt="Product 1" />
+                                                            </div>
+                                                            <div className="card-body">
+                                                                <div className="card-title added-products-title">Product 1</div>
+                                                                <p className="card-text">A brief description of Product 1 and its features.</p>
+                                                            </div>
+                                                            <div className="card-overlay">
+                                                                <button className="btn btn-primary">
+                                                                    View Details
+                                                                    <span className="visually-hidden">for Product 1</span>
+                                                                </button>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                )}
+                                                    <div className="col">
+                                                        <div className="card h-100 shadow-sm">
+                                                            <div className="card-img-container">
+                                                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7yflggK4Iy7KRo18fIGYgGlmdMIBAlb0_Vw&s" className="card-img-top" alt="Product 2" />
+                                                            </div>
+                                                            <div className="card-body">
+                                                                <h5 className="card-title added-products-title">Product 2</h5>
+                                                                <p className="card-text">A brief description of Product 2 and its features.</p>
+                                                            </div>
+                                                            <div className="card-overlay">
+                                                                <button className="btn btn-primary">
+                                                                    View Details
+                                                                    <span className="visually-hidden">for Product 2</span>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="col">
+                                                        <div className="card h-100 shadow-sm">
+                                                            <div className="card-img-container">
+                                                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRuilK6m7nQE2OpadkIFpoyxcf98oAS80LzeQ&s" className="card-img-top" alt="Product 3" />
+                                                            </div>
+                                                            <div className="card-body">
+                                                                <h5 className="card-title added-products-title">Product 3</h5>
+                                                                <p className="card-text">A brief description of Product 3 and its features.</p>
+                                                            </div>
+                                                            <div className="card-overlay">
+                                                                <button className="btn btn-primary">
+                                                                    View Details
+                                                                    <span className="visually-hidden">for Product 3</span>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
+                                            {/* main-content-wrap  */}
                                         </div>
-                                    </div>
-                                    {/* Linked Content Preview Section  */}
-                                    {/* Product Added Section */}
-                                    <div className="wg-box py-5 mb-30">
-                                        <div className="text-center featured-content-title mb-4">Previously added products</div>
-                                        <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-                                            <div className="col">
-                                                <div className="card h-100 shadow-sm">
-                                                    <div className="card-img-container">
-                                                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLLOKocediUNjqq0L_QOZCtrVu8SYusAh6Ww&s" className="card-img-top" alt="Product 1" />
-                                                    </div>
-                                                    <div className="card-body">
-                                                        <div className="card-title added-products-title">Product 1</div>
-                                                        <p className="card-text">A brief description of Product 1 and its features.</p>
-                                                    </div>
-                                                    <div className="card-overlay">
-                                                        <button className="btn btn-primary">
-                                                            View Details
-                                                            <span className="visually-hidden">for Product 1</span>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="col">
-                                                <div className="card h-100 shadow-sm">
-                                                    <div className="card-img-container">
-                                                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7yflggK4Iy7KRo18fIGYgGlmdMIBAlb0_Vw&s" className="card-img-top" alt="Product 2" />
-                                                    </div>
-                                                    <div className="card-body">
-                                                        <h5 className="card-title added-products-title">Product 2</h5>
-                                                        <p className="card-text">A brief description of Product 2 and its features.</p>
-                                                    </div>
-                                                    <div className="card-overlay">
-                                                        <button className="btn btn-primary">
-                                                            View Details
-                                                            <span className="visually-hidden">for Product 2</span>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="col">
-                                                <div className="card h-100 shadow-sm">
-                                                    <div className="card-img-container">
-                                                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRuilK6m7nQE2OpadkIFpoyxcf98oAS80LzeQ&s" className="card-img-top" alt="Product 3" />
-                                                    </div>
-                                                    <div className="card-body">
-                                                        <h5 className="card-title added-products-title">Product 3</h5>
-                                                        <p className="card-text">A brief description of Product 3 and its features.</p>
-                                                    </div>
-                                                    <div className="card-overlay">
-                                                        <button className="btn btn-primary">
-                                                            View Details
-                                                            <span className="visually-hidden">for Product 3</span>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                        {/* main-content-wrap  */}
+                                        {/* bottom-page  */}
+                                        <div className="bottom-page">
+                                            <div className="body-text">Made with LOVE </div>
+                                            <i className="icon-heart"></i>
+                                            <div className="body-text">by <a href="">Team Malaai</a> All rights reserved.</div>
                                         </div>
+                                        {/* bottom-page  */}
                                     </div>
-                                    {/* main-content-wrap  */}
+                                    {/* main-content  */}
                                 </div>
-                                {/* main-content-wrap  */}
-                                {/* bottom-page  */}
-                                <div className="bottom-page">
-                                    <div className="body-text">Made with LOVE </div>
-                                    <i className="icon-heart"></i>
-                                    <div className="body-text">by <a href="">Team Malaai</a> All rights reserved.</div>
-                                </div>
-                                {/* bottom-page  */}
+                                {/* section-content-right  */}
                             </div>
-                            {/* main-content  */}
+                            {/* layout-wrap  */}
                         </div>
-                        {/* section-content-right  */}
+                        {/* page  */}
                     </div>
-                    {/* layout-wrap  */}
                 </div>
-                {/* page  */}
-            </div>
-            </div>
             </div>
         </>
     );

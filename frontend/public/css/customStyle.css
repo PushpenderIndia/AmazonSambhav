@@ -109,7 +109,7 @@
     position: relative; /* Relative to itself */
 }
 .logo{
-    height:60px;
+    height:5rem;
 }
 
 /* Add this to your CSS file or inside a <style> tag in the same component for scoped styles */
