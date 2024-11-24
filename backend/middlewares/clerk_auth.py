@@ -14,6 +14,18 @@ class ClerkAuthMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
 
+    def fetch_user_data_from_clerk(self, user_id):
+        CLERK_API_URL = "https://api.clerk.com/v1"
+        response = requests.get(
+            f"{CLERK_API_URL}/users/{user_id}",
+            headers={"Authorization": f"Bearer {settings.CLERK_SECRET_KEY}"},
+        )
+        if response.status_code == 200:
+            data = response.json()
+            return data
+        else:
+            return None
+
     def __call__(self, request):
 
         print("Inside Clerk Middleware")
@@ -58,6 +70,13 @@ class ClerkAuthMiddleware:
 
         user['is_authenticated'] = True
         user['id'] = user_id
+
+        # Fetch the user data from Clerk
+        user_data = self.fetch_user_data_from_clerk(user_id)
+        if user_data:
+            user['data'] = user_data
+        else:
+            user['data'] = None
 
         if not user:
             raise AuthenticationFailed('Invalid authentication token')
