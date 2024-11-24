@@ -1,7 +1,7 @@
 from rest_framework import routers
 from .api import PostViewset
 from django.urls import path
-from .api import ConnectedSocialMediaAPI, UpdateConnectedSocialMediaAPI, RecentFetchedPostAPI, UpdateListingAPI, PreviousListingAPI, DashboardStatsAPI
+from .api import ConnectedSocialMediaAPI, UpdateConnectedSocialMediaAPI, RecentFetchedPostAPI, UpdateListingAPI, PreviousListingAPI, DashboardStatsAPI, ProfileDataAPI
 
 router = routers.SimpleRouter()
 router.register(r'posts', PostViewset, basename="posts")
@@ -14,4 +14,5 @@ urlpatterns += [
     path('update_listing_data', UpdateListingAPI.as_view()),
     path('previous_listing_data', PreviousListingAPI.as_view()),
     path('dashboard_stats', DashboardStatsAPI.as_view()),
+    path('profile_data', ProfileDataAPI.as_view())
 ]
