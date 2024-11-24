@@ -210,13 +210,10 @@ class Social2Amazon:
         """
         try:
             # Remove triple backticks if present
-            print("="*50)
-            print(response_text)
-            print("="*50)
             if "```json" in response_text:
-                sanitized_text = response_text.strip().split("```json")[1].strip("```")[0].strip()
+                sanitized_text = response_text.split("```json")[1].split("```")[0].strip()
             else:
-                sanitized_text = response_text.strip().split("```")[1].strip("```")[0].strip()
+                sanitized_text = response_text.split("```")[1].split("```")[0].strip()
             
             # Parse the sanitized text into JSON
             json_data = json.loads(sanitized_text)
