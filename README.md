@@ -172,6 +172,37 @@ mv env-sample .env
 npm run dev  
 ```  
 
+### Backend Deployment on VPS
+```
+apt install nginx python3.12-pip
+
+git clone https://github.com/pushpenderindia/AmazonSambhav  
+
+# Configure Ngnix
+sudo cp -rf DevOps/social2amazon.conf /etc/nginx/sites-available/social2amazon
+sudo ln -s /etc/nginx/sites-available/social2amazon /etc/nginx/sites-enabled
+sudo nginx -t
+
+# Configure Gunicorn Service
+sudo cp -rf DevOps/gunicorn_social2amazon.socket /etc/systemd/system/
+sudo cp -rf DevOps/gunicorn_social2amazon.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl start gunicorn_social2amazon.socket
+sudo systemctl enable gunicorn_social2amazon.socket
+sudo systemctl status gunicorn_social2amazon.socket
+sudo systemctl start gunicorn_social2amazon
+sudo systemctl enable gunicorn_social2amazon
+sudo systemctl status gunicorn_social2amazon
+
+sudo systemctl reload nginx
+cd backend
+python3 -m venv venv  
+source venv/bin/activate  
+mv env-sample .env  
+# Update .env with necessary keys and configurations  
+pip install -r requirements.txt  
+```
+
 ---
 
 ## Usage Instructions  
