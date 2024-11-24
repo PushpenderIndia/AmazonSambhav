@@ -89,10 +89,10 @@ class GeminiAnalyzer:
             # One or more image files
             return self.process_images(file_paths)
 
-class InstagramProcessor:
+class Social2Amazon:
     def __init__(self, base_folder="insta", GOOGLE_API_KEY=""):
         """
-        Initializes the InstagramProcessor class.
+        Initializes the Social2Amazon class.
 
         :param base_folder: The base folder where all data will be saved.
         """
@@ -293,7 +293,7 @@ if __name__ == "__main__":
     url = input("Enter the Instagram post URL: ")
     import shutil
     shutil.rmtree('insta', ignore_errors=True)
-    processor = InstagramProcessor(GOOGLE_API_KEY="AIzaSyD9yTukD5YLJYm8r8d3nd0yNSF65Afb4JA")
+    processor = Social2Amazon(GOOGLE_API_KEY="AIzaSyD9yTukD5YLJYm8r8d3nd0yNSF65Afb4JA")
     results = processor.process_post(url)
     print("\nProcessing complete. Results:")
     print(results)

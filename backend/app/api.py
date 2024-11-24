@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from permissions.clerk import ClerkAuthenticated
 from .models import ConnectedSocialMedia, ProductListings
 from rest_framework.views import APIView
-from .serializers import ConnectedSocialMediaSerializer
+from .serializers import ConnectedSocialMediaSerializer, ProductListingsSerializer
 
 post_data = [
     {
@@ -59,7 +59,8 @@ class RecentFetchedPostAPI(APIView):
         Get the most recent fetched post, only 1 post
         """
         recent_fetched_posts = ProductListings.objects.all().order_by('-created_at')[:1]
-        return Response(recent_fetched_posts)
+        serializer = ProductListingsSerializer(recent_fetched_posts, many=True)
+        return Response(serializer.data)
 
 class UpdateListingAPI(APIView):
     permission_classes = [ClerkAuthenticated]
@@ -74,13 +75,15 @@ class UpdateListingAPI(APIView):
         product.about_this_item = data.get('about_this_item')
         product.product_description = data.get('product_description')
         product.save()
-        return Response(product)
+        serializer = ProductListingsSerializer(product)
+        return Response(serializer.data)
 
 class PreviousListingAPI(APIView):
     permission_classes = [ClerkAuthenticated]
     def get(self, request):
         previous_listings = ProductListings.objects.all().order_by('-created_at')[1:]
-        return Response(previous_listings)
+        serializer = ProductListingsSerializer(previous_listings, many=True)
+        return Response(serializer.data)
 
 class DashboardStatsAPI(APIView):
     permission_classes = [ClerkAuthenticated]
