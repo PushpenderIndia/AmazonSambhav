@@ -1,0 +1,113 @@
+.social-media-icon{
+    width: 50px; 
+    height: 50px; 
+    font-size: 1.5rem;
+}
+
+.text-secondary-custom {
+    color: #8b8c92;
+    font-family: cursive;
+}
+
+.featured-content-title{
+    font-size: xx-large;
+    font-weight: 700;
+    color: #333;
+    font-family: inherit;
+}
+.featured-content{
+    z-index: -1;
+}
+.featured-content .carousel-item img {
+    height: 300px;
+    object-fit: cover;
+}
+.featured-content .btn-primary {  
+    background-color: #2275fc;
+    border-color: #2275fc;
+    color: #fff;
+}
+.featured-content .btn-primary:hover {
+    background-color: #1c5fcf;
+    border-color: #1c5fcf;
+}
+.featured-content .btn-outline-primary {
+    color: #2275fc;
+    border-color: #2275fc;
+}
+.featured-content .btn-outline-primary:hover {
+    background-color: #2275fc;
+    color: #fff;
+}
+.link-btn{
+    font-size: 16px;
+}
+
+.card{
+    border-radius: 3%;
+}
+
+.card-img-container {
+    height: 200px;
+    overflow: hidden;
+    border-radius: 3% 3% 0 0;
+}
+.card-img-top {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.card-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 3%;
+}
+.card:hover .card-overlay {
+    opacity: 1;
+}
+.card {
+    transition: transform 0.3s ease;
+}
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.added-products-title{
+    font-size: 18px;
+}
+
+/* Modal overlay to cover everything */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Dim background */
+    z-index: 1050; /* Higher than other elements */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Modal content styling */
+.modal-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1060; /* Slightly higher than the overlay */
+    position: relative; /* Relative to itself */
+}
+.logo{
+    height:60px;
+}
