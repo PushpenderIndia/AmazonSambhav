@@ -31,6 +31,9 @@ class UpdateConnectedSocialMediaAPI(APIView):
     def post(self, request):
         data = request.data
         connected_social_media = ConnectedSocialMedia.objects.first()
+        if not connected_social_media:
+            connected_social_media = ConnectedSocialMedia()
+        
         connected_social_media.instagram_link = data.get('instagram_link')
         connected_social_media.facebook_link = data.get('facebook_link')
         connected_social_media.tiktok_link = data.get('tiktok_link')
