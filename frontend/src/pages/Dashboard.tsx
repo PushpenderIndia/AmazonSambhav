@@ -1,6 +1,48 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useAuth } from "@clerk/clerk-react";
 
 const Dashboard: React.FC = () => {
+  const { isLoaded, getToken } = useAuth();
+  const [helloUser, setHelloUser] = useState(""); // State to store the hello user message
+  const [error, setError] = useState(null); // State to handle errors
+  const [profile_img, setProfileImg] = useState(null); // State to store the profile image
+
+  // Function to fetch user data
+  const getUsername = async () => {
+    try {
+      const token = await getToken();
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_API_URL}/profile_data`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+      const data = await response.json();
+      if (data.first_name) {
+        setHelloUser(data.first_name); // Update state with API response
+        setProfileImg(data.profile_image); // Update state with API response
+      } else {
+        setError(data.message || "Unknown error occurred");
+      }
+    } catch (err: any) {
+      setError(err.message);
+    }
+  };
+
+  // Fetch user data when the component mounts
+  useEffect(() => {
+    if (isLoaded) {
+      getUsername();
+    }
+  }, [isLoaded]);
+
   return (
     <>
     <div id="wrapper">
@@ -75,11 +117,13 @@ const Dashboard: React.FC = () => {
                                         <button className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-expanded="false">
                                             <span className="header-user wg-user">
                                                 <span className="image">
-                                                    <img src="images/avatar/user-1.png" alt=""/>
+                                                    {profile_img && <img src={profile_img} alt=""/>}
+                                                    {error && <img src="images/avatar/user-1.png" alt=""/>}
                                                 </span>
                                                 <span className="flex flex-column">
                                                     <span className="text-tiny">Hello</span>
-                                                    <span className="body-title mb-2">Adarsh</span>
+                                                    {helloUser && <span className="body-title mb-2">{helloUser}!</span>}
+                                                    {error && <span className="body-title mb-2">Error: {error}!</span>}
                                                 </span>
                                             </span>
                                         </button>
