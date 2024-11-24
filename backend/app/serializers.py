@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from app.models import ConnectedSocialMedia  
+from app.models import ConnectedSocialMedia, ProductListings 
 
 class ConnectedSocialMediaSerializer(serializers.ModelSerializer):
     class Meta:

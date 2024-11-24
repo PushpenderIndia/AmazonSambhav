@@ -1,7 +1,7 @@
 from rest_framework import routers
 from .api import PostViewset
 from django.urls import path
-from .api import ConnectedSocialMediaAPI, UpdateConnectedSocialMediaAPI, RecentFetchedPostAPI, UpdateListingAPI, PreviousListingAPI, DashboardStatsAPI, ProfileDataAPI
+from .api import ConnectedSocialMediaAPI, UpdateConnectedSocialMediaAPI, RecentFetchedPostAPI, UpdateListingAPI, PreviousListingAPI, DashboardStatsAPI, ProfileDataAPI, Social2AmazonAPI
 
 router = routers.SimpleRouter()
 router.register(r'posts', PostViewset, basename="posts")

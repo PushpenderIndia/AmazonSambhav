@@ -121,7 +121,7 @@ class ProfileDataAPI(APIView):
             "profile_image": profile_image
         })
 
-class Social2Amazon(APIView):
+class Social2AmazonAPI(APIView):
     permission_classes = [ClerkAuthenticated]
     def post(self, request):
         insta_post_link = request.data.get('insta_post_link', '')
