@@ -5,6 +5,7 @@ const Dashboard: React.FC = () => {
   const { isLoaded, getToken } = useAuth();
   const [helloUser, setHelloUser] = useState(""); // State to store the hello user message
   const [error, setError] = useState(null); // State to handle errors
+  const [profile_img, setProfileImg] = useState(null); // State to store the profile image
 
   // Function to fetch user data
   const getUsername = async () => {
@@ -24,8 +25,9 @@ const Dashboard: React.FC = () => {
         throw new Error("Failed to fetch data");
       }
       const data = await response.json();
-      if (data.status) {
+      if (data.first_name) {
         setHelloUser(data.first_name); // Update state with API response
+        setProfileImg(data.profile_image); // Update state with API response
       } else {
         setError(data.message || "Unknown error occurred");
       }
@@ -115,7 +117,8 @@ const Dashboard: React.FC = () => {
                                         <button className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-expanded="false">
                                             <span className="header-user wg-user">
                                                 <span className="image">
-                                                    <img src="images/avatar/user-1.png" alt=""/>
+                                                    {profile_img && <img src={profile_img} alt=""/>}
+                                                    {error && <img src="images/avatar/user-1.png" alt=""/>}
                                                 </span>
                                                 <span className="flex flex-column">
                                                     <span className="text-tiny">Hello</span>
