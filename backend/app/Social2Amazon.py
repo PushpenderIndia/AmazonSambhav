@@ -4,7 +4,7 @@ from instaloader import Instaloader, Post
 from PIL import Image
 import pytesseract
 import google.generativeai as genai
-import json
+import json5
 import time
 
 class GeminiAnalyzer:
@@ -216,7 +216,13 @@ class Social2Amazon:
                 sanitized_text = response_text.split("```")[1].split("```")[0].strip()
             
             # Parse the sanitized text into JSON
-            json_data = json.loads(sanitized_text)
+            try:
+                json_data = json5.loads(sanitized_text)
+            except:
+                print("Error parsing JSON5, trying JSON...")
+                print("====================================")
+                print(sanitized_text)
+                print("====================================")
             return json_data
         except Exception as e:
             print(f"Error parsing JSON: {e}")

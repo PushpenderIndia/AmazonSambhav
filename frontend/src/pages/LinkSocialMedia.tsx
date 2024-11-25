@@ -372,7 +372,7 @@ const LinkSocialMedia: React.FC = () => {
             }
 
             const data = await response.json();
-            setInstagramLinks(data); // Assuming API returns an array of URLs
+            setInstagramLinks(data.post_links); // Assuming API returns an array of URLs
         } catch (err: any) {
             console.error("Error fetching Instagram posts:", err.message);
             setError(err.message || "An error occurred while fetching Instagram posts.");
