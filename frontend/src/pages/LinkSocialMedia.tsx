@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "@clerk/clerk-react";
+import Amazon from "./Amazon";
+import Modal from "./Modal";
 // Define the type for the product data
+
 type ProductData = {
     product_id: string;
     created_at: string;
@@ -9,9 +12,10 @@ type ProductData = {
     product_title: string;
     price: string;
     product_details: { [key: string]: string };
-    "about this item": string;
-    "Product description": string;
-};
+    about_this_item: string;
+    product_description: string;
+    approved: boolean;
+  };
 const LinkSocialMedia: React.FC = () => {
     // Code for Social media connection : start
     const { isLoaded, getToken } = useAuth();
@@ -127,70 +131,134 @@ const LinkSocialMedia: React.FC = () => {
         setIsModalOpen(true);
     };
 
-    const renderCard = (platform: string, link: string) => (
-        <div className="col-md-4">
-            <div className="d-flex flex-column align-items-center border rounded p-4" style={{ fontFamily: "Open Sans, sans-serif" }}>
-                <div className="rounded-circle bg-primary d-flex justify-content-center align-items-center text-white social-media-icon mb-3" style={{ width: "60px", height: "60px" }}>
-                    <i className={`bi bi-${platform} fs-2`}></i>
+    const renderCard = (platform: string, link: string) => {
+        const truncateLink = (link: string, maxLength: number) => {
+            // Remove 'https://' or 'http://' prefix and truncate
+            const cleanLink = link.replace(/^https?:\/\//, "");
+            return cleanLink.length > maxLength
+                ? `${cleanLink.slice(0, maxLength)}...`
+                : cleanLink;
+        };
+
+        return (
+            <div className="col-md-4">
+                <div
+                    className="d-flex flex-column align-items-center border rounded p-4"
+                    style={{ fontFamily: "Open Sans, sans-serif" }}
+                >
+                    <div
+                        className="rounded-circle bg-primary d-flex justify-content-center align-items-center text-white social-media-icon mb-3"
+                        style={{ width: "60px", height: "60px" }}
+                    >
+                        <i className={`bi bi-${platform} fs-2`}></i>
+                    </div>
+                    <h6
+                        className="mb-1 text-dark"
+                        style={{ fontSize: "1.4rem", fontWeight: "600" }}
+                    >
+                        {platform.charAt(0).toUpperCase() + platform.slice(1)}
+                    </h6>
+                    {link ? (
+                        <>
+                            <p
+                                className="mb-3 text-center"
+                                style={{ fontSize: "1.3rem", lineHeight: "1.5" }}
+                            >
+                                Connected with the following account:
+                                <br />
+                                <a
+                                    href={link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    <span className="d-none d-lg-inline">
+                                        {truncateLink(link, 10)} {/* For large screens */}
+                                    </span>
+                                    <span className="d-lg-none">
+                                        {truncateLink(link, 5)} {/* For small screens */}
+                                    </span>
+                                </a>
+                            </p>
+                            <button
+                                className="btn btn-outline-primary px-4 py-2 fw-bold"
+                                style={{ fontSize: "1.2rem", fontWeight: "500" }}
+                                onClick={() => openModal(platform)}
+                            >
+                                Change Account
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <p
+                                className="text mb-3 text-center"
+                                style={{ fontSize: "1.3rem", lineHeight: "1.5" }}
+                            >
+                                Connect your{" "}
+                                {platform.charAt(0).toUpperCase() + platform.slice(1)}{" "}
+                                account
+                            </p>
+                            <button
+                                className="btn btn-outline-primary px-4 py-2 fw-bold"
+                                style={{ fontSize: "1.2rem", fontWeight: "500" }}
+                                onClick={() => openModal(platform)}
+                            >
+                                Connect
+                            </button>
+                        </>
+                    )}
                 </div>
-                <h6 className="mb-1 text-dark" style={{ fontSize: "1.4rem", fontWeight: "600" }}>{platform.charAt(0).toUpperCase() + platform.slice(1)}</h6>
-                {link ? (
-                    <>
-                        <p className="mb-3 text-center" style={{ fontSize: "1.3rem", lineHeight: "1.5" }}>
-                            Connected with the following account:
-                            <br />
-                            <a href={link} target="_blank" rel="noopener noreferrer">{link}</a>
-                        </p>
-                        <button
-                            className="btn btn-outline-primary px-4 py-2 fw-bold"
-                            style={{ fontSize: "1.2rem", fontWeight: "500" }}
-                            onClick={() => openModal(platform)}
-                        >
-                            Change Account
-                        </button>
-                    </>
-                ) : (
-                    <>
-                        <p className="text mb-3 text-center" style={{ fontSize: "1.3rem", lineHeight: "1.5" }}>
-                            Connect your {platform.charAt(0).toUpperCase() + platform.slice(1)} account
-                        </p>
-                        <button
-                            className="btn btn-outline-primary px-4 py-2 fw-bold"
-                            style={{ fontSize: "1.2rem", fontWeight: "500" }}
-                            onClick={() => openModal(platform)}
-                        >
-                            Connect
-                        </button>
-                    </>
-                )}
             </div>
-        </div>
-    );
+        );
+    };
+
     // Code for social medai connection : end
 
     // code for post editing and preview : start
     // State for storing API data
     const [productData, setProductData] = useState<ProductData | null>(null);
-    const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const [formData, setFormData] = useState<Partial<ProductData>>({}); // Partial for editing fields
+    const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false); // Preview state
+    const [formData, setFormData] = useState<Record<string, any>>({}); // Dynamic fields
 
-    // Fetch data from API on component load
+    // Fetch data from `/recent_fetched_post` when the edit modal is opened
     useEffect(() => {
-        fetchProductData();
+        if (isEditModalOpen) fetchProductData();
+    }, [isEditModalOpen]);
+    useEffect(() => {
+        if (isLoaded) fetchProductData();
     }, [isLoaded]);
 
     const fetchProductData = async () => {
         try {
-            const response = await axios.get<ProductData>("https://127.0.0.1:8000/api/update_listing_data");
-            setProductData(response.data);
-            setFormData(response.data); // Set initial form data
-        } catch (error) {
-            console.error("Error fetching product data:", error);
+            const token = await getToken(); // Assuming getToken retrieves a valid token
+            const response = await fetch(
+                `${import.meta.env.VITE_BACKEND_API_URL}/recent_fetched_post`,
+                {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("Failed to fetch product data");
+            }
+
+            const data = await response.json();
+            if (Array.isArray(data) && data.length > 0) {
+                setProductData(data[0]); // Set the first item of the array as productData
+                setFormData(data[0]); // Initialize the form with fetched data
+            } else {
+                throw new Error("No product data available");
+            }
+        } catch (err: any) {
+            console.error("Error fetching product data:", err.message);
         }
     };
 
-    // Handle form field changes
+    // Handle dynamic form field changes
     const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setFormData({
             ...formData,
@@ -201,15 +269,145 @@ const LinkSocialMedia: React.FC = () => {
     // Handle form submission
     const handleFormSubmit = async () => {
         try {
-            const response = await axios.post<ProductData>("https://127.0.0.1:8000/api/update_listing_data", formData);
+            const response = await axios.post("/update_listing_data", formData);
             console.log("Updated product data:", response.data);
-            setIsEditModalOpen(false); // Close the modal after submission
-            fetchProductData(); // Refresh the data
+            setIsEditModalOpen(false); // Close the edit modal
+            fetchProductData(); // Refresh the data after updating
         } catch (error) {
             console.error("Error updating product data:", error);
         }
     };
     // code for post editing and preview : end
+
+    // Code for Viewing previous listing : start
+    const [productList, setProductList] = useState<ProductData[]>([]);
+    const [isProductListLoaded, setIsProductListLoaded] = useState<boolean>(false);
+    const [selectedProduct, setSelectedProduct] = useState<ProductData | null>(
+      null
+    ); // For modal display
+    const [isProductModalOpen, setIsProductModalOpen] = useState<boolean>(false);
+  
+    const fetchPreviousListings = async () => {
+      try {
+        const token = await getToken(); // Replace with your authentication method
+        const response = await fetch(
+          `${import.meta.env.VITE_BACKEND_API_URL}/previous_listing_data`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+  
+        if (!response.ok) {
+          throw new Error("Failed to fetch product listings");
+        }
+  
+        const data = await response.json();
+        setProductList(data);
+        setIsProductListLoaded(true);
+      } catch (err: any) {
+        setError(err.message);
+      }
+    };
+  
+    const toggleApprovalStatus = async (product: ProductData) => {
+      try {
+        const updatedStatus = !product.approved;
+        const response = await fetch(
+          `${import.meta.env.VITE_BACKEND_API_URL}/update_listing_data`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${await getToken()}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify([{ ...product, approved: updatedStatus }]),
+          }
+        );
+  
+        if (!response.ok) {
+          throw new Error("Failed to update approval status");
+        }
+  
+        setProductList((prev) =>
+          prev.map((item) =>
+            item.product_id === product.product_id
+              ? { ...item, approved: updatedStatus }
+              : item
+          )
+        );
+      } catch (err: any) {
+        setError(err.message);
+      }
+    };
+  
+    useEffect(() => {
+      fetchPreviousListings();
+    }, [isProductListLoaded]);
+  
+    // Code for viewing previous listing : end
+
+    // Code for adding data in the databse
+    const [instagramLinks, setInstagramLinks] = useState<string[]>([]);
+
+    const fetchInstagramPosts = async () => {
+        try {
+            const token = await getToken(); // Replace with your token retrieval method
+            const response = await fetch(
+                `${import.meta.env.VITE_BACKEND_API_URL}/fetch_latest_instagram_post`,
+                {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("Failed to fetch Instagram posts");
+            }
+
+            const data = await response.json();
+            setInstagramLinks(data); // Assuming API returns an array of URLs
+        } catch (err: any) {
+            console.error("Error fetching Instagram posts:", err.message);
+            setError(err.message || "An error occurred while fetching Instagram posts.");
+        }
+    };
+
+    const convertToProductListing = async (link: string) => {
+        try {
+            const token = await getToken(); // Replace with your token retrieval method
+            const requestBody = { insta_post_link: link };
+
+            const response = await fetch(
+                `${import.meta.env.VITE_BACKEND_API_URL}/social2amazon`,
+                {
+                    method: "POST",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(requestBody),
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("Failed to convert Instagram post to product listing");
+            }
+
+            const data = await response.json();
+            alert(`Successfully converted to product listing: ${link}`);
+            console.log("Response from API:", data);
+        } catch (err: any) {
+            console.error("Error converting to product listing:", err.message);
+            alert(`Error converting to product listing for link: ${link}`);
+        }
+    };
     return (
         <>
             <div id="wrapper">
@@ -261,7 +459,7 @@ const LinkSocialMedia: React.FC = () => {
                                 <div className="wrap">
                                     <div className="header-left">
                                         <a href="index.html">
-                                            <img className="logo" id="logo_header_mobile" alt="" src="images/logo/logo.png"/>
+                                            <img className="logo" id="logo_header_mobile" alt="" src="images/logo/logo.png" />
                                         </a>
                                         <div className="button-show-hide">
                                             <i className="icon-menu-left"></i>
@@ -369,6 +567,43 @@ const LinkSocialMedia: React.FC = () => {
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div className="wg-box mb-30">
+                                                <button className="btn btn-primary link-btn" onClick={fetchInstagramPosts}>
+                                                    Fetch Latest Instagram Posts
+                                                </button>
+
+                                                {error && <p className="text-danger mt-3">{error}</p>}
+
+                                                {instagramLinks.length > 0 && (
+                                                    <table className="table table-striped mt-4">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Instagram Post Link</th>
+                                                                <th>Action</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {instagramLinks.map((link, index) => (
+                                                                <tr key={index}>
+                                                                    <td>
+                                                                        <a href={link} target="_blank" rel="noopener noreferrer">
+                                                                            {link}
+                                                                        </a>
+                                                                    </td>
+                                                                    <td>
+                                                                        <button
+                                                                            className="btn btn-primary"
+                                                                            onClick={() => convertToProductListing(link)}
+                                                                        >
+                                                                            Convert to Product Listing
+                                                                        </button>
+                                                                    </td>
+                                                                </tr>
+                                                            ))}
+                                                        </tbody>
+                                                    </table>
+                                                )}
+                                            </div>
                                             <div className="wg-box mb-30 shadow-sm featured-content">
                                                 <div className="">
                                                     <div className="row">
@@ -381,7 +616,11 @@ const LinkSocialMedia: React.FC = () => {
                                                                             className={`carousel-item ${index === 0 ? "active" : ""}`}
                                                                             key={index}
                                                                         >
-                                                                            <img src={image} className="d-block w-100" alt={`Slide ${index + 1}`} />
+                                                                            <img
+                                                                                src={`${import.meta.env.VITE_BASE_PATH}/${image}`}
+                                                                                className="d-block w-100"
+                                                                                alt={`Slide ${index + 1}`}
+                                                                            />
                                                                         </div>
                                                                     ))}
                                                                 </div>
@@ -404,6 +643,7 @@ const LinkSocialMedia: React.FC = () => {
                                                                     <span className="visually-hidden">Next</span>
                                                                 </button>
                                                             </div>
+
                                                         </div>
 
                                                         {/* Right Column: Title, Description, and Buttons */}
@@ -413,13 +653,13 @@ const LinkSocialMedia: React.FC = () => {
                                                                     {productData?.product_title || "Loading..."}
                                                                 </div>
                                                                 <p className="text-dark">
-                                                                    {productData?.["Product description"] ||
+                                                                    {productData?.product_description ||
                                                                         "Explore our curated selection of top-performing content."}
                                                                 </p>
                                                             </div>
                                                             <div className="mt-16">
                                                                 <p className="text-secondary-custom mb-3">
-                                                                    Fetched {productData?.created_at || "some time ago"}
+                                                                    Fetched {new Date(productData?.created_at).toLocaleString() || "some time ago"}
                                                                 </p>
                                                                 <div className="d-flex justify-content-end">
                                                                     <button
@@ -438,23 +678,85 @@ const LinkSocialMedia: React.FC = () => {
                                                             </div>
                                                         </div>
 
+
                                                         {/* Preview Modal */}
                                                         {isPreviewModalOpen && (
-                                                            <div className="modal-overlay" onClick={() => setIsPreviewModalOpen(false)}>
+                                                            // <div className="modal-overlay" onClick={() => setIsPreviewModalOpen(false)}>
+                                                            //     <div
+                                                            //         className="modal-content"
+                                                            //         onClick={(e) => e.stopPropagation()}
+                                                            //     >
+                                                            //         <h5>Product Preview</h5>
+                                                            //         <p>Title: {productData?.product_title}</p>
+                                                            //         <p>Price: {productData?.price}</p>
+                                                            //         <p>Description: {productData?.["Product description"]}</p>
+                                                            //         <p>About This Item: {productData?.["about this item"]}</p>
+                                                            //         <button onClick={() => setIsPreviewModalOpen(false)}>Close</button>
+                                                            //         <Amazon></Amazon>
+                                                            //     </div>
+                                                            // </div>
+                                                            <div
+                                                                className="modal-overlay d-flex align-items-center justify-content-center"
+                                                                onClick={() => setIsPreviewModalOpen(false)}
+                                                                style={{
+                                                                    position: "fixed",
+                                                                    top: 0,
+                                                                    left: 0,
+                                                                    width: "100vw",
+                                                                    height: "100vh",
+                                                                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                                                                    zIndex: 1050,
+                                                                }}
+                                                            >
                                                                 <div
                                                                     className="modal-content"
                                                                     onClick={(e) => e.stopPropagation()}
+                                                                    style={{
+                                                                        position: "relative",
+                                                                        maxWidth: "90%",
+                                                                        maxHeight: "90%",
+                                                                        backgroundColor: "#fff",
+                                                                        borderRadius: "8px",
+                                                                        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+                                                                        display: "flex",
+                                                                        flexDirection: "column",
+                                                                        overflow: "hidden",
+                                                                    }}
                                                                 >
-                                                                    <h5>Product Preview</h5>
-                                                                    <p>Title: {productData?.product_title}</p>
-                                                                    <p>Price: {productData?.price}</p>
-                                                                    <p>Description: {productData?.["Product description"]}</p>
-                                                                    <p>About This Item: {productData?.["about this item"]}</p>
-                                                                    <button onClick={() => setIsPreviewModalOpen(false)}>Close</button>
+                                                                    {/* Close Button */}
+                                                                    <div
+                                                                        style={{
+                                                                            marginTop: "0px",
+                                                                            textAlign: "right",
+                                                                        }}
+                                                                    >
+                                                                        <button
+                                                                            onClick={() => setIsPreviewModalOpen(false)}
+                                                                            style={{
+                                                                                background: "none",
+                                                                                border: "none",
+                                                                                fontSize: "1.5rem",
+                                                                                cursor: "pointer",
+                                                                            }}
+                                                                            aria-label="Close"
+                                                                        >
+                                                                            &times;
+                                                                        </button>
+                                                                    </div>
+
+                                                                    {/* Scrollable Content */}
+                                                                    <div
+                                                                        style={{
+                                                                            flex: 1,
+                                                                            overflowY: "auto", 
+                                                                            padding: "16px",
+                                                                        }}
+                                                                    >
+                                                                        <Amazon />
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         )}
-
                                                         {/* Edit Modal */}
                                                         {isEditModalOpen && (
                                                             <div className="modal-overlay" onClick={() => setIsEditModalOpen(false)}>
@@ -506,60 +808,71 @@ const LinkSocialMedia: React.FC = () => {
                                             {/* Linked Content Preview Section  */}
                                             {/* Product Added Section */}
                                             <div className="wg-box py-5 mb-30">
-                                                <div className="text-center featured-content-title mb-4">Previously added products</div>
-                                                <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-                                                    <div className="col">
-                                                        <div className="card h-100 shadow-sm">
-                                                            <div className="card-img-container">
-                                                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLLOKocediUNjqq0L_QOZCtrVu8SYusAh6Ww&s" className="card-img-top" alt="Product 1" />
-                                                            </div>
-                                                            <div className="card-body">
-                                                                <div className="card-title added-products-title">Product 1</div>
-                                                                <p className="card-text">A brief description of Product 1 and its features.</p>
-                                                            </div>
-                                                            <div className="card-overlay">
-                                                                <button className="btn btn-primary">
-                                                                    View Details
-                                                                    <span className="visually-hidden">for Product 1</span>
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="col">
-                                                        <div className="card h-100 shadow-sm">
-                                                            <div className="card-img-container">
-                                                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7yflggK4Iy7KRo18fIGYgGlmdMIBAlb0_Vw&s" className="card-img-top" alt="Product 2" />
-                                                            </div>
-                                                            <div className="card-body">
-                                                                <h5 className="card-title added-products-title">Product 2</h5>
-                                                                <p className="card-text">A brief description of Product 2 and its features.</p>
-                                                            </div>
-                                                            <div className="card-overlay">
-                                                                <button className="btn btn-primary">
-                                                                    View Details
-                                                                    <span className="visually-hidden">for Product 2</span>
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="col">
-                                                        <div className="card h-100 shadow-sm">
-                                                            <div className="card-img-container">
-                                                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRuilK6m7nQE2OpadkIFpoyxcf98oAS80LzeQ&s" className="card-img-top" alt="Product 3" />
-                                                            </div>
-                                                            <div className="card-body">
-                                                                <h5 className="card-title added-products-title">Product 3</h5>
-                                                                <p className="card-text">A brief description of Product 3 and its features.</p>
-                                                            </div>
-                                                            <div className="card-overlay">
-                                                                <button className="btn btn-primary">
-                                                                    View Details
-                                                                    <span className="visually-hidden">for Product 3</span>
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
+      <div className="text-center featured-content-title mb-4">
+        Previously Added Products
+      </div>
+      <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {error ? (
+          <div className="col">
+            <p className="text-danger">Error: {error}</p>
+          </div>
+        ) : (
+          productList.map((product) => (
+            <div className="col" key={product.product_id}>
+              <div className="card h-100 shadow-sm">
+                <div className="card-img-container">
+                  <img
+                    src={`${import.meta.env.VITE_BASE_PATH}${product.images_list[0]}` || "default-image.jpg"}
+                    className="card-img-top"
+                    alt={product.product_title || "Product Image"}
+                  />
+                </div>
+                <div className="card-body">
+                  <h5 className="card-title added-products-title">
+                    {product.product_title || "Unknown Product"}
+                  </h5>
+                  <p className="card-text">
+                    Price: {product.price ? `₹${product.price}` : "N/A"}
+                  </p>
+                  <p className="card-text">
+                    Brand: {product.product_details?.Brand || "N/A"}
+                  </p>
+                  <p className="card-text">
+                    {product.about_this_item || "Description not available"}
+                  </p>
+                </div>
+                <div className="card-footer d-flex justify-content-between">
+                  <button
+                    className="btn btn-info"
+                    onClick={() => {
+                      setSelectedProduct(product);
+                      setIsProductModalOpen(true);
+                    }}
+                  >
+                    View Details
+                  </button>
+                  <button
+                    className={`btn ${
+                      product.approved ? "btn-success" : "btn-warning"
+                    }`}
+                    onClick={() => toggleApprovalStatus(product)}
+                  >
+                    {product.approved ? "Approved" : "Disapproved"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+      {isProductModalOpen && selectedProduct && (
+        <Modal
+          product={selectedProduct}
+          onClose={() => setIsProductModalOpen(false)}
+        />
+      )}
+    </div>
+
                                             </div>
                                             {/* main-content-wrap  */}
                                         </div>
@@ -581,7 +894,7 @@ const LinkSocialMedia: React.FC = () => {
                         {/* page  */}
                     </div>
                 </div>
-            </div>
+            
         </>
     );
 };

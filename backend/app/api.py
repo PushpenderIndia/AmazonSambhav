@@ -60,8 +60,8 @@ class RecentFetchedPostAPI(APIView):
         """
         Get the most recent fetched post, only 1 post
         """
-        recent_fetched_posts = ProductListings.objects.all().order_by('-created_at')[:1]
-        serializer = ProductListingsSerializer(recent_fetched_posts, many=True)
+        recent_fetched_posts = ProductListings.objects.last()
+        serializer = ProductListingsSerializer(recent_fetched_posts)
         return Response(serializer.data)
 
 class UpdateListingAPI(APIView):

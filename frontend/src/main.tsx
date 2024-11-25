@@ -7,7 +7,7 @@ import HomePage from "./pages/HomePage.tsx"; // Import the HomePage component
 import "./index.css";
 import Dashboard from "./pages/Dashboard.tsx";
 import LinkSocialMedia from "./pages/LinkSocialMedia.tsx";
-import { Sidebar } from "lucide-react";
+import Amazon from "./pages/Amazon.tsx";
 
 // Import your publishable key
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
@@ -24,6 +24,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           <Route path="/" element={<HomePage />} />  {/* Set HomePage as the main entry */}
           <Route path="/dashboard" element={<Dashboard/>} />  {/* Optionally keep /dashboard route */}
           <Route path="/linksocialmedia" element={<LinkSocialMedia/>} />
+          <Route path="/amazonclone" element={<Amazon/>} />
         </Routes>
       </Router>
     </ClerkProvider>
