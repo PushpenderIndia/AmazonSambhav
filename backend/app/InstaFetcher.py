@@ -45,7 +45,7 @@ class InstaFetcher:
                     for image in images_data:
                         video_list.append(image["url"])
                     posts.append({
-                        "post_link": f"https://www.instagram.com/bata.india/p/{post_code}/",
+                        "post_link": f"https://www.instagram.com/{username}/p/{post_code}/",
                         "image_url": video_list,
                         "description": post["caption"]["text"],
                     })

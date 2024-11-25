@@ -157,7 +157,14 @@ class FetchInstagramPostAPI(APIView):
 class Social2AmazonAPI(APIView):
     permission_classes = [ClerkAuthenticated]
     def post(self, request):
-        insta_post_link = request.data.get('insta_post_link', '')
+        insta_post_link = request.data.get('post_link', '')
+        images_link = request.data.get('image_url', '')
+        post_description = request.data.get('description', '')
+        social2amazon_data = {
+            "post_link": insta_post_link,
+            "image_url": images_link,
+            "description": post_description
+        }
         if not insta_post_link:
             return Response({
                 "message": "Please provide a valid Instagram post link"
@@ -181,7 +188,7 @@ class Social2AmazonAPI(APIView):
             else:
                 GOOGLE_API_KEY = settings.GOOGLE_API_KEY
                 social2amazon = Social2Amazon(GOOGLE_API_KEY=GOOGLE_API_KEY)
-                product_data = social2amazon.process_post(insta_post_link)
+                product_data = social2amazon.process_post(social2amazon_data)
                 product_title = product_data.get('product_title')
                 product_title_hash = hash(product_title)
                 if ProductListings.objects.filter(product_id=product_title_hash).exists():

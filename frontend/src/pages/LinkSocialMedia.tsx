@@ -417,7 +417,7 @@ const LinkSocialMedia: React.FC = () => {
     // Code for viewing previous listing : end
 
     // Code for adding data in the databse
-    const [instagramLinks, setInstagramLinks] = useState<string[]>([]);
+    const [instagramLinks, setInstagramLinks] = useState([]);
     const [loadingPosts, setLoadingPosts] = useState(false);
     const [convertingLink, setConvertingLink] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -454,14 +454,18 @@ const LinkSocialMedia: React.FC = () => {
         }
     };
 
-    const convertToProductListing = async (link: string) => {
-        setConvertingLink(link);
+    const convertToProductListing = async (post_link: string, image_url: string[], description: string) => {
+        setConvertingLink(post_link);
         setError(null);
         setSuccessMessage(null);
 
         try {
             const token = await getToken(); // Replace with your token retrieval method
-            const requestBody = { insta_post_link: link };
+            const requestBody = { 
+                post_link: post_link ,
+                image_url: image_url, // list of string
+                description: description // string
+            };
 
             const response = await fetch(
                 `${import.meta.env.VITE_BACKEND_API_URL}/social2amazon`,
@@ -480,10 +484,10 @@ const LinkSocialMedia: React.FC = () => {
             }
             fetchPreviousListings();
             fetchProductData();
-            setSuccessMessage(`Successfully converted to product listing: ${link}`);
+            setSuccessMessage(`Successfully converted to product listing: ${post_link}`);
         } catch (err: any) {
             console.error("Error converting to product listing:", err.message);
-            setError(`Error converting to product listing for link: ${link}`);
+            setError(`Error converting to product listing for link: ${post_link}`);
         } finally {
             setConvertingLink(null);
         }
@@ -678,26 +682,29 @@ const LinkSocialMedia: React.FC = () => {
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            {instagramLinks.map((link, index) => (
+                                                            {instagramLinks.map((post, index) => (
                                                                 <tr key={index} className="hover:bg-gray-50">
                                                                     <td className="border border-gray-300 px-4 py-2">
                                                                         <a
-                                                                            href={link}
+                                                                            href={post.post_link}
                                                                             target="_blank"
                                                                             rel="noopener noreferrer"
                                                                             className="text-blue-500 underline"
                                                                         >
-                                                                            {link}
+                                                                            {post.post_link}
                                                                         </a>
                                                                     </td>
                                                                     <td className="border border-gray-300 px-4 py-2 text-center">
                                                                         <button
-                                                                            className={`btn btn-secondary ${convertingLink === link ? "opacity-50 cursor-not-allowed" : ""
-                                                                                }`}
-                                                                            onClick={() => convertToProductListing(link)}
-                                                                            disabled={convertingLink === link}
+                                                                            className={`btn btn-primary ${
+                                                                                convertingLink === post.post_link
+                                                                                    ? "opacity-50 cursor-not-allowed"
+                                                                                    : ""
+                                                                            }`}
+                                                                            onClick={() => convertToProductListing(post.post_link, post.image_url, post.description)}
+                                                                            disabled={convertingLink === post.post_link}
                                                                         >
-                                                                            {convertingLink === link ? (
+                                                                            {convertingLink === post.post_link ? (
                                                                                 <span className="loader inline-block mr-2"></span>
                                                                             ) : (
                                                                                 "Convert to Product Listing"
