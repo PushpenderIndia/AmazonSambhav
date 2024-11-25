@@ -104,44 +104,6 @@ class Social2Amazon:
         self.gemini_analyzer = GeminiAnalyzer(GOOGLE_API_KEY)  # Initialize GeminiAnalyzer
         genai.configure(api_key=GOOGLE_API_KEY)
 
-    # def download_post(self, url):
-    #     """
-    #     Downloads Instagram post media and description using Instaloader.
-
-    #     :param url: The URL of the Instagram post.
-    #     :return: A tuple of post description and downloaded file paths.
-    #     """
-    #     loader = Instaloader(download_videos=True, save_metadata=False)
-    #     post_description = None
-    #     downloaded_files = []
-         
-
-    #     try:
-    #         # Extract shortcode and download the post
-    #         shortcode = url.split("/p/")[1].split("/")[0]
-    #         post = Post.from_shortcode(loader.context, shortcode)
-
-    #         loader.download_post(post, target=self.base_folder)
-
-    #         # Collect all downloaded files
-    #         for file in os.listdir(self.base_folder):
-    #             if file.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.tiff', '.mp4', '.mov', '.avi', '.txt')):
-    #                 downloaded_files.append(os.path.join(self.base_folder, file))
-
-    #         # Find and read the post description file
-    #         for file_path in downloaded_files:
-    #             if file_path.endswith(".txt"):
-    #                 with open(file_path, "r", encoding="utf-8") as desc_file:
-    #                     post_description = desc_file.read().strip()
-    #                 downloaded_files.remove(file_path)  # Remove description from media files
-    #                 break
-
-    #         print(f"Post downloaded successfully to {self.base_folder}.")
-    #     except Exception as e:
-    #         print(f"Error downloading the post: {e}")
-
-    #     return post_description, downloaded_files
-
     def download_post(self, url):
         """
         Downloads Instagram post media and description using Instaloader.
