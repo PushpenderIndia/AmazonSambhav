@@ -91,11 +91,13 @@ The manual process of creating e-commerce listings from social media posts is la
 
 ### Social Media Post  
 Original Post:  
-![Social Media Post](https://via.placeholder.com/400x400)  
+![image](https://github.com/user-attachments/assets/40cf2a3d-5b6e-49d9-8314-d00f9e5e8701)
+ 
 
 ### Generated Product Listing  
 Generated Amazon Listing:  
-![Generated Amazon Listing](https://via.placeholder.com/800x400)  
+![image](https://github.com/user-attachments/assets/a92292bb-39b5-41a2-9249-ba81bb14cbdd)
+
 
 ---
 
@@ -115,10 +117,10 @@ Generated Amazon Listing:
    - Generates product details such as price, brand, and material.  
 
 4. **Backend API**  
-   - Built using Django to manage requests, database operations, and listing generation.  
+   - Built using Django REST Framework to manage requests, database operations, and listing generation.  
 
 5. **Frontend**  
-   - Developed with ReactJS and TailwindCSS for a smooth user experience.  
+   - Developed with ReactJS, Vite, TypeScript and TailwindCSS for a smooth user experience.  
 
 ---
 
