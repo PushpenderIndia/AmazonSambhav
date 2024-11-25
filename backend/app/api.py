@@ -147,7 +147,7 @@ class FetchInstagramPostAPI(APIView):
                 else:
                     RAPIDAPI_KEY = settings.RAPIDAPI_KEY
                     fetcher = InstaFetcher(RAPIDAPI_KEY)
-                    post_links = fetcher.fetch(username)
+                    post_links = fetcher.get_user_posts(username)
                     return Response({
                         "message": "Posts fetched successfully",
                         "post_links": post_links
