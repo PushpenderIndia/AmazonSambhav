@@ -3820,20 +3820,21 @@ const Modal = ({ product, onClose }: ProductModalProps) => {
                                       data-ux-click=""
                                       data-csa-c-id="8iq1w7-ba9nx2-da0sem-qox1rl"
                                     >
-                                      <div
-                                        className="imgTagWrapper"
-                                        style={{ height: 700 }}
-                                      >
-                                        <img
-                                          src="https://m.media-amazon.com/images/I/51jQSp3MRKL.jpg"
-                                          className="a-dynamic-image a-stretch-horizontal"
-                                          id=""
-                                          style={{
-                                            maxHeight: 500,
-                                            maxWidth: 500
-                                          }}
-                                          data-a-manual-replacement="true"
-                                        />
+                                      
+                                        <div className="d-flex flex-wrap gap-2">
+                {product.images_list.length > 0 ? (
+                  product.images_list.map((image, index) => (
+                    <img
+                      key={0}
+                      src={`${import.meta.env.VITE_BASE_PATH}${image}`}
+                      alt={`Product ${index + 1}`}
+                      className="img-thumbnail"
+                      style={{ height: "auto" }}
+                    />
+                  ))
+                ) : (
+                  <p>No images available</p>
+                )}
                                       </div>
                                     </span>{" "}
                                   </span>
