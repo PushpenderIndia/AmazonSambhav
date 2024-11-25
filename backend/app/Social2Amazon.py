@@ -7,6 +7,7 @@ import google.generativeai as genai
 import json5
 import time
 import random
+import requests
 
 class GeminiAnalyzer:
     def __init__(self, GOOGLE_API_KEY):
@@ -97,58 +98,74 @@ class Social2Amazon:
 
         :param base_folder: The base folder where all data will be saved.
         """
-        self.base_folder = base_folder
+        subfolder_name = ''.join(random.choices('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', k=10))
+        self.base_folder = os.path.join(base_folder, subfolder_name)
         if not os.path.exists(self.base_folder):
             os.makedirs(self.base_folder)
 
         self.gemini_analyzer = GeminiAnalyzer(GOOGLE_API_KEY)  # Initialize GeminiAnalyzer
         genai.configure(api_key=GOOGLE_API_KEY)
 
-    def download_post(self, url):
-        """
-        Downloads Instagram post media and description using Instaloader.
+    # def download_post(self, url):
+    #     """
+    #     Downloads Instagram post media and description using Instaloader.
 
-        :param url: The URL of the Instagram post.
-        :return: A tuple of post description and downloaded file paths.
-        """
-        loader = Instaloader(download_videos=True, save_metadata=False)
-        post_description = None
-        downloaded_files = []
+    #     :param url: The URL of the Instagram post.
+    #     :return: A tuple of post description and downloaded file paths.
+    #     """
+    #     loader = Instaloader(download_videos=True, save_metadata=False)
+    #     post_description = None
+    #     downloaded_files = []
 
-        try:
-            # Extract shortcode and download the post
-            shortcode = url.split("/p/")[1].split("/")[0]
-            target_folder = shortcode
-            os.makedirs(target_folder, exist_ok=True)
+    #     try:
+    #         # Extract shortcode and download the post
+    #         shortcode = url.split("/p/")[1].split("/")[0]
+    #         target_folder = shortcode
+    #         os.makedirs(target_folder, exist_ok=True)
 
-            # Download the post
-            post = Post.from_shortcode(loader.context, shortcode)
-            loader.download_post(post, target=target_folder)
+    #         # Download the post
+    #         post = Post.from_shortcode(loader.context, shortcode)
+    #         loader.download_post(post, target=target_folder)
 
-            # List files in the target directory after downloading
-            new_files = set(os.listdir(target_folder))
+    #         # List files in the target directory after downloading
+    #         new_files = set(os.listdir(target_folder))
 
-            # Collect all downloaded files with full paths
-            for file in new_files:
-                file_path = os.path.join(target_folder, file)
-                downloaded_files.append(file_path)
+    #         # Collect all downloaded files with full paths
+    #         for file in new_files:
+    #             file_path = os.path.join(target_folder, file)
+    #             downloaded_files.append(file_path)
 
-                # Check for description file
-                if file.endswith(".txt"):
-                    with open(file_path, "r", encoding="utf-8") as desc_file:
-                        post_description = desc_file.read().strip()
+    #             # Check for description file
+    #             if file.endswith(".txt"):
+    #                 with open(file_path, "r", encoding="utf-8") as desc_file:
+    #                     post_description = desc_file.read().strip()
 
-            # move all files of target_folder to the base folder
-            for file in os.listdir(target_folder):
-                os.rename(os.path.join(target_folder, file), os.path.join(self.base_folder, file))
+    #         # move all files of target_folder to the base folder
+    #         for file in os.listdir(target_folder):
+    #             os.rename(os.path.join(target_folder, file), os.path.join(self.base_folder, file))
 
-            downloaded_files = [os.path.join(self.base_folder, file.replace(shortcode+"/", "")) for file in downloaded_files]
+    #         downloaded_files = [os.path.join(self.base_folder, file.replace(shortcode+"/", "")) for file in downloaded_files]
 
-            print(f"Post downloaded successfully to {target_folder}.")
-        except Exception as e:
-            print(f"Error downloading the post: {e}")
+    #         print(f"Post downloaded successfully to {target_folder}.")
+    #     except Exception as e:
+    #         print(f"Error downloading the post: {e}")
 
-        return post_description, downloaded_files
+    #     return post_description, downloaded_files
+
+    def download_post(self, data):
+        """download direct links of instagram to static folder and return a medias_files list and description"""
+        post_description = data['description']
+        media_files = []
+        for i, url in enumerate(data['image_url']):
+            try:
+                random_alphanumeric_file_name = ''.join(random.choices('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', k=10))
+                file_path = os.path.join(self.base_folder, f"media_{random_alphanumeric_file_name}.jpg")
+                media_files.append(file_path)
+                with open(file_path, 'wb') as f:
+                    f.write(requests.get(url).content)
+            except Exception as e:
+                print(f"Error downloading image: {e}")
+        return post_description, media_files
 
     def perform_ocr(self):
         """
@@ -308,19 +325,32 @@ The "product_details" field is dynamic, and its keys will vary depending on the 
         # Step 4: Process Gemini text-only input
         print("Processing data with Gemini text model...")
         final_results = self.process_gemini_text(post_description, ocr_text, gemini_results, media_files)
-        shortcode = url.split("/p/")[1].split("/")[0]
-        os.rmdir(shortcode)
+
         return final_results
 
 
 # Example usage
 if __name__ == "__main__":
-    url = "https://www.instagram.com/p/DCl10QtPNdG/"
-    url = "https://www.instagram.com/p/DCl10QtPNdG/"
+    # url = "https://www.instagram.com/p/DCl10QtPNdG/"
+    # url = "https://www.instagram.com/p/DCl10QtPNdG/"
+    data_to_add = {'description': 'Kick back in style. \n'
+                 'The New Striker Collection has arrived to bring the heat to '
+                 'the street! 👟 💥 \n'
+                 '\n'
+                 'Don’t miss out—explore now at bata.com/in or in select Bata '
+                 'stores. 📍\n'
+                 '\n'
+                 '#BataIndia #NorthStar #NewStrikerCollection\n'
+                 '\n'
+                 '(Bata India, North Star, New Striker Collection, Football '
+                 'Fanclub, Sporty Styles, Footwear)',
+  'image_url': ['https://scontent-fra3-1.cdninstagram.com/v/t39.30808-6/467304502_989468933222621_4350400722445210664_n.jpg?se=7&stp=dst-jpg_e35&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi4xMDgweDEwODAuc2RyLmYzMDgwOC5kZWZhdWx0X2ltYWdlIn0&_nc_ht=scontent-fra3-1.cdninstagram.com&_nc_cat=105&_nc_ohc=DW3KgLEd8asQ7kNvgHLZzlD&_nc_gid=ea002f9bd9954ef3b361e0f927b19ca8&edm=ABmJApAAAAAA&ccb=7-5&ig_cache_key=MzUwMjMwNDExOTA5NzQwMjE5NQ%3D%3D.3-ccb7-5&oh=00_AYCwWESvTzAzGA06E0MCry19W3h1PaOo4wpCT6wne9ggMw&oe=674A54AF&_nc_sid=b41fef',
+                'https://scontent-fra3-1.cdninstagram.com/v/t39.30808-6/467304502_989468933222621_4350400722445210664_n.jpg?stp=dst-jpg_e35_s480x480&efg=eyJ2ZW5jb2RlX3RhZyI6ImltYWdlX3VybGdlbi4xMDgweDEwODAuc2RyLmYzMDgwOC5kZWZhdWx0X2ltYWdlIn0&_nc_ht=scontent-fra3-1.cdninstagram.com&_nc_cat=105&_nc_ohc=DW3KgLEd8asQ7kNvgHLZzlD&_nc_gid=ea002f9bd9954ef3b361e0f927b19ca8&edm=ABmJApAAAAAA&ccb=7-5&ig_cache_key=MzUwMjMwNDExOTA5NzQwMjE5NQ%3D%3D.3-ccb7-5&oh=00_AYByrnQiq72jj2BfOmNKwOb1IxNtKA692yLY3DJq_-BG8w&oe=674A54AF&_nc_sid=b41fef'],
+  'post_link': 'https://www.instagram.com/bata.india/p/DCarwpSMCNT/'}
     GOOGLE_API_KEY = input("Enter your Google API key: ")
     import shutil
     shutil.rmtree('insta', ignore_errors=True)
     processor = Social2Amazon(GOOGLE_API_KEY=GOOGLE_API_KEY)
-    results = processor.process_post(url)
+    results = processor.process_post(data_to_add)
     print("\nProcessing complete. Results:")
     print(results)

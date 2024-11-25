@@ -1,4 +1,5 @@
 import requests
+from pprint import pprint
 
 class InstaFetcher:
     def __init__(self, api_key: str):
@@ -39,7 +40,15 @@ class InstaFetcher:
             for post in all_posts_data:
                 post_code = post["code"]
                 if post["is_video"] == False:
-                    posts.append(f"https://www.instagram.com/bata.india/p/{post_code}/")
+                    video_list = []
+                    images_data = post["image_versions"]["items"]
+                    for image in images_data:
+                        video_list.append(image["url"])
+                    posts.append({
+                        "post_link": f"https://www.instagram.com/bata.india/p/{post_code}/",
+                        "image_url": video_list,
+                        "description": post["caption"]["text"],
+                    })
             return posts
         except requests.exceptions.RequestException as e:
             print(f"An error occurred: {e}")
@@ -53,5 +62,4 @@ if __name__ == "__main__":
     scraper = InstaFetcher(api_key)
     posts = scraper.get_user_posts(username)
     
-    if posts:
-        print(posts)
+    pprint(posts)
