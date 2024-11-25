@@ -77,6 +77,7 @@ class UpdateListingAPI(APIView):
         product.product_details = data.get('product_details')
         product.about_this_item = data.get('about_this_item')
         product.product_description = data.get('product_description')
+        product.approved = data.get('approved')
         product.save()
         serializer = ProductListingsSerializer(product)
         return Response(serializer.data)
