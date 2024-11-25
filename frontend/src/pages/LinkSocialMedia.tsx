@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "@clerk/clerk-react";
-import Amazon from "./Amazon";
 import Modal from "./Modal";
 // Define the type for the product data
 
@@ -15,7 +14,7 @@ type ProductData = {
     about_this_item: string;
     product_description: string;
     approved: boolean;
-  };
+};
 const LinkSocialMedia: React.FC = () => {
     // Code for Social media connection : start
     const { isLoaded, getToken } = useAuth();
@@ -215,10 +214,12 @@ const LinkSocialMedia: React.FC = () => {
 
     // code for post editing and preview : start
     // State for storing API data
+    // State for storing API data
     const [productData, setProductData] = useState<ProductData | null>(null);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false); // Preview state
     const [formData, setFormData] = useState<Record<string, any>>({}); // Dynamic fields
+    const [responseMessage, setResponseMessage] = useState<string>(""); // Response message state
 
     // Fetch data from `/recent_fetched_post` when the edit modal is opened
     useEffect(() => {
@@ -227,6 +228,14 @@ const LinkSocialMedia: React.FC = () => {
     useEffect(() => {
         if (isLoaded) fetchProductData();
     }, [isLoaded]);
+    // Fetch data from `/recent_fetched_post` when the edit modal is opened
+    useEffect(() => {
+        if (isEditModalOpen) fetchProductData();
+    }, [isEditModalOpen]);
+    useEffect(() => {
+        if (isLoaded) fetchProductData();
+    }, [isLoaded]);
+
 
     const fetchProductData = async () => {
         try {
@@ -266,94 +275,158 @@ const LinkSocialMedia: React.FC = () => {
         });
     };
 
+    // Handle product details changes (for nested object properties)
+    const handleProductDetailsChange = (key: string, value: string) => {
+        setFormData({
+            ...formData,
+            product_details: {
+                ...formData.product_details,
+                [key]: value,
+            },
+        });
+    };
+
+    // Handle adding/removing images
+    const handleAddImage = () => {
+        setFormData({
+            ...formData,
+            images_list: [...formData.images_list, ""],
+        });
+    };
+
+    const handleRemoveImage = (index: number) => {
+        const updatedImagesList = formData.images_list.filter((_, i) => i !== index);
+        setFormData({
+            ...formData,
+            images_list: updatedImagesList,
+        });
+    };
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+        const updatedImagesList = formData.images_list.map((image, i) =>
+            i === index ? e.target.value : image
+        );
+        setFormData({
+            ...formData,
+            images_list: updatedImagesList,
+        });
+    };
+
     // Handle form submission
     const handleFormSubmit = async () => {
         try {
-            const response = await axios.post("/update_listing_data", formData);
-            console.log("Updated product data:", response.data);
-            setIsEditModalOpen(false); // Close the edit modal
-            fetchProductData(); // Refresh the data after updating
-        } catch (error) {
-            console.error("Error updating product data:", error);
+            // Get the authorization token
+            const token = await getToken();
+
+            // Send the request using fetch and include the token in the headers
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/update_listing_data`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(formData), // Send form data as the request body
+            });
+
+            // Check if the response is successful
+            if (response.ok) {
+                setResponseMessage("Product data updated successfully!");
+                setIsEditModalOpen(false); // Close the edit modal
+                fetchProductData(); // Refresh the data after updating
+            } else {
+                console.error("Error updating product data");
+                setResponseMessage("Error updating product data. Please try again.");
+            }
+        } catch (error: any) {
+            console.error("Error:", error.message);
+            setResponseMessage("Error updating product data. Please try again.");
         }
     };
+
     // code for post editing and preview : end
 
     // Code for Viewing previous listing : start
     const [productList, setProductList] = useState<ProductData[]>([]);
     const [isProductListLoaded, setIsProductListLoaded] = useState<boolean>(false);
     const [selectedProduct, setSelectedProduct] = useState<ProductData | null>(
-      null
+        null
     ); // For modal display
     const [isProductModalOpen, setIsProductModalOpen] = useState<boolean>(false);
-  
+
     const fetchPreviousListings = async () => {
-      try {
-        const token = await getToken(); // Replace with your authentication method
-        const response = await fetch(
-          `${import.meta.env.VITE_BACKEND_API_URL}/previous_listing_data`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-  
-        if (!response.ok) {
-          throw new Error("Failed to fetch product listings");
+        try {
+            const token = await getToken(); // Replace with your authentication method
+            const response = await fetch(
+                `${import.meta.env.VITE_BACKEND_API_URL}/previous_listing_data`,
+                {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("Failed to fetch product listings");
+            }
+
+            const data = await response.json();
+            setProductList(data);
+            setIsProductListLoaded(true);
+        } catch (err: any) {
+            setError(err.message);
         }
-  
-        const data = await response.json();
-        setProductList(data);
-        setIsProductListLoaded(true);
-      } catch (err: any) {
-        setError(err.message);
-      }
     };
-  
+
     const toggleApprovalStatus = async (product: ProductData) => {
-      try {
-        const updatedStatus = !product.approved;
-        const response = await fetch(
-          `${import.meta.env.VITE_BACKEND_API_URL}/update_listing_data`,
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${await getToken()}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ ...product, approved: updatedStatus }),
-          }
-        );
-  
-        if (!response.ok) {
-          throw new Error("Failed to update approval status");
+        try {
+            const updatedStatus = !product.approved;
+            const response = await fetch(
+                `${import.meta.env.VITE_BACKEND_API_URL}/update_listing_data`,
+                {
+                    method: "POST",
+                    headers: {
+                        Authorization: `Bearer ${await getToken()}`,
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ ...product, approved: updatedStatus }),
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("Failed to update approval status");
+            }
+
+            setProductList((prev) =>
+                prev.map((item) =>
+                    item.product_id === product.product_id
+                        ? { ...item, approved: updatedStatus }
+                        : item
+                )
+            );
+        } catch (err: any) {
+            setError(err.message);
         }
-  
-        setProductList((prev) =>
-          prev.map((item) =>
-            item.product_id === product.product_id
-              ? { ...item, approved: updatedStatus }
-              : item
-          )
-        );
-      } catch (err: any) {
-        setError(err.message);
-      }
     };
-  
+
     useEffect(() => {
-      fetchPreviousListings();
+        fetchPreviousListings();
     }, [isProductListLoaded]);
-  
+
     // Code for viewing previous listing : end
 
     // Code for adding data in the databse
     const [instagramLinks, setInstagramLinks] = useState<string[]>([]);
+    const [loadingPosts, setLoadingPosts] = useState(false);
+    const [convertingLink, setConvertingLink] = useState<string | null>(null);
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
     const fetchInstagramPosts = async () => {
+        setLoadingPosts(true);
+        setError(null);
+        setSuccessMessage(null);
+
         try {
             const token = await getToken(); // Replace with your token retrieval method
             const response = await fetch(
@@ -372,14 +445,20 @@ const LinkSocialMedia: React.FC = () => {
             }
 
             const data = await response.json();
-            setInstagramLinks(data.post_links); // Assuming API returns an array of URLs
+            setInstagramLinks(data.post_links || []); // Assuming API returns an array of URLs
         } catch (err: any) {
             console.error("Error fetching Instagram posts:", err.message);
             setError(err.message || "An error occurred while fetching Instagram posts.");
+        } finally {
+            setLoadingPosts(false);
         }
     };
 
     const convertToProductListing = async (link: string) => {
+        setConvertingLink(link);
+        setError(null);
+        setSuccessMessage(null);
+
         try {
             const token = await getToken(); // Replace with your token retrieval method
             const requestBody = { insta_post_link: link };
@@ -400,14 +479,15 @@ const LinkSocialMedia: React.FC = () => {
                 throw new Error("Failed to convert Instagram post to product listing");
             }
 
-            const data = await response.json();
-            alert(`Successfully converted to product listing: ${link}`);
-            console.log("Response from API:", data);
+            setSuccessMessage(`Successfully converted to product listing: ${link}`);
         } catch (err: any) {
             console.error("Error converting to product listing:", err.message);
-            alert(`Error converting to product listing for link: ${link}`);
+            setError(`Error converting to product listing for link: ${link}`);
+        } finally {
+            setConvertingLink(null);
         }
     };
+
     return (
         <>
             <div id="wrapper">
@@ -567,38 +647,60 @@ const LinkSocialMedia: React.FC = () => {
                                                     </div>
                                                 </div>
                                             </div>
+                                            {/* Add insta posts to database */}
                                             <div className="wg-box mb-30">
-                                                <h1 className="text-center">
-                                                    If Post is already imported, then clicking on "Convert to Product Listing" will update the product listing on site
+                                                <h1 className="text-lg font-bold text-center mb-6">
+                                                    Convert Instagram Posts to Product Listings
                                                 </h1>
-                                                <button className="btn btn-primary link-btn" onClick={fetchInstagramPosts}>
-                                                    Fetch Latest Instagram Posts
+
+                                                <button
+                                                    className={`btn btn-primary w-full mb-4 ${loadingPosts ? "opacity-50 cursor-not-allowed" : ""}`}
+                                                    onClick={fetchInstagramPosts}
+                                                    disabled={loadingPosts}
+                                                >
+                                                    {loadingPosts ? (
+                                                        <span className="loader inline-block mr-2"></span>
+                                                    ) : (
+                                                        "Fetch Latest Instagram Posts"
+                                                    )}
                                                 </button>
 
-                                                {error && <p className="text-danger mt-3">{error}</p>}
+                                                {error && <p className="text-red-500 text-center mt-2">{error}</p>}
+                                                {successMessage && <p className="text-green-500 text-center mt-2">{successMessage}</p>}
 
                                                 {instagramLinks.length > 0 && (
-                                                    <table className="table table-striped">
-                                                        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                                                            <tr>
-                                                                <th>Instagram Post Link</th>
-                                                                <th>Action</th>
+                                                    <table className="table-auto w-full border-collapse border border-gray-300 mt-6">
+                                                        <thead>
+                                                            <tr className="bg-gray-100 text-gray-700">
+                                                                <th className="border border-gray-300 px-4 py-2">Instagram Post Link</th>
+                                                                <th className="border border-gray-300 px-4 py-2">Action</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
                                                             {instagramLinks.map((link, index) => (
-                                                                <tr key={index}>
-                                                                    <td>
-                                                                        <a href={link} target="_blank" rel="noopener noreferrer">
+                                                                <tr key={index} className="hover:bg-gray-50">
+                                                                    <td className="border border-gray-300 px-4 py-2">
+                                                                        <a
+                                                                            href={link}
+                                                                            target="_blank"
+                                                                            rel="noopener noreferrer"
+                                                                            className="text-blue-500 underline"
+                                                                        >
                                                                             {link}
                                                                         </a>
                                                                     </td>
-                                                                    <td>
+                                                                    <td className="border border-gray-300 px-4 py-2 text-center">
                                                                         <button
-                                                                            className="btn btn-primary"
+                                                                            className={`btn btn-secondary ${convertingLink === link ? "opacity-50 cursor-not-allowed" : ""
+                                                                                }`}
                                                                             onClick={() => convertToProductListing(link)}
+                                                                            disabled={convertingLink === link}
                                                                         >
-                                                                            Convert to Product Listing
+                                                                            {convertingLink === link ? (
+                                                                                <span className="loader inline-block mr-2"></span>
+                                                                            ) : (
+                                                                                "Convert to Product Listing"
+                                                                            )}
                                                                         </button>
                                                                     </td>
                                                                 </tr>
@@ -620,7 +722,7 @@ const LinkSocialMedia: React.FC = () => {
                                                                             key={index}
                                                                         >
                                                                             <img
-                                                                                src={`${import.meta.env.VITE_BASE_PATH}/${image}`}
+                                                                                src={`${import.meta.env.VITE_BASE_PATH}${image}`}
                                                                                 className="d-block w-100"
                                                                                 alt={`Slide ${index + 1}`}
                                                                             />
@@ -664,7 +766,7 @@ const LinkSocialMedia: React.FC = () => {
                                                             <div className="mt-16">
                                                                 <p className="text-secondary-custom mb-3">
                                                                     {productData?.created_at
-                                                                        ? "Fetched " + new Date(productData.created_at).toLocaleString() 
+                                                                        ? "Fetched " + new Date(productData.created_at).toLocaleString()
                                                                         : "Fetching Created Date ..."}
                                                                 </p>
                                                                 {/* <p className="text-secondary-custom mb-3">
@@ -690,20 +792,6 @@ const LinkSocialMedia: React.FC = () => {
 
                                                         {/* Preview Modal */}
                                                         {isPreviewModalOpen && (
-                                                            // <div className="modal-overlay" onClick={() => setIsPreviewModalOpen(false)}>
-                                                            //     <div
-                                                            //         className="modal-content"
-                                                            //         onClick={(e) => e.stopPropagation()}
-                                                            //     >
-                                                            //         <h5>Product Preview</h5>
-                                                            //         <p>Title: {productData?.product_title}</p>
-                                                            //         <p>Price: {productData?.price}</p>
-                                                            //         <p>Description: {productData?.["Product description"]}</p>
-                                                            //         <p>About This Item: {productData?.["about this item"]}</p>
-                                                            //         <button onClick={() => setIsPreviewModalOpen(false)}>Close</button>
-                                                            //         <Amazon></Amazon>
-                                                            //     </div>
-                                                            // </div>
                                                             <div
                                                                 className="modal-overlay d-flex align-items-center justify-content-center"
                                                                 onClick={() => setIsPreviewModalOpen(false)}
@@ -753,34 +841,50 @@ const LinkSocialMedia: React.FC = () => {
                                                                         </button>
                                                                     </div>
 
-                                                                    {/* Scrollable Content */}
+                                                                    {/* Modal Content (Scrollable Area) */}
                                                                     <div
                                                                         style={{
-                                                                            flex: 1,
-                                                                            overflowY: "auto", 
-                                                                            padding: "16px",
+                                                                            flex: 1,  // Allow the content area to grow and take available space
+                                                                            overflowY: "auto",  // Enable vertical scrolling if content overflows
+                                                                            padding: "20px",  // Optional: padding for the content
+                                                                            maxHeight: "calc(90vh - 40px)",  // Make the content area scrollable with max height
                                                                         }}
                                                                     >
-                                                                        <Amazon />
+                                                                        {/* Pass productData to Modal component */}
+                                                                        <Modal product={productData} onClose={() => setIsPreviewModalOpen(false)} />
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         )}
+
                                                         {/* Edit Modal */}
                                                         {isEditModalOpen && (
                                                             <div className="modal-overlay" onClick={() => setIsEditModalOpen(false)}>
-                                                                <div
-                                                                    className="modal-content"
-                                                                    onClick={(e) => e.stopPropagation()}
-                                                                >
+                                                                <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                                                                     <h5>Edit Product Data</h5>
                                                                     <form>
                                                                         <label>
-                                                                            Title:
+                                                                            Product Title:
                                                                             <input
                                                                                 type="text"
                                                                                 name="product_title"
                                                                                 value={formData.product_title || ""}
+                                                                                onChange={handleFormChange}
+                                                                            />
+                                                                        </label>
+                                                                        <label>
+                                                                            Product Description:
+                                                                            <textarea
+                                                                                name="product_description"
+                                                                                value={formData.product_description || ""}
+                                                                                onChange={handleFormChange}
+                                                                            />
+                                                                        </label>
+                                                                        <label>
+                                                                            About this Product:
+                                                                            <textarea
+                                                                                name="about_this_item"
+                                                                                value={formData.about_this_item || ""}
                                                                                 onChange={handleFormChange}
                                                                             />
                                                                         </label>
@@ -793,14 +897,7 @@ const LinkSocialMedia: React.FC = () => {
                                                                                 onChange={handleFormChange}
                                                                             />
                                                                         </label>
-                                                                        <label>
-                                                                            Description:
-                                                                            <textarea
-                                                                                name="Product description"
-                                                                                value={formData["Product description"] || ""}
-                                                                                onChange={handleFormChange}
-                                                                            />
-                                                                        </label>
+
                                                                         <button type="button" onClick={handleFormSubmit}>
                                                                             Submit
                                                                         </button>
@@ -808,178 +905,182 @@ const LinkSocialMedia: React.FC = () => {
                                                                             Cancel
                                                                         </button>
                                                                     </form>
+
+                                                                    {/* Response Message */}
+                                                                    {responseMessage && <div className="response-message">{responseMessage}</div>}
                                                                 </div>
                                                             </div>
                                                         )}
+
+
                                                     </div>
                                                 </div>
                                             </div>
                                             {/* Linked Content Preview Section  */}
                                             {/* Product Added Section */}
                                             <div className="wg-box py-5 mb-30">
-      <div className="text-center featured-content-title mb-4">
-        Previously Added Products
-      </div>
-      <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-  {error ? (
-    <div className="col">
-      <p className="text-danger">Error: {error}</p>
-    </div>
-  ) : (
-    productList.map((product) => (
-      <div className="col" key={product.product_id}>
-        <div
-          className="card h-100 shadow-sm d-flex flex-column"
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            height: '100%',
-          }}
-        >
-          <div className="card-img-container">
-            <img
-              src={`${import.meta.env.VITE_BASE_PATH}${product.images_list[0]}` || "default-image.jpg"}
-              className="card-img-top"
-              alt={product.product_title || "Product Image"}
-            />
-          </div>
-          <div className="card-body d-flex flex-column" style={{ flexGrow: 1 }}>
-            <h5 className="card-title added-products-title">
-              {product.product_title || "Unknown Product"}
-            </h5>
-            <p className="card-text">
-              Price: {product.price ? `₹${product.price}` : "N/A"}
-            </p>
-            <p className="card-text">
-              Brand: {product.product_details?.Brand || "N/A"}
-            </p>
-            <p className="card-text">
-              {product.about_this_item
-                ? product.about_this_item.slice(0, 100) + (product.about_this_item.length > 100 ? "..." : "")
-                : "Description not available"}
-            </p>
-          </div>
-          <div className="card-footer d-flex justify-content-between">
-            <button
-              className="btn btn-info"
-              onClick={() => {
-                setSelectedProduct(product);
-                setIsProductModalOpen(true);
-              }}
-            >
-              View Details
-            </button>
-            <button
-              className={`btn ${
-                product.approved ? "btn-success" : "btn-warning"
-              }`}
-              onClick={() => toggleApprovalStatus(product)}
-            >
-              {product.approved ? "Listing Status: Approved" : "Listing Status: Disapproved"}
-            </button>
-          </div>
-        </div>
-      </div>
-    ))
-  )}
-</div>
+                                                <div className="text-center featured-content-title mb-4">
+                                                    Previously Added Products
+                                                </div>
+                                                <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                                                    {error ? (
+                                                        <div className="col">
+                                                            <p className="text-danger">Error: {error}</p>
+                                                        </div>
+                                                    ) : (
+                                                        productList.map((product) => (
+                                                            <div className="col" key={product.product_id}>
+                                                                <div
+                                                                    className="card h-100 shadow-sm d-flex flex-column"
+                                                                    style={{
+                                                                        display: 'flex',
+                                                                        flexDirection: 'column',
+                                                                        height: '100%',
+                                                                    }}
+                                                                >
+                                                                    <div className="card-img-container">
+                                                                        <img
+                                                                            src={`${import.meta.env.VITE_BASE_PATH}${product.images_list[0]}` || "default-image.jpg"}
+                                                                            className="card-img-top"
+                                                                            alt={product.product_title || "Product Image"}
+                                                                        />
+                                                                    </div>
+                                                                    <div className="card-body d-flex flex-column" style={{ flexGrow: 1 }}>
+                                                                        <h5 className="card-title added-products-title">
+                                                                            {product.product_title || "Unknown Product"}
+                                                                        </h5>
+                                                                        <p className="card-text">
+                                                                            Price: {product.price ? `₹${product.price}` : "N/A"}
+                                                                        </p>
+                                                                        <p className="card-text">
+                                                                            Brand: {product.product_details?.Brand || "N/A"}
+                                                                        </p>
+                                                                        <p className="card-text">
+                                                                            {product.about_this_item
+                                                                                ? product.about_this_item.slice(0, 100) + (product.about_this_item.length > 100 ? "..." : "")
+                                                                                : "Description not available"}
+                                                                        </p>
+                                                                    </div>
+                                                                    <div className="card-footer d-flex justify-content-between">
+                                                                        <button
+                                                                            className="btn btn-info"
+                                                                            onClick={() => {
+                                                                                setSelectedProduct(product);
+                                                                                setIsProductModalOpen(true);
+                                                                            }}
+                                                                        >
+                                                                            View Details
+                                                                        </button>
+                                                                        <button
+                                                                            className={`btn ${product.approved ? "btn-success" : "btn-warning"
+                                                                                }`}
+                                                                            onClick={() => toggleApprovalStatus(product)}
+                                                                        >
+                                                                            {product.approved ? "Listing Status: Approved" : "Listing Status: Disapproved"}
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        ))
+                                                    )}
+                                                </div>
 
-{/* Modal Overlay */}
-{isProductModalOpen && selectedProduct && (
-  <div
-    className="modal-overlay"
-    onClick={() => setIsProductModalOpen(false)}  // Close on click outside
-    style={{
-      position: "fixed",
-      top: 0,
-      left: 0,
-      width: "100vw",
-      height: "100vh",
-      backgroundColor: "rgba(0, 0, 0, 0.5)",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      zIndex: 1050,
-    }}
-  >
-    <div
-      className="modal-content"
-      onClick={(e) => e.stopPropagation()}  // Prevent modal from closing when clicked inside
-      style={{
-        position: "relative",
-        maxWidth: "90%",
-        maxHeight: "90%",
-        backgroundColor: "#fff",
-        borderRadius: "8px",
-        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-        display: "flex",
-        flexDirection: "column",
-        overflow: "hidden",
-        padding: "16px",
-      }}
-    >
-      {/* Close Button */}
-      <div
-        style={{
-          position: "absolute",
-          top: "10px",
-          right: "10px",
-        }}
-      >
-        <button
-          onClick={() => setIsProductModalOpen(false)}
-          style={{
-            background: "none",
-            border: "none",
-            fontSize: "1.5rem",
-            cursor: "pointer",
-            color: "#000",
-          }}
-          aria-label="Close"
-        >
-          &times;
-        </button>
-      </div>
+                                                {/* Modal Overlay */}
+                                                {isProductModalOpen && selectedProduct && (
+                                                    <div
+                                                        className="modal-overlay"
+                                                        onClick={() => setIsProductModalOpen(false)}  // Close on click outside
+                                                        style={{
+                                                            position: "fixed",
+                                                            top: 0,
+                                                            left: 0,
+                                                            width: "100vw",
+                                                            height: "100vh",
+                                                            backgroundColor: "rgba(0, 0, 0, 0.5)",
+                                                            display: "flex",
+                                                            alignItems: "center",
+                                                            justifyContent: "center",
+                                                            zIndex: 1050,
+                                                        }}
+                                                    >
+                                                        <div
+                                                            className="modal-content"
+                                                            onClick={(e) => e.stopPropagation()}  // Prevent modal from closing when clicked inside
+                                                            style={{
+                                                                position: "relative",
+                                                                maxWidth: "90%",
+                                                                maxHeight: "90%",
+                                                                backgroundColor: "#fff",
+                                                                borderRadius: "8px",
+                                                                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+                                                                display: "flex",
+                                                                flexDirection: "column",
+                                                                overflow: "hidden",
+                                                                padding: "16px",
+                                                            }}
+                                                        >
+                                                            {/* Close Button */}
+                                                            <div
+                                                                style={{
+                                                                    position: "absolute",
+                                                                    top: "10px",
+                                                                    right: "10px",
+                                                                }}
+                                                            >
+                                                                <button
+                                                                    onClick={() => setIsProductModalOpen(false)}
+                                                                    style={{
+                                                                        background: "none",
+                                                                        border: "none",
+                                                                        fontSize: "1.5rem",
+                                                                        cursor: "pointer",
+                                                                        color: "#000",
+                                                                    }}
+                                                                    aria-label="Close"
+                                                                >
+                                                                    &times;
+                                                                </button>
+                                                            </div>
 
-      {/* Scrollable Content */}
-      <div
-        style={{
-          flex: 1,
-          overflowY: "auto",
-          padding: "16px",
-        }}
-      >
-        <Modal product={selectedProduct} onClose={() => setIsProductModalOpen(false)} />
-      </div>
-    </div>
-  </div>
-)}
+                                                            {/* Scrollable Content */}
+                                                            <div
+                                                                style={{
+                                                                    flex: 1,
+                                                                    overflowY: "auto",
+                                                                    padding: "16px",
+                                                                }}
+                                                            >
+                                                                <Modal product={selectedProduct} onClose={() => setIsProductModalOpen(false)} />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )}
 
-
-    </div>
 
                                             </div>
-                                            {/* main-content-wrap  */}
+
                                         </div>
                                         {/* main-content-wrap  */}
-                                        {/* bottom-page  */}
-                                        <div className="bottom-page">
-                                            <div className="body-text">Made with LOVE </div>
-                                            <i className="icon-heart"></i>
-                                            <div className="body-text">by <a href="">Team Malaai</a> All rights reserved.</div>
-                                        </div>
-                                        {/* bottom-page  */}
                                     </div>
-                                    {/* main-content  */}
+                                    {/* main-content-wrap  */}
+                                    {/* bottom-page  */}
+                                    <div className="bottom-page">
+                                        <div className="body-text">Made with LOVE </div>
+                                        <i className="icon-heart"></i>
+                                        <div className="body-text">by <a href="">Team Malaai</a> All rights reserved.</div>
+                                    </div>
+                                    {/* bottom-page  */}
                                 </div>
-                                {/* section-content-right  */}
+                                {/* main-content  */}
                             </div>
-                            {/* layout-wrap  */}
+                            {/* section-content-right  */}
                         </div>
-                        {/* page  */}
+                        {/* layout-wrap  */}
                     </div>
+                    {/* page  */}
                 </div>
-            
+            </div>
+
         </>
     );
 };
