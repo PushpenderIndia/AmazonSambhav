@@ -99,6 +99,7 @@ class Social2Amazon:
         self.base_folder = base_folder
         if not os.path.exists(self.base_folder):
             os.makedirs(self.base_folder)
+
         self.gemini_analyzer = GeminiAnalyzer(GOOGLE_API_KEY)  # Initialize GeminiAnalyzer
         genai.configure(api_key=GOOGLE_API_KEY)
 
@@ -117,7 +118,7 @@ class Social2Amazon:
             # Extract shortcode and download the post
             shortcode = url.split("/p/")[1].split("/")[0]
             post = Post.from_shortcode(loader.context, shortcode)
-            loader.download_post(post, target=self.base_folder)
+            loader.download_post(post, target=self.base_folder+"/"+shortcode)
 
             # Collect all downloaded files
             for file in os.listdir(self.base_folder):
