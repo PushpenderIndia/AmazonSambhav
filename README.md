@@ -26,7 +26,8 @@
 ## Demonstration  
 
 ### Live Demo  
-Explore the tool in action: **[Demo Link](http://143.110.233.2:1234/)**  
+Explore the tool in action: **[Demo Link](http://143.110.233.2:1234/)**
+YouTube video link of live demo: **[Demo Video Link](https://www.youtube.com/watch?v=IBHPfPj9cIs)**
 
 ### Screenshots  
 ![image](https://github.com/user-attachments/assets/ee8e4995-ab52-46b2-bab5-a34670668dc5)
