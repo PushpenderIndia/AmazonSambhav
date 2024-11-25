@@ -184,6 +184,8 @@ class Social2AmazonAPI(APIView):
                 product_data = social2amazon.process_post(insta_post_link)
                 product_title = product_data.get('product_title')
                 product_title_hash = hash(product_title)
+                if ProductListings.objects.filter(product_id=product_title_hash).exists():
+                    ProductListings.objects.filter(product_id=product_title_hash).delete()
                 ProductListings(
                     product_id=product_title_hash,
                     images_list=product_data.get('images_list'),
