@@ -49,7 +49,7 @@ if __name__ == "__main__":
     username = input("Enter the Instagram username: ")
     
     scraper = InstaFetcher(api_key)
-    posts = scraper.fetch(username)
+    posts = scraper.get_user_posts(username)
     
     if posts:
         print(posts)
