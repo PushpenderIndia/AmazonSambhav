@@ -29,14 +29,33 @@
 Explore the tool in action: **[Demo Link](http://143.110.233.2:1234/)**  
 
 ### Screenshots  
+![image](https://github.com/user-attachments/assets/ee8e4995-ab52-46b2-bab5-a34670668dc5)
+*This is the landing page containing the button to login (Get Started)*
 
-#### Dashboard  
-![Dashboard Overview](https://via.placeholder.com/800x400)  
-*A snapshot of the user-friendly dashboard, showcasing account management and fetched posts.*  
+![image](https://github.com/user-attachments/assets/21aaf3bb-9eca-44a8-9544-69b1a3377d81)
+*Login page containing all kind of options for user login*
 
-#### Generated Product Listing  
-![Generated Product Listing](https://via.placeholder.com/800x400)  
-*Example of an Amazon product listing generated from social media content.*  
+![image](https://github.com/user-attachments/assets/7a3494c6-6554-4aeb-9bdf-763e0fc38837)
+*User Dashboard (User can see all the activity stats*
+
+![image](https://github.com/user-attachments/assets/ebe874a0-b589-4425-986d-811dd16d242d)
+*User can connect their social media account*
+
+![image](https://github.com/user-attachments/assets/aa7e504d-4754-4ec0-b2ed-d38607d3c186)
+*User can fetch their latest post from social media manually if needed*
+
+![image](https://github.com/user-attachments/assets/4215ae52-f394-4067-91b5-a7c6fff1d2f0)
+*Recent fetched post will be visible here*
+
+![image](https://github.com/user-attachments/assets/c13e604c-4c77-438b-b629-120fe823850b)
+*Users can preview their product listing data before approving them*
+
+![image](https://github.com/user-attachments/assets/6a3355bf-0c14-43a1-ba4a-c20538cbd8af)
+*Users can edit the AI generated data before approving for product
+listing*
+
+![image](https://github.com/user-attachments/assets/37d11c09-ccb1-4c6b-93ea-709a92503de0)
+*Users can view previously added products and update it if needed*
 
 ---
 
