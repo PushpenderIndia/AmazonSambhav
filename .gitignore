@@ -11,3 +11,4 @@ __pycache__
 backend/app/__pycache__/*
 static/*
 *.jpg
+*.txt

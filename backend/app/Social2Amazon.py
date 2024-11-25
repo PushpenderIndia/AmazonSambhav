@@ -6,6 +6,7 @@ import pytesseract
 import google.generativeai as genai
 import json5
 import time
+import random
 
 class GeminiAnalyzer:
     def __init__(self, GOOGLE_API_KEY):
@@ -103,6 +104,44 @@ class Social2Amazon:
         self.gemini_analyzer = GeminiAnalyzer(GOOGLE_API_KEY)  # Initialize GeminiAnalyzer
         genai.configure(api_key=GOOGLE_API_KEY)
 
+    # def download_post(self, url):
+    #     """
+    #     Downloads Instagram post media and description using Instaloader.
+
+    #     :param url: The URL of the Instagram post.
+    #     :return: A tuple of post description and downloaded file paths.
+    #     """
+    #     loader = Instaloader(download_videos=True, save_metadata=False)
+    #     post_description = None
+    #     downloaded_files = []
+         
+
+    #     try:
+    #         # Extract shortcode and download the post
+    #         shortcode = url.split("/p/")[1].split("/")[0]
+    #         post = Post.from_shortcode(loader.context, shortcode)
+
+    #         loader.download_post(post, target=self.base_folder)
+
+    #         # Collect all downloaded files
+    #         for file in os.listdir(self.base_folder):
+    #             if file.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.tiff', '.mp4', '.mov', '.avi', '.txt')):
+    #                 downloaded_files.append(os.path.join(self.base_folder, file))
+
+    #         # Find and read the post description file
+    #         for file_path in downloaded_files:
+    #             if file_path.endswith(".txt"):
+    #                 with open(file_path, "r", encoding="utf-8") as desc_file:
+    #                     post_description = desc_file.read().strip()
+    #                 downloaded_files.remove(file_path)  # Remove description from media files
+    #                 break
+
+    #         print(f"Post downloaded successfully to {self.base_folder}.")
+    #     except Exception as e:
+    #         print(f"Error downloading the post: {e}")
+
+    #     return post_description, downloaded_files
+
     def download_post(self, url):
         """
         Downloads Instagram post media and description using Instaloader.
@@ -113,30 +152,34 @@ class Social2Amazon:
         loader = Instaloader(download_videos=True, save_metadata=False)
         post_description = None
         downloaded_files = []
-         
 
         try:
             # Extract shortcode and download the post
             shortcode = url.split("/p/")[1].split("/")[0]
-            os.makedirs(self.base_folder+"/"+shortcode, exist_ok=True) 
-            self.base_folder = self.base_folder+"/"+shortcode
+            target_folder = self.base_folder
+
+            # List files in the target directory before downloading
+            pre_download_files = set(os.listdir(target_folder))
+
+            # Download the post
             post = Post.from_shortcode(loader.context, shortcode)
-            loader.download_post(post, target=self.base_folder)
+            loader.download_post(post, target=target_folder)
 
-            # Collect all downloaded files
-            for file in os.listdir(self.base_folder):
-                if file.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.tiff', '.mp4', '.mov', '.avi', '.txt')):
-                    downloaded_files.append(os.path.join(self.base_folder, file))
+            # List files in the target directory after downloading
+            post_download_files = set(os.listdir(target_folder))
+            new_files = post_download_files - pre_download_files
 
-            # Find and read the post description file
-            for file_path in downloaded_files:
-                if file_path.endswith(".txt"):
+            # Collect all downloaded files with full paths
+            for file in new_files:
+                file_path = os.path.join(target_folder, file)
+                downloaded_files.append(file_path)
+
+                # Check for description file
+                if file.endswith(".txt"):
                     with open(file_path, "r", encoding="utf-8") as desc_file:
                         post_description = desc_file.read().strip()
-                    downloaded_files.remove(file_path)  # Remove description from media files
-                    break
 
-            print(f"Post downloaded successfully to {self.base_folder}.")
+            print(f"Post downloaded successfully to {target_folder}.")
         except Exception as e:
             print(f"Error downloading the post: {e}")
 
@@ -148,7 +191,9 @@ class Social2Amazon:
 
         :return: The concatenated OCR text.
         """
-        ocr_output_file = os.path.join(self.base_folder, "ocr.txt")
+        # Generate a random number for the OCR file
+        random_num = random.randint(1000, 999999999)
+        ocr_output_file = os.path.join(self.base_folder, f"ocr_{random_num}.txt")
         ocr_text = []
 
         # Initialize the output file
@@ -304,7 +349,7 @@ The "product_details" field is dynamic, and its keys will vary depending on the 
 
 # Example usage
 if __name__ == "__main__":
-    url = input("Enter the Instagram post URL: ")
+    url = "https://www.instagram.com/p/DCl10QtPNdG/"
     GOOGLE_API_KEY = input("Enter your Google API key: ")
     import shutil
     shutil.rmtree('insta', ignore_errors=True)

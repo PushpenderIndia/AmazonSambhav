@@ -7,8 +7,10 @@ class InstaFetcher:
         
         :param api_key: API key for authentication
         """
-        self.api_url = "https://instagram-scraper-api3.p.rapidapi.com/user_posts"
-        self.api_host = "instagram-scraper-api3.p.rapidapi.com"
+        # self.api_url = "https://instagram-scraper-api3.p.rapidapi.com/user_posts"
+        # self.api_host = "instagram-scraper-api3.p.rapidapi.com"
+        self.api_url = "https://instagram-scraper-api2.p.rapidapi.com/v1.2/posts"
+        self.api_host = "instagram-scraper-api2.p.rapidapi.com"
         self.api_key = api_key
 
     def get_user_posts(self, username: str, count: int = 5):
@@ -24,8 +26,7 @@ class InstaFetcher:
             "x-rapidapi-key": self.api_key,
         }
         params = {
-            "username_or_id": username,
-            "count": count,
+            "username_or_id_or_url": username,
         }
 
         try:
@@ -37,7 +38,8 @@ class InstaFetcher:
             posts = []
             for post in all_posts_data:
                 post_code = post["code"]
-                posts.append(f"https://www.instagram.com/bata.india/p/{post_code}/")
+                if post["is_video"] == False:
+                    posts.append(f"https://www.instagram.com/bata.india/p/{post_code}/")
             return posts
         except requests.exceptions.RequestException as e:
             print(f"An error occurred: {e}")
