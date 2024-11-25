@@ -478,7 +478,8 @@ const LinkSocialMedia: React.FC = () => {
             if (!response.ok) {
                 throw new Error("Failed to convert Instagram post to product listing");
             }
-
+            fetchPreviousListings();
+            fetchInstagramPosts();
             setSuccessMessage(`Successfully converted to product listing: ${link}`);
         } catch (err: any) {
             console.error("Error converting to product listing:", err.message);
