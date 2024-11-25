@@ -812,65 +812,141 @@ const LinkSocialMedia: React.FC = () => {
         Previously Added Products
       </div>
       <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-        {error ? (
-          <div className="col">
-            <p className="text-danger">Error: {error}</p>
+  {error ? (
+    <div className="col">
+      <p className="text-danger">Error: {error}</p>
+    </div>
+  ) : (
+    productList.map((product) => (
+      <div className="col" key={product.product_id}>
+        <div
+          className="card h-100 shadow-sm d-flex flex-column"
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100%',
+          }}
+        >
+          <div className="card-img-container">
+            <img
+              src={`${import.meta.env.VITE_BASE_PATH}${product.images_list[0]}` || "default-image.jpg"}
+              className="card-img-top"
+              alt={product.product_title || "Product Image"}
+            />
           </div>
-        ) : (
-          productList.map((product) => (
-            <div className="col" key={product.product_id}>
-              <div className="card h-100 shadow-sm">
-                <div className="card-img-container">
-                  <img
-                    src={`${import.meta.env.VITE_BASE_PATH}${product.images_list[0]}` || "default-image.jpg"}
-                    className="card-img-top"
-                    alt={product.product_title || "Product Image"}
-                  />
-                </div>
-                <div className="card-body">
-                  <h5 className="card-title added-products-title">
-                    {product.product_title || "Unknown Product"}
-                  </h5>
-                  <p className="card-text">
-                    Price: {product.price ? `₹${product.price}` : "N/A"}
-                  </p>
-                  <p className="card-text">
-                    Brand: {product.product_details?.Brand || "N/A"}
-                  </p>
-                  <p className="card-text">
-                    {product.about_this_item || "Description not available"}
-                  </p>
-                </div>
-                <div className="card-footer d-flex justify-content-between">
-                  <button
-                    className="btn btn-info"
-                    onClick={() => {
-                      setSelectedProduct(product);
-                      setIsProductModalOpen(true);
-                    }}
-                  >
-                    View Details
-                  </button>
-                  <button
-                    className={`btn ${
-                      product.approved ? "btn-success" : "btn-warning"
-                    }`}
-                    onClick={() => toggleApprovalStatus(product)}
-                  >
-                    {product.approved ? "Approved" : "Disapproved"}
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))
-        )}
+          <div className="card-body d-flex flex-column" style={{ flexGrow: 1 }}>
+            <h5 className="card-title added-products-title">
+              {product.product_title || "Unknown Product"}
+            </h5>
+            <p className="card-text">
+              Price: {product.price ? `₹${product.price}` : "N/A"}
+            </p>
+            <p className="card-text">
+              Brand: {product.product_details?.Brand || "N/A"}
+            </p>
+            <p className="card-text">
+              {product.about_this_item
+                ? product.about_this_item.slice(0, 100) + (product.about_this_item.length > 100 ? "..." : "")
+                : "Description not available"}
+            </p>
+          </div>
+          <div className="card-footer d-flex justify-content-between">
+            <button
+              className="btn btn-info"
+              onClick={() => {
+                setSelectedProduct(product);
+                setIsProductModalOpen(true);
+              }}
+            >
+              View Details
+            </button>
+            <button
+              className={`btn ${
+                product.approved ? "btn-success" : "btn-warning"
+              }`}
+              onClick={() => toggleApprovalStatus(product)}
+            >
+              {product.approved ? "Approved" : "Disapproved"}
+            </button>
+          </div>
+        </div>
       </div>
-      {isProductModalOpen && selectedProduct && (
-        <Modal
-          product={selectedProduct}
-          onClose={() => setIsProductModalOpen(false)}
-        />
-      )}
+    ))
+  )}
+</div>
+
+{/* Modal Overlay */}
+{isProductModalOpen && selectedProduct && (
+  <div
+    className="modal-overlay"
+    onClick={() => setIsProductModalOpen(false)}  // Close on click outside
+    style={{
+      position: "fixed",
+      top: 0,
+      left: 0,
+      width: "100vw",
+      height: "100vh",
+      backgroundColor: "rgba(0, 0, 0, 0.5)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      zIndex: 1050,
+    }}
+  >
+    <div
+      className="modal-content"
+      onClick={(e) => e.stopPropagation()}  // Prevent modal from closing when clicked inside
+      style={{
+        position: "relative",
+        maxWidth: "90%",
+        maxHeight: "90%",
+        backgroundColor: "#fff",
+        borderRadius: "8px",
+        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+        padding: "16px",
+      }}
+    >
+      {/* Close Button */}
+      <div
+        style={{
+          position: "absolute",
+          top: "10px",
+          right: "10px",
+        }}
+      >
+        <button
+          onClick={() => setIsProductModalOpen(false)}
+          style={{
+            background: "none",
+            border: "none",
+            fontSize: "1.5rem",
+            cursor: "pointer",
+            color: "#000",
+          }}
+          aria-label="Close"
+        >
+          &times;
+        </button>
+      </div>
+
+      {/* Scrollable Content */}
+      <div
+        style={{
+          flex: 1,
+          overflowY: "auto",
+          padding: "16px",
+        }}
+      >
+        <Modal product={selectedProduct} onClose={() => setIsProductModalOpen(false)} />
+      </div>
+    </div>
+  </div>
+)}
+
+
     </div>
 
                                             </div>

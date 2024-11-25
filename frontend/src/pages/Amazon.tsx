@@ -187,7 +187,7 @@ const [productData, setProductData] = useState<ProductData | null>(null);
     >
       <div
         id="navbar"
-        cel_widget_id="Navigation-desktop-navbar"
+        
         role="navigation"
         className="nav-sprite-v1 celwidget nav-bluebeacon nav-a11y-t1 bold-focus-hover layout2 nav-flex layout3 layout3-alt nav-packard-glow hamburger nav-progressive-attribute using-mouse"
         data-csa-c-id="h17cgz-gswrc1-c7ct63-n9peh7"
@@ -327,7 +327,7 @@ const [productData, setProductData] = useState<ProductData | null>(null);
                         tabIndex={0}
                         title="Search in"
                       >
-                        <option selected="selected" value="search-alias=aps">
+                        <option value="search-alias=aps">
                           All Categories
                         </option>
                         <option value="search-alias=alexa-skills">
@@ -2801,7 +2801,7 @@ const [productData, setProductData] = useState<ProductData | null>(null);
       <div id="percolate-ui-lpo_div"></div>
       <div id="showing-breadcrumbs_div">
         <div
-          cel_widget_id="showing-breadcrumbs_csm_instrumentation_wrapper"
+          
           className="celwidget"
           data-csa-c-id="u8btuf-4dz8f7-ofuk54-sb8954"
           data-cel-widget="showing-breadcrumbs_csm_instrumentation_wrapper"
@@ -2810,7 +2810,7 @@ const [productData, setProductData] = useState<ProductData | null>(null);
       <div id="rw-preload-landing-image_div"></div>
       <div id="dp-container" className="a-container" role="main">
         <div
-          cel_widget_id="dpx-ppd_csm_instrumentation_wrapper"
+          
           className="celwidget"
           data-csa-c-id="wy4ysz-ghjk4o-47shvp-q0n3rm"
           data-cel-widget="dpx-ppd_csm_instrumentation_wrapper"
@@ -3145,8 +3145,8 @@ const [productData, setProductData] = useState<ProductData | null>(null);
                                           }}
                                         >
                                           <div
-                                            disablepictureinpicture="true"
-                                            playsInline="true"
+                                            
+                                            
                                             className="video-js brila-video-js vjs-paused vjs-controls-enabled vjs-workinghover vjs-v7 vjs-user-active vjs-fluid mbsoftlines-player-fc77b1c8-d552-4c8c-a588-4e8eb8a5c839-container-element-dimensions"
                                             id="mbsoftlines-player-fc77b1c8-d552-4c8c-a588-4e8eb8a5c839-container-element"
                                             tabIndex={-1}
@@ -3159,8 +3159,7 @@ const [productData, setProductData] = useState<ProductData | null>(null);
                                             <video
                                               id="mbsoftlines-player-fc77b1c8-d552-4c8c-a588-4e8eb8a5c839-container-element_html5_api"
                                               className="vjs-tech"
-                                              playsInline="playsinline"
-                                              disablepictureinpicture="true"
+                                            
                                               tabIndex={-1}
                                               role="application"
                                               preload="auto"
@@ -3676,7 +3675,7 @@ const [productData, setProductData] = useState<ProductData | null>(null);
                                   </div>
                                 </div>
                                 <div
-                                  target="_blank"
+                                  
                                   className="a-profile ive-creator-profile aok-hidden"
                                   data-a-size="small"
                                   data-a-descriptor="true"
@@ -3996,13 +3995,11 @@ const [productData, setProductData] = useState<ProductData | null>(null);
                   <div
                     id="twister-main-image"
                     className="a-hidden"
-                    customfunctionname="(function(id, state){ P.when('A').execute(function(A){ A.trigger('image-block-twister-swatch-hover', id, state); }); });"
-                  ></div>
+                    ></div>
                   <div
                     id="thumbs-image"
                     className="a-hidden"
-                    customfunctionname="(function(id, state, onloadFunction){ P.when('A').execute(function(A){ A.trigger('image-block-twister-swatch-click', id, state, onloadFunction); }); });"
-                  ></div>
+                    ></div>
                   <div
                     className="a-popover-preload"
                     id="a-popover-immersiveView"
@@ -4102,7 +4099,7 @@ const [productData, setProductData] = useState<ProductData | null>(null);
                 >
                   <div
                     className="celwidget c-f"
-                    cel_widget_id="buffet-high-priority-disclaimers-card_DetailPage_0"
+                   
                     data-csa-op-log-render=""
                     data-csa-c-content-id="DsUnknown"
                     data-csa-c-slot-id="DsUnknown-1"
@@ -5017,10 +5014,7 @@ const [productData, setProductData] = useState<ProductData | null>(null);
                         data-cel-widget="vsxoffers_feature_div"
                       >
                         <div className="a-section vsxoffers_desktop_feature">
-                          <dptags:querylogoperation
-                            methodname="startTimer"
-                            metric="vsxoffers_rendertime"
-                          >
+                          
                             <div className="a-section a-spacing-none vsx__commons">
                               <div
                                 id="vsx__offer-data"
@@ -5035,11 +5029,7 @@ const [productData, setProductData] = useState<ProductData | null>(null);
                               aria-hidden="true"
                               className="a-spacing-small a-divider-normal twister-plus-divider"
                             />
-                            <dptags:querylogoperation
-                              methodname="stopTimer"
-                              metric="vsxoffers_rendertime"
-                            ></dptags:querylogoperation>
-                          </dptags:querylogoperation>
+                            
                         </div>
                       </div>
                       <div
@@ -6079,7 +6069,7 @@ const [productData, setProductData] = useState<ProductData | null>(null);
                       >
                         <div
                           className="celwidget c-f"
-                          cel_widget_id="tell-amazon-desktop_DetailPage_1"
+                         
                           data-csa-op-log-render=""
                           data-csa-c-content-id="DsUnknown"
                           data-csa-c-slot-id="DsUnknown-2"
@@ -6146,7 +6136,7 @@ const [productData, setProductData] = useState<ProductData | null>(null);
                         <div
                           id="valuePick_container"
                           className="celwidget pf_rd_p-95ea8b69-9a0d-4a8a-8f4e-5e974a005fcd pf_rd_r-AGSRENW6SRAW518HGTR3 pd_rd_wg-WrHqp pd_rd_i-B09TPKLFMM pd_rd_w-9mk1O content-id-amzn1.sym.95ea8b69-9a0d-4a8a-8f4e-5e974a005fcd pd_rd_r-ac4b6791-8a20-464b-8ebf-02970cdcc34d "
-                          cel_widget_id="valuePick_desktop_container"
+                          
                           data-source="dpUpsellWidgetVPINDesktop"
                           data-csa-c-id="et7u3b-4ac0g3-7hiwxv-z2j7l3"
                           data-cel-widget="valuePick_desktop_container"
@@ -7767,7 +7757,7 @@ const [productData, setProductData] = useState<ProductData | null>(null);
                                                                 >
                                                                   <option
                                                                     value={1}
-                                                                    selected=""
+                                                                    
                                                                   >
                                                                     1
                                                                   </option>
@@ -8016,8 +8006,8 @@ const [productData, setProductData] = useState<ProductData | null>(null);
                                                           data-csa-c-id="d1nufg-cxv1jp-kx9mdx-aucpl3"
                                                         >
                                                           <span
-                                                            cssclass="celwidget"
-                                                            cel_widget_id="twisterPlus-celwidget-popover"
+                                                           
+                                                       
                                                           >
                                                             <a
                                                               id="price_block_total_price_details_ww"
@@ -9727,14 +9717,14 @@ const [productData, setProductData] = useState<ProductData | null>(null);
         data-cel-widget="similarities_feature_div"
       >
         <div
-          cel_widget_id="sims-consolidated-1_csm_instrumentation_wrapper"
+          
           className="celwidget"
           data-csa-c-id="fvq0hk-z4eof-ebdwbz-dbqtq9"
           data-cel-widget="sims-consolidated-1_csm_instrumentation_wrapper"
         >
           <div
             className="celwidget pd_rd_w-xbBu8 content-id-amzn1.sym.c7ef6266-a9b9-4df2-ad24-f795ecdadcdc pf_rd_p-c7ef6266-a9b9-4df2-ad24-f795ecdadcdc pf_rd_r-AGSRENW6SRAW518HGTR3 pd_rd_wg-Tz2Zi pd_rd_r-9e0d30ae-7ef3-49c7-a998-32869a69adf3 c-f"
-            cel_widget_id="p13n-desktop-sims-fbt_DPSims_0"
+            
             data-csa-op-log-render=""
             data-csa-c-content-id="amzn1.sym.c7ef6266-a9b9-4df2-ad24-f795ecdadcdc"
             data-csa-c-slot-id="product-bundle-1"
@@ -9887,7 +9877,7 @@ const [productData, setProductData] = useState<ProductData | null>(null);
             >
               {/* add celwidget name 'ask-browse-ajax-load' to record client side metric, following guidance: https://w.amazon.com/index.php/ClientSideMetrics/UserDocs/CEL/Widgets#Onboarding */}
               <div
-                cel_widget_id="ask-browse-ajax-load"
+               
                 className="celwidget"
                 data-csa-c-id="vxzvgu-6y2g0q-li4z0y-seqs60"
                 data-cel-widget="ask-browse-ajax-load"
@@ -9895,7 +9885,7 @@ const [productData, setProductData] = useState<ProductData | null>(null);
                 {/* ask-automation:start */}
                 <div
                   id="ask-btf-container"
-                  cel_widget_id="ask-btf-desktop"
+                 
                   className="celwidget"
                   data-csa-c-id="hnor3c-3jzcto-4x2nr0-kkcz3i"
                   data-cel-widget="ask-btf-desktop"
@@ -9956,17 +9946,17 @@ const [productData, setProductData] = useState<ProductData | null>(null);
           data-cel-widget="aplus_feature_div"
         >
           <div id="aplus" className="a-section a-spacing-large bucket">
-            <hr noshade="true" size={1} className="bucketDivider" />
+            <hr  className="bucketDivider" />
             <h2>Product Description</h2>
             <div
               className="aplus-v2 desktop celwidget"
-              cel_widget_id="aplus"
+              
               data-csa-c-id="oelk5v-uuht24-tzeht5-y0rnm"
               data-cel-widget="aplus"
             >
               <div
                 className="celwidget aplus-module 3p-module-b aplus-standard"
-                cel_widget_id="aplus-3p-module-b"
+                
                 data-csa-c-id="3thf0c-x48ir9-69wlax-uw0c9q"
                 data-cel-widget="aplus-3p-module-b"
               >
@@ -10128,14 +10118,14 @@ const [productData, setProductData] = useState<ProductData | null>(null);
         data-cel-widget="product-comparison_feature_div"
       >
         <div
-          cel_widget_id="sims-consolidated-4_csm_instrumentation_wrapper"
+      
           className="celwidget"
           data-csa-c-id="1nt178-q3ml7x-oilwjc-az4uda"
           data-cel-widget="sims-consolidated-4_csm_instrumentation_wrapper"
         >
           <div
             className="celwidget pd_rd_w-36JmL content-id-amzn1.sym.4c610b0e-88c2-4ee7-aa8c-0844a8493424 pf_rd_p-4c610b0e-88c2-4ee7-aa8c-0844a8493424 pf_rd_r-AGSRENW6SRAW518HGTR3 pd_rd_wg-Tz2Zi pd_rd_r-9e0d30ae-7ef3-49c7-a998-32869a69adf3 c-f"
-            cel_widget_id="product-comparison-desktop_DPSims_5"
+            
             data-csa-op-log-render=""
             data-csa-c-content-id="amzn1.sym.4c610b0e-88c2-4ee7-aa8c-0844a8493424"
             data-csa-c-slot-id="comparison-container-6"
@@ -10162,7 +10152,7 @@ const [productData, setProductData] = useState<ProductData | null>(null);
       >
         <div
           className="celwidget c-f"
-          cel_widget_id="legal-compliance-card_DetailPage_1"
+          
           data-csa-op-log-render=""
           data-csa-c-content-id="DsUnknown"
           data-csa-c-slot-id="DsUnknown-2"
@@ -10218,14 +10208,14 @@ const [productData, setProductData] = useState<ProductData | null>(null);
         data-cel-widget="sims-themis-sponsored-products-2_feature_div"
       >
         <div
-          cel_widget_id="sims-consolidated-5_csm_instrumentation_wrapper"
+          
           className="celwidget"
           data-csa-c-id="a1qpjo-ypiqyg-t1l0f6-3qqpjr"
           data-cel-widget="sims-consolidated-5_csm_instrumentation_wrapper"
         >
           <div
             className="celwidget pd_rd_w-a2nJn content-id-amzn1.sym.a67825cd-bf53-4190-b32f-f5084546a8c2 pf_rd_p-a67825cd-bf53-4190-b32f-f5084546a8c2 pf_rd_r-AGSRENW6SRAW518HGTR3 pd_rd_wg-Tz2Zi pd_rd_r-9e0d30ae-7ef3-49c7-a998-32869a69adf3"
-            cel_widget_id="desktop-dp-sims_SponsoredProductsSimsDp2Desktop"
+            
             data-csa-op-log-render=""
             data-csa-c-content-id="amzn1.sym.a67825cd-bf53-4190-b32f-f5084546a8c2"
             data-csa-c-slot-id="sponsored-products-5"
@@ -10282,7 +10272,7 @@ const [productData, setProductData] = useState<ProductData | null>(null);
       >
         <div
           className="celwidget c-f"
-          cel_widget_id="dp-cpsia-product-safety-warning_DetailPage_2"
+          
           data-csa-op-log-render=""
           data-csa-c-content-id="DsUnknown"
           data-csa-c-slot-id="DsUnknown-3"
@@ -10312,7 +10302,7 @@ const [productData, setProductData] = useState<ProductData | null>(null);
       >
         <div
           className="celwidget c-f"
-          cel_widget_id="buffet-disclaimers-card_DetailPage_3"
+      
           data-csa-op-log-render=""
           data-csa-c-content-id="DsUnknown"
           data-csa-c-slot-id="DsUnknown-4"
@@ -10379,14 +10369,14 @@ const [productData, setProductData] = useState<ProductData | null>(null);
         data-cel-widget="discovery-and-inspiration_feature_div"
       >
         <div
-          cel_widget_id="sims-consolidated-6_csm_instrumentation_wrapper"
+        
           className="celwidget"
           data-csa-c-id="3dd2aa-4vf8es-s16sy8-ocel3a"
           data-cel-widget="sims-consolidated-6_csm_instrumentation_wrapper"
         >
           <div
             className="celwidget pd_rd_w-XUbX7 content-id-amzn1.sym.aa14fa00-bc47-4b9c-afe8-e5f5a8aecc2e pf_rd_p-aa14fa00-bc47-4b9c-afe8-e5f5a8aecc2e pf_rd_r-AGSRENW6SRAW518HGTR3 pd_rd_wg-Tz2Zi pd_rd_r-9e0d30ae-7ef3-49c7-a998-32869a69adf3 c-f"
-            cel_widget_id="multi-brand-video-desktop_DPSims_6"
+            
             data-csa-op-log-render=""
             data-csa-c-content-id="amzn1.sym.aa14fa00-bc47-4b9c-afe8-e5f5a8aecc2e"
             data-csa-c-slot-id="discovery-and-inspiration-container-7"
@@ -10431,7 +10421,7 @@ const [productData, setProductData] = useState<ProductData | null>(null);
         data-cel-widget="customer-reviews_feature_div"
       >
         <div
-          cel_widget_id="customer-reviews_csm_instrumentation_wrapper"
+          
           className="celwidget"
           data-csa-c-id="aawo0e-vfoou8-vdubt6-r9h685"
           data-cel-widget="customer-reviews_csm_instrumentation_wrapper"
@@ -10498,7 +10488,7 @@ const [productData, setProductData] = useState<ProductData | null>(null);
         data-cel-widget="similarities_feature_div"
       >
         <div
-          cel_widget_id="sims-consolidated-7_csm_instrumentation_wrapper"
+          
           className="celwidget"
           data-csa-c-id="4v2sll-s0z8ot-gago7y-tfopyk"
           data-cel-widget="sims-consolidated-7_csm_instrumentation_wrapper"
@@ -10510,7 +10500,7 @@ const [productData, setProductData] = useState<ProductData | null>(null);
             <div className="widget-html-container">
               <div
                 className="celwidget pd_rd_w-xuHQf content-id-amzn1.sym.9f1cb690-f0b7-44de-b6ff-1bad1e37d3f0 pf_rd_p-9f1cb690-f0b7-44de-b6ff-1bad1e37d3f0 pf_rd_r-AGSRENW6SRAW518HGTR3 pd_rd_wg-Tz2Zi pd_rd_r-9e0d30ae-7ef3-49c7-a998-32869a69adf3"
-                cel_widget_id="desktop-dp-sims_SPThematicPrimeThemeForNonPrimeMembers"
+                
                 data-csa-op-log-render=""
                 data-csa-c-content-id="amzn1.sym.9f1cb690-f0b7-44de-b6ff-1bad1e37d3f0"
                 data-csa-c-slot-id="sims-container-3"
@@ -10547,7 +10537,7 @@ const [productData, setProductData] = useState<ProductData | null>(null);
             data-cel-widget="similarities_feature_div"
           >
             <div
-              cel_widget_id="sims-consolidated-8_csm_instrumentation_wrapper"
+              
               className="celwidget"
               data-csa-c-id="xhu8g3-7dxeta-czfbl3-urmdh3"
               data-cel-widget="sims-consolidated-8_csm_instrumentation_wrapper"
@@ -10559,7 +10549,7 @@ const [productData, setProductData] = useState<ProductData | null>(null);
                 <div className="widget-html-container">
                   <div
                     className="celwidget pd_rd_w-CFeYL content-id-amzn1.sym.1f02df7f-f362-4e6d-9a92-f270d75713e4 pf_rd_p-1f02df7f-f362-4e6d-9a92-f270d75713e4 pf_rd_r-AGSRENW6SRAW518HGTR3 pd_rd_wg-Tz2Zi pd_rd_r-9e0d30ae-7ef3-49c7-a998-32869a69adf3 c-f"
-                    cel_widget_id="p13n-desktop-carousel_DPSims_3"
+                    
                     data-csa-op-log-render=""
                     data-csa-c-content-id="amzn1.sym.1f02df7f-f362-4e6d-9a92-f270d75713e4"
                     data-csa-c-slot-id="sims-container-4"
@@ -11145,7 +11135,7 @@ const [productData, setProductData] = useState<ProductData | null>(null);
   {/*NAVYAAN-HMENU-AJAX*/}
   <div
     id="hmenu-container"
-    cel_widget_id="Navigation-desktop-HamburgerMenu"
+    
     style={{ display: "block" }}
     className="celwidget nav-sprite-v1"
     data-csa-c-id="baxul8-f4th3s-oviohe-335kne"
