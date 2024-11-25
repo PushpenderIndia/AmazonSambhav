@@ -144,8 +144,7 @@ Generated Amazon Listing:
 ## Architecture Overview  
 
 ### Architecture Diagram  
-![Architecture Diagram](https://via.placeholder.com/800x400)  
-*The architecture includes scraping, AI-based analysis, and a robust frontend-backend system for managing and generating product listings.*  
+![Architecture Diagram](https://github.com/user-attachments/assets/d9f93251-d009-4e4d-886e-c447371e325b)
 
 ---
 
