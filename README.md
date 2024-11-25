@@ -122,11 +122,11 @@ Generated Amazon Listing:
    - Creates SEO-friendly short and long descriptions for e-commerce platforms.  
 
 ### Backend API  
-- **Technology Used**: Django, PostgreSQL.  
+- **Technology Used**: Django, PostgreSQL.
 - **Functionality**: Handles user authentication, data storage, and request-response cycles.  
 
 ### Frontend  
-- **Technology Used**: ReactJS, TailwindCSS.  
+- **Technology Used**: ReactJS, TailwindCSS, Vite, TypeScript
 - **Functionality**: Provides an intuitive dashboard for account management and generated listings.  
 
 ---
@@ -144,7 +144,9 @@ Generated Amazon Listing:
 ## Architecture Overview  
 
 ### Architecture Diagram  
-![Architecture Diagram](https://github.com/user-attachments/assets/d9f93251-d009-4e4d-886e-c447371e325b)
+![image](https://github.com/user-attachments/assets/672848d6-0d61-4500-a45d-a2d643dbee4f)
+
+[Click here for Flowchart](https://github.com/user-attachments/assets/34e9d412-4bbb-4368-bde2-f04d0cd2ae44)
 
 ---
 
