@@ -118,18 +118,15 @@ class Social2Amazon:
         try:
             # Extract shortcode and download the post
             shortcode = url.split("/p/")[1].split("/")[0]
-            target_folder = self.base_folder
-
-            # List files in the target directory before downloading
-            pre_download_files = set(os.listdir(target_folder))
+            target_folder = shortcode
+            os.makedirs(target_folder, exist_ok=True)
 
             # Download the post
             post = Post.from_shortcode(loader.context, shortcode)
             loader.download_post(post, target=target_folder)
 
             # List files in the target directory after downloading
-            post_download_files = set(os.listdir(target_folder))
-            new_files = post_download_files - pre_download_files
+            new_files = set(os.listdir(target_folder))
 
             # Collect all downloaded files with full paths
             for file in new_files:
@@ -140,6 +137,12 @@ class Social2Amazon:
                 if file.endswith(".txt"):
                     with open(file_path, "r", encoding="utf-8") as desc_file:
                         post_description = desc_file.read().strip()
+
+            # move all files of target_folder to the base folder
+            for file in os.listdir(target_folder):
+                os.rename(os.path.join(target_folder, file), os.path.join(self.base_folder, file))
+
+            downloaded_files = [os.path.join(self.base_folder, file.replace(shortcode+"/", "")) for file in downloaded_files]
 
             print(f"Post downloaded successfully to {target_folder}.")
         except Exception as e:
@@ -305,12 +308,14 @@ The "product_details" field is dynamic, and its keys will vary depending on the 
         # Step 4: Process Gemini text-only input
         print("Processing data with Gemini text model...")
         final_results = self.process_gemini_text(post_description, ocr_text, gemini_results, media_files)
-
+        shortcode = url.split("/p/")[1].split("/")[0]
+        os.rmdir(shortcode)
         return final_results
 
 
 # Example usage
 if __name__ == "__main__":
+    url = "https://www.instagram.com/p/DCl10QtPNdG/"
     url = "https://www.instagram.com/p/DCl10QtPNdG/"
     GOOGLE_API_KEY = input("Enter your Google API key: ")
     import shutil
