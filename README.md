@@ -153,7 +153,7 @@ Generated Amazon Listing:
 ---
 
 ## Technologies Used  
-- **Languages**: Python, JavaScript.  
+- **Languages**: Python, TypeScript.  
 - **Frontend**: ReactJS, TailwindCSS.  
 - **Backend**: Django.  
 - **AI & ML**: PyTesseract for OCR, LLMs for text generation.  
