@@ -186,7 +186,7 @@ class Social2AmazonAPI(APIView):
                 ProductListings(
                     product_id=product_title_hash,
                     images_list=product_data.get('images_list'),
-                    product_title=,
+                    product_title=product_title,
                     price=product_data.get('price'),
                     product_details=product_data.get('product_details'),
                     about_this_item=product_data.get('about this item'),
