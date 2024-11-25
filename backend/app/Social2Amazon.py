@@ -113,12 +113,15 @@ class Social2Amazon:
         loader = Instaloader(download_videos=True, save_metadata=False)
         post_description = None
         downloaded_files = []
+         
 
         try:
             # Extract shortcode and download the post
             shortcode = url.split("/p/")[1].split("/")[0]
+            os.makedirs(self.base_folder+"/"+shortcode, exist_ok=True) 
+            self.base_folder = self.base_folder+"/"+shortcode
             post = Post.from_shortcode(loader.context, shortcode)
-            loader.download_post(post, target=self.base_folder+"/"+shortcode)
+            loader.download_post(post, target=self.base_folder)
 
             # Collect all downloaded files
             for file in os.listdir(self.base_folder):
@@ -282,6 +285,7 @@ The "product_details" field is dynamic, and its keys will vary depending on the 
         # Step 1: Download Instagram post
         print("Downloading Instagram post...")
         post_description, media_files = self.download_post(url)
+        media_files = [file for file in media_files if file.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.tiff'))]
 
         # Step 2: Perform OCR
         print("Performing OCR on images...")

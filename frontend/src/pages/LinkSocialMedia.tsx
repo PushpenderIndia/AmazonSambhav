@@ -247,9 +247,9 @@ const LinkSocialMedia: React.FC = () => {
             }
 
             const data = await response.json();
-            if (Array.isArray(data) && data.length > 0) {
-                setProductData(data[0]); // Set the first item of the array as productData
-                setFormData(data[0]); // Initialize the form with fetched data
+            if (data) {
+                setProductData(data); // Set the first item of the array as productData
+                setFormData(data); // Initialize the form with fetched data
             } else {
                 throw new Error("No product data available");
             }
@@ -324,7 +324,7 @@ const LinkSocialMedia: React.FC = () => {
               Authorization: `Bearer ${await getToken()}`,
               "Content-Type": "application/json",
             },
-            body: JSON.stringify([{ ...product, approved: updatedStatus }]),
+            body: JSON.stringify({ ...product, approved: updatedStatus }),
           }
         );
   
@@ -568,6 +568,9 @@ const LinkSocialMedia: React.FC = () => {
                                                 </div>
                                             </div>
                                             <div className="wg-box mb-30">
+                                                <h1 className="text-center">
+                                                    If Post is already imported, then clicking on "Convert to Product Listing" will update the product listing on site
+                                                </h1>
                                                 <button className="btn btn-primary link-btn" onClick={fetchInstagramPosts}>
                                                     Fetch Latest Instagram Posts
                                                 </button>
@@ -575,8 +578,8 @@ const LinkSocialMedia: React.FC = () => {
                                                 {error && <p className="text-danger mt-3">{error}</p>}
 
                                                 {instagramLinks.length > 0 && (
-                                                    <table className="table table-striped mt-4">
-                                                        <thead>
+                                                    <table className="table table-striped">
+                                                        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                                             <tr>
                                                                 <th>Instagram Post Link</th>
                                                                 <th>Action</th>
@@ -650,17 +653,23 @@ const LinkSocialMedia: React.FC = () => {
                                                         <div className="col-md-6 d-flex flex-column">
                                                             <div>
                                                                 <div className="featured-content-title">
-                                                                    {productData?.product_title || "Loading..."}
+                                                                    {productData?.product_title || "Loading Product Title ..."}
                                                                 </div>
                                                                 <p className="text-dark">
-                                                                    {productData?.product_description ||
-                                                                        "Explore our curated selection of top-performing content."}
+                                                                    {productData?.product_description
+                                                                        ? productData.product_description.slice(0, 800) + "......."
+                                                                        : "Loading Recent Imported Product Description ..."}
                                                                 </p>
                                                             </div>
                                                             <div className="mt-16">
                                                                 <p className="text-secondary-custom mb-3">
-                                                                    Fetched {new Date(productData?.created_at).toLocaleString() || "some time ago"}
+                                                                    {productData?.created_at
+                                                                        ? "Fetched " + new Date(productData.created_at).toLocaleString() 
+                                                                        : "Fetching Created Date ..."}
                                                                 </p>
+                                                                {/* <p className="text-secondary-custom mb-3">
+                                                                    Fetched {new Date(productData?.created_at).toLocaleString() || "some time ago"}
+                                                                </p> */}
                                                                 <div className="d-flex justify-content-end">
                                                                     <button
                                                                         className="btn btn-outline-primary me-2 link-btn"
@@ -866,7 +875,7 @@ const LinkSocialMedia: React.FC = () => {
               }`}
               onClick={() => toggleApprovalStatus(product)}
             >
-              {product.approved ? "Approved" : "Disapproved"}
+              {product.approved ? "Listing Status: Approved" : "Listing Status: Disapproved"}
             </button>
           </div>
         </div>
