@@ -238,7 +238,7 @@ const Home: React.FC = () => {
                   </ul>
                 </CardContent>
                 <CardFooter>
-                  <Button className="w-full bg-blue-600 hover:bg-blue-700">Choose Plan</Button>
+                  <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white-100">Choose Plan</Button>
                 </CardFooter>
               </Card>
               <Card>
@@ -282,7 +282,7 @@ const Home: React.FC = () => {
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center space-y-4 text-center">
               <div className="space-y-2">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Ready to Streamline Your E-commerce?</h2>
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-blue-100">Ready to Streamline Your E-commerce?</h2>
                 <p className="mx-auto max-w-[600px] text-blue-100 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
                   Join thousands of successful sellers who have transformed their business with our AI-powered platform.
                 </p>
@@ -296,7 +296,7 @@ const Home: React.FC = () => {
         </section>
       </main>
       <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t border-blue-200">
-        <p className="text-xs text-blue-600">© 2023 Social2Amazon. All rights reserved.</p>
+        <p className="text-xs text-blue-600">© 2024 Social2Amazon. All rights reserved.</p>
         <nav className="sm:ml-auto flex gap-4 sm:gap-6">
           <Link className="text-xs hover:underline underline-offset-4 text-blue-600" to="#">
             Terms of Service
