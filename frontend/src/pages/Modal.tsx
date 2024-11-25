@@ -1,4 +1,5 @@
 import React from "react";
+import { useState } from "react";
 
 type ProductModalProps = {
     product: {
@@ -14,7 +15,15 @@ type ProductModalProps = {
     };
     onClose: () => void;
 };
+
+
 const Modal = ({ product, onClose }: ProductModalProps) => {
+    const [selectedImage, setSelectedImage] = useState(product.images_list[0]);
+
+    const handleImageClick = (image) => {
+        setSelectedImage(image); // Update the selected image
+    };
+
     return (
         <>
 
@@ -2883,13 +2892,14 @@ const Modal = ({ product, onClose }: ProductModalProps) => {
                                                                     product.images_list.map((image, index) => (
                                                                         <li
                                                                             key={index}
-                                                                            className="a-spacing-small item imageThumbnail a-declarative"
+                                                                            className="a-spacing-small item imageThumbnail option-img a-declarative"
                                                                             data-ux-click=""
                                                                             data-csa-c-type="uxElement"
                                                                             data-csa-c-element-type="navigational"
                                                                             data-csa-c-action="image-block-alt-image-hover"
                                                                             data-csa-c-posy={index + 1}
                                                                             data-csa-c-id={`fp6ns9-s58ntf-r9zmo0-${index}`}
+                                                                            onClick={() => handleImageClick(image)} // Change main image on click
                                                                         >
                                                                             <span className="a-list-item">
                                                                                 <span className="a-button a-button-thumbnail a-button-toggle">
@@ -3769,13 +3779,12 @@ const Modal = ({ product, onClose }: ProductModalProps) => {
                                                                                     data-ux-click=""
                                                                                     data-csa-c-id="8iq1w7-ba9nx2-da0sem-qox1rl"
                                                                                 >
-                                                                                    <div className="d-flex flex-wrap gap-2">
+                                                                                    <div className="d-flex flex-wrap main-img gap-2">
                                                                                         {product.images_list.length > 0 ? (
-                                                                                            // Render only the first image
                                                                                             <img
                                                                                                 key={0}
-                                                                                                src={`${import.meta.env.VITE_BASE_PATH}${product.images_list[0]}`}
-                                                                                                alt="Product 1"
+                                                                                                src={`${import.meta.env.VITE_BASE_PATH}${selectedImage}`}
+                                                                                                alt="Main Product Image"
                                                                                                 className="img-thumbnail"
                                                                                                 style={{ height: "auto" }}
                                                                                             />
@@ -5626,7 +5635,7 @@ const Modal = ({ product, onClose }: ProductModalProps) => {
                                                                     </div>
 
                                                                 </div>
-                                                                
+
                                                                 <hr
                                                                     aria-hidden="true"
                                                                     className="a-spacing-base a-spacing-top-base a-divider-normal"
@@ -5638,7 +5647,7 @@ const Modal = ({ product, onClose }: ProductModalProps) => {
                                                                 <ul className="a-unordered-list a-vertical a-spacing-small">
                                                                     <li>
                                                                         <span className="a-list-item a-size-base a-color-base">
-                                                                        {product.about_this_item || "No details available."}
+                                                                            {product.about_this_item || "No details available."}
                                                                         </span>
                                                                     </li>
                                                                 </ul>
@@ -6176,7 +6185,7 @@ const Modal = ({ product, onClose }: ProductModalProps) => {
                                                                                                                         </span>
                                                                                                                         <span aria-hidden="true">
                                                                                                                             <span className="a-price-symbol">
-                                                                                                                                
+
                                                                                                                             </span>
                                                                                                                             <span className="a-price-whole">
                                                                                                                                 {product.price || "Price Not Available"}
@@ -8134,7 +8143,7 @@ const Modal = ({ product, onClose }: ProductModalProps) => {
                                                                                                                                 title="Add to Shopping Cart"
                                                                                                                                 data-hover="Select <b>__dims__</b> from the left<br> to add to Shopping Cart"
                                                                                                                                 data-ref=""
-                                                                                                                                className="a-button-input attach-dss-atc"
+                                                                                                                                className="my-0 py-2"
                                                                                                                                 type="button"
                                                                                                                                 formAction="/cart/add-to-cart/ref=dp_start-bbf_1_glance"
                                                                                                                                 defaultValue="Add to Cart"
@@ -8209,7 +8218,7 @@ const Modal = ({ product, onClose }: ProductModalProps) => {
                                                                                                                                 name="submit.buy-now"
                                                                                                                                 title="Buy Now"
                                                                                                                                 data-hover="Select <b>__dims__</b> from the left<br> to Buy"
-                                                                                                                                className="a-button-input"
+                                                                                                                                style={{}}
                                                                                                                                 type="submit"
                                                                                                                                 aria-labelledby="submit.buy-now-announce"
                                                                                                                             />
@@ -9644,7 +9653,7 @@ const Modal = ({ product, onClose }: ProductModalProps) => {
                                     >
                                         <div className="aplus-module-wrapper aplus-3p-fixed-width">
                                             <p style={{ fontSize: "large" }}>
-                                            {product.product_description || "No description available."}
+                                                {product.product_description || "No description available."}
                                             </p>
                                         </div>
                                     </div>
