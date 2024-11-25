@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from .serializers import ConnectedSocialMediaSerializer, ProductListingsSerializer
 from .Social2Amazon import Social2Amazon
 from .InstaFetcher import InstaFetcher
+import backend.settings as settings
 
 post_data = [
     {
@@ -144,8 +145,9 @@ class FetchInstagramPostAPI(APIView):
                         "message": "Please provide a valid Instagram username"
                     })
                 else:
-                    fetcher = InstaFetcher()
-                    post_links = fetcher.fetch(username)
+                    RAPIDAPI_KEY = settings.RAPIDAPI_KEY
+                    fetcher = InstaFetcher(RAPIDAPI_KEY)
+                    post_links = fetcher.get_user_posts(username)
                     return Response({
                         "message": "Posts fetched successfully",
                         "post_links": post_links
@@ -176,11 +178,15 @@ class Social2AmazonAPI(APIView):
                     "message": "Please connect your social media accounts"
                 })
             else:
-                social2amazon = Social2Amazon(GOOGLE_API_KEY="AIzaSyD9yTukD5YLJYm8r8d3nd0yNSF65Afb4JA")
+                GOOGLE_API_KEY = settings.GOOGLE_API_KEY
+                social2amazon = Social2Amazon(GOOGLE_API_KEY=GOOGLE_API_KEY)
                 product_data = social2amazon.process_post(insta_post_link)
+                product_title = product_data.get('product_title')
+                product_title_hash = hash(product_title)
                 ProductListings(
+                    product_id=product_title_hash,
                     images_list=product_data.get('images_list'),
-                    product_title=product_data.get('product_title'),
+                    product_title=product_title,
                     price=product_data.get('price'),
                     product_details=product_data.get('product_details'),
                     about_this_item=product_data.get('about this item'),

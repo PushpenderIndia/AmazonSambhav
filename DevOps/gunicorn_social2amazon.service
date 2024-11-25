@@ -5,12 +5,12 @@ After=network.target
 [Service]
 User=root
 Group=www-data
-WorkingDirectory=/root/AmazonSambhav/backend
-ExecStart=/root/AmazonSambhav/backend/venv/bin/gunicorn --access-logfile - --workers 10 --timeout 30 --bind unix:/run/gunicorn_social2amazon.sock backend.wsgi:application
-Environment="PATH=/root/AmazonSambhav/backend/venv/bin:/usr/local/bin:/usr/bin:/bin"
+WorkingDirectory=/var/www/AmazonSambhav/backend
+ExecStart=/var/www/AmazonSambhav/backend/venv/bin/gunicorn --access-logfile - --workers 10 --timeout 30 --bind unix:/run/gunicorn_social2amazon.sock backend.wsgi:application
+Environment="PATH=/var/www/AmazonSambhav/backend/venv/bin:/usr/local/bin:/usr/bin:/bin"
 Environment="PRODUCTION=True"
-# stderr_logfile = /root/AmazonSambhav/backend/logs/error.log
-# stdout_logfile = /root/AmazonSambhav/backend/logs/access.log
+# stderr_logfile = /var/www/AmazonSambhav/backend/logs/error.log
+# stdout_logfile = /var/www/AmazonSambhav/backend/logs/access.log
 
 [Install]
 WantedBy=multi-user.target

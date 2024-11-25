@@ -1,27 +1,55 @@
-import instaloader
+import requests
 
 class InstaFetcher:
-    loader = instaloader.Instaloader()
-    # username = "bdaaneelatatta"
-    # password = "neelatatta@123"
-    # loader.login(username, password)
+    def __init__(self, api_key: str):
+        """
+        Initialize the InstaFetcher with the provided API key.
+        
+        :param api_key: API key for authentication
+        """
+        self.api_url = "https://instagram-scraper-api3.p.rapidapi.com/user_posts"
+        self.api_host = "instagram-scraper-api3.p.rapidapi.com"
+        self.api_key = api_key
 
-    def fetch(self, username):
+    def get_user_posts(self, username: str, count: int = 5):
+        """
+        Fetch user posts from the Instagram API.
+        
+        :param username: Instagram username or ID
+        :param count: Number of posts to fetch (default is 5)
+        :return: JSON response from the API
+        """
+        headers = {
+            "x-rapidapi-host": self.api_host,
+            "x-rapidapi-key": self.api_key,
+        }
+        params = {
+            "username_or_id": username,
+            "count": count,
+        }
+
         try:
-            profile = instaloader.Profile.from_username(self.loader.context, username)
-            posts = profile.get_posts()
-            post_links = []
-            for i, post in enumerate(posts):
-                if i >= 5:
-                    break
-                post_url = f"https://www.instagram.com/p/{post.shortcode}/"
-                post_links.append(post_url)
-                print(f"Post {i+1}: {post_url}")
-            return post_links
-        except Exception as e:
+            response = requests.get(self.api_url, headers=headers, params=params)
+            response.raise_for_status()
+            all_data = response.json()
+            username = all_data["data"]["user"]["username"]
+            all_posts_data = all_data["data"]["items"]
+            posts = []
+            for post in all_posts_data:
+                post_code = post["code"]
+                posts.append(f"https://www.instagram.com/bata.india/p/{post_code}/")
+            return posts
+        except requests.exceptions.RequestException as e:
             print(f"An error occurred: {e}")
-            return e
+            return None
 
+# Example usage:
 if __name__ == "__main__":
-    fetcher = InstaFetcher()
-    fetcher.fetch("roshniwaliaa")
+    api_key = input("Enter your API key: ")
+    username = input("Enter the Instagram username: ")
+    
+    scraper = InstaFetcher(api_key)
+    posts = scraper.fetch(username)
+    
+    if posts:
+        print(posts)

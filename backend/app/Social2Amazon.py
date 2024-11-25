@@ -210,13 +210,10 @@ class Social2Amazon:
         """
         try:
             # Remove triple backticks if present
-            print("="*50)
-            print(response_text)
-            print("="*50)
             if "```json" in response_text:
-                sanitized_text = response_text.strip().split("```json")[1].strip("```")[0].strip()
+                sanitized_text = response_text.split("```json")[1].split("```")[0].strip()
             else:
-                sanitized_text = response_text.strip().split("```")[1].strip("```")[0].strip()
+                sanitized_text = response_text.split("```")[1].split("```")[0].strip()
             
             # Parse the sanitized text into JSON
             json_data = json.loads(sanitized_text)
@@ -297,9 +294,10 @@ The "product_details" field is dynamic, and its keys will vary depending on the 
 # Example usage
 if __name__ == "__main__":
     url = input("Enter the Instagram post URL: ")
+    GOOGLE_API_KEY = input("Enter your Google API key: ")
     import shutil
     shutil.rmtree('insta', ignore_errors=True)
-    processor = Social2Amazon(GOOGLE_API_KEY="AIzaSyD9yTukD5YLJYm8r8d3nd0yNSF65Afb4JA")
+    processor = Social2Amazon(GOOGLE_API_KEY=GOOGLE_API_KEY)
     results = processor.process_post(url)
     print("\nProcessing complete. Results:")
     print(results)
