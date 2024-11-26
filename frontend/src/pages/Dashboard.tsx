@@ -8,6 +8,22 @@ const Dashboard: React.FC = () => {
     const [error, setError] = useState(null); // State to handle errors
     const [profile_img, setProfileImg] = useState(null); // State to store the profile image
 
+    // State to track whether the window is maximized or not
+    const [isMaximized, setIsMaximized] = useState<boolean>(false);
+
+    // Handle the button click to toggle the maximize state
+    const handleMaximizeClick = () => {
+        if (isMaximized) {
+          document.exitFullscreen();
+        } else {
+          const elem = document.documentElement;
+          if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+          }
+        }
+        setIsMaximized((prevState) => !prevState);
+    };
+
     // Function to fetch user data.
     const getUsername = async () => {
         try {
@@ -129,9 +145,9 @@ const Dashboard: React.FC = () => {
                                         </div>
                                     </div>
                                     <div className="header-grid">
-                                        <div className="header-item button-zoom-maximize">
+                                        <div className="header-item button-zoom-maximize" onClick={handleMaximizeClick}>
                                             <div className="">
-                                                <i className="icon-maximize"></i>
+                                                <i className={`icon-maximize ${isMaximized ? 'maximized' : ''}`}></i>
                                             </div>
                                         </div>
                                         <div className="popup-wrap user type-header">
