@@ -4,18 +4,16 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ArrowRight, CheckCircle, Facebook, Instagram, Twitter, ShoppingCart, Zap, Globe, BarChart } from 'lucide-react'
 import { Link } from 'react-router-dom';
-import { SignedIn, SignedOut, useAuth, useClerk } from "@clerk/clerk-react";
+import { SignedIn, SignedOut, useAuth } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
 
 const Home: React.FC = () => {
   // const { isLoaded, getToken, signOut } = useAuth();
   const { signOut } = useAuth();
 
-  const { openSignIn } = useClerk();  // Destructure openSignIn function
-
   // Trigger sign-in flow on button click
   const handleGetStarted = () => {
-    openSignIn();  // This will open the Clerk sign-in modal
+    navigate("/dashboard"); // Redirect to /dashboard route
   };
 
   // Handle Sign Out
