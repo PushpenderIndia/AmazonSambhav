@@ -314,7 +314,7 @@ const LinkSocialMedia: React.FC = () => {
     // Handle form submission
     const handleFormSubmit = async () => {
         try {
-            // Get the authorization token
+            // Get the authorization token.
             const token = await getToken();
 
             // Send the request using fetch and include the token in the headers
