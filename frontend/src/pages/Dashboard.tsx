@@ -3,7 +3,7 @@ import { useAuth } from "@clerk/clerk-react";
 import { Link } from 'react-router-dom';
 
 const Dashboard: React.FC = () => {
-    const { isLoaded, getToken } = useAuth();
+    const { isLoaded, getToken, signOut } = useAuth();
     const [helloUser, setHelloUser] = useState(""); // State to store the hello user message
     const [error, setError] = useState(null); // State to handle errors
     const [profile_img, setProfileImg] = useState(null); // State to store the profile image
@@ -175,11 +175,11 @@ const Dashboard: React.FC = () => {
                                                         </Link>
                                                     </li>
                                                     <li>
-                                                        <Link to="login.html" className="user-item">
+                                                        <Link to="#" className="user-item">
                                                             <div className="icon">
                                                                 <i className="icon-log-out"></i>
                                                             </div>
-                                                            <div className="body-title-2">Log out</div>
+                                                            <div className="body-title-2" onClick={() => signOut()}>Log out</div>
                                                         </Link>
                                                     </li>
                                                 </ul>
