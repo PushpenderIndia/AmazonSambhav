@@ -1,5 +1,3 @@
-import React from "react";
-
 type ProductModalProps = {
   product: {
     product_id: string;

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useAuth } from "@clerk/clerk-react";
 import Modal from "./Modal";
 // Define the type for the product data
@@ -20,7 +19,7 @@ const LinkSocialMedia: React.FC = () => {
     const { isLoaded, getToken } = useAuth();
 
     const [helloUser, setHelloUser] = useState(""); // State to store the hello user message
-    const [error, setError] = useState(null); // State to handle errors
+    const [error, setError] = useState<string | null>(null);
     const [profile_img, setProfileImg] = useState(null); // State to store the profile image
 
     // Function to fetch user data
@@ -275,42 +274,42 @@ const LinkSocialMedia: React.FC = () => {
         });
     };
 
-    // Handle product details changes (for nested object properties)
-    const handleProductDetailsChange = (key: string, value: string) => {
-        setFormData({
-            ...formData,
-            product_details: {
-                ...formData.product_details,
-                [key]: value,
-            },
-        });
-    };
+    // // Handle product details changes (for nested object properties)
+    // const handleProductDetailsChange = (key: string, value: string) => {
+    //     setFormData({
+    //         ...formData,
+    //         product_details: {
+    //             ...formData.product_details,
+    //             [key]: value,
+    //         },
+    //     });
+    // };
 
-    // Handle adding/removing images
-    const handleAddImage = () => {
-        setFormData({
-            ...formData,
-            images_list: [...formData.images_list, ""],
-        });
-    };
+    // // Handle adding/removing images
+    // const handleAddImage = () => {
+    //     setFormData({
+    //         ...formData,
+    //         images_list: [...formData.images_list, ""],
+    //     });
+    // };
 
-    const handleRemoveImage = (index: number) => {
-        const updatedImagesList = formData.images_list.filter((_, i) => i !== index);
-        setFormData({
-            ...formData,
-            images_list: updatedImagesList,
-        });
-    };
+    // const handleRemoveImage = (index: number) => {
+    //     const updatedImagesList = formData.images_list.filter((_, i) => i !== index);
+    //     setFormData({
+    //         ...formData,
+    //         images_list: updatedImagesList,
+    //     });
+    // };
 
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
-        const updatedImagesList = formData.images_list.map((image, i) =>
-            i === index ? e.target.value : image
-        );
-        setFormData({
-            ...formData,
-            images_list: updatedImagesList,
-        });
-    };
+    // const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+    //     const updatedImagesList = formData.images_list.map((image, i) =>
+    //         i === index ? e.target.value : image
+    //     );
+    //     setFormData({
+    //         ...formData,
+    //         images_list: updatedImagesList,
+    //     });
+    // };
 
     // Handle form submission
     const handleFormSubmit = async () => {
@@ -626,7 +625,9 @@ const LinkSocialMedia: React.FC = () => {
                                                                 <div className="modal-dialog">
                                                                     <div className="modal-content">
                                                                         <div className="modal-header">
-                                                                            <h5 className="modal-title">Connect {selectedPlatform?.charAt(0).toUpperCase() + selectedPlatform?.slice(1)} Account</h5>
+                                                                            <h5 className="modal-title">
+                                                                                Connect {selectedPlatform ? selectedPlatform.charAt(0).toUpperCase() + selectedPlatform.slice(1) : ''} Account
+                                                                            </h5>
                                                                             <button type="button" className="btn-close" onClick={() => setIsModalOpen(false)}></button>
                                                                         </div>
                                                                         <div className="modal-body">

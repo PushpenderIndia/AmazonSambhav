@@ -1,4 +1,3 @@
-import React from "react";
 import { useState } from "react";
 
 type ProductModalProps = {
@@ -16,12 +15,11 @@ type ProductModalProps = {
     onClose: () => void;
 };
 
-
-const Modal = ({ product, onClose }: ProductModalProps) => {
+const Modal = ({ product }: ProductModalProps) => {
     const [selectedImage, setSelectedImage] = useState(product.images_list[0]);
 
-    const handleImageClick = (image) => {
-        setSelectedImage(image); // Update the selected image
+    const handleImageClick = (image: string) => {
+        setSelectedImage(image);
     };
 
     return (
