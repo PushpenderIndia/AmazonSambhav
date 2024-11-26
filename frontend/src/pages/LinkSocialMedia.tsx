@@ -133,7 +133,7 @@ const LinkSocialMedia: React.FC = () => {
     const renderCard = (platform: string, link: string) => {
         const truncateLink = (link: string, maxLength: number) => {
             // Remove 'https://' or 'http://' prefix and truncate
-            const cleanLink = link.replace(/^https?:\/\//, "");
+            const cleanLink = link.replace(/^https?:\/\//, "").replace("www.", "").replace("instagram.com/", "@").replace("facebook.com/", "@").replace("tiktok.com/", "@");
             return cleanLink.length > maxLength
                 ? `${cleanLink.slice(0, maxLength)}...`
                 : cleanLink;
@@ -171,10 +171,10 @@ const LinkSocialMedia: React.FC = () => {
                                     rel="noopener noreferrer"
                                 >
                                     <span className="d-none d-lg-inline">
-                                        {truncateLink(link, 10)} {/* For large screens */}
+                                        {truncateLink(link, 20)} {/* For large screens */}
                                     </span>
                                     <span className="d-lg-none">
-                                        {truncateLink(link, 5)} {/* For small screens */}
+                                        {truncateLink(link, 15)} {/* For small screens */}
                                     </span>
                                 </a>
                             </p>
