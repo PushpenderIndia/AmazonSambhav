@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "@clerk/clerk-react";
+import { Link } from 'react-router-dom';
 
 const Dashboard: React.FC = () => {
     const { isLoaded, getToken } = useAuth();
@@ -94,9 +95,9 @@ const Dashboard: React.FC = () => {
                         {/* preload section-menu-left  */}
                         <div className="section-menu-left">
                             <div className="box-logo">
-                                <a href="index.html" id="site-logo-inner">
-                                    <img className="logo" src="public\images\logo\logo.png" alt="" />
-                                </a>
+                                <Link to="index.html" id="site-logo-inner">
+                                    <img className="logo" src="images\logo\logo.png" alt="" />
+                                </Link>
                                 <div className="button-show-hide">
                                     <i className="icon-menu-left"></i>
                                 </div>
@@ -105,16 +106,16 @@ const Dashboard: React.FC = () => {
                                 <div className="center-item">
                                     <ul className="menu-list">
                                         <li className="menu-item">
-                                            <a href="/dashboard" className="menu-item-button">
+                                            <Link to="/dashboard" className="menu-item-button">
                                                 <div className="icon"><i className="icon-grid"></i></div>
                                                 <div className="text">Dashboard</div>
-                                            </a>
+                                            </Link>
                                         </li>
                                         <li className="menu-item">
-                                            <a href="/linksocialmedia" className="">
+                                            <Link to="/linksocialmedia" className="">
                                                 <div className="icon"><i className="icon-image"></i></div>
                                                 <div className="text">Link Social Media</div>
-                                            </a>
+                                            </Link>
                                         </li>
                                     </ul>
                                 </div>
@@ -128,9 +129,9 @@ const Dashboard: React.FC = () => {
                             <div className="header-dashboard">
                                 <div className="wrap">
                                     <div className="header-left">
-                                        <a href="index.html">
+                                        <Link to="index.html">
                                             <img className="logo"  src="images/logo/logo.png" />
-                                        </a>
+                                        </Link>
                                         <div className="button-show-hide">
                                             <i className="icon-menu-left"></i>
                                         </div>
@@ -158,20 +159,20 @@ const Dashboard: React.FC = () => {
                                                 </button>
                                                 <ul className="dropdown-menu dropdown-menu-end has-content" aria-labelledby="dropdownMenuButton3" >
                                                     <li>
-                                                        <a href="#" className="user-item">
+                                                        <Link to="#" className="user-item">
                                                             <div className="icon">
                                                                 <i className="icon-user"></i>
                                                             </div>
                                                             <div className="body-title-2">Account</div>
-                                                        </a>
+                                                        </Link>
                                                     </li>
                                                     <li>
-                                                        <a href="login.html" className="user-item">
+                                                        <Link to="login.html" className="user-item">
                                                             <div className="icon">
                                                                 <i className="icon-log-out"></i>
                                                             </div>
                                                             <div className="body-title-2">Log out</div>
-                                                        </a>
+                                                        </Link>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -267,7 +268,7 @@ const Dashboard: React.FC = () => {
                                     <div className="bottom-page">
                                         <div className="body-text">Made with LOVE </div>
                                         <i className="icon-heart"></i>
-                                        <div className="body-text">by <a href="">Team Malaai</a> All rights reserved.</div>
+                                        <div className="body-text">by <Link to="https://github.com/PushpenderIndia/AmazonSambhav">Team Malaai</Link> All rights reserved.</div>
                                     </div>
                                     {/* bottom-page  */}
                                 </div>
