@@ -45,7 +45,7 @@ const Dashboard: React.FC = () => {
         connected_social_media: "Loading...",
     });
 
-    // Function to fetch dashboard stats
+    // Function to fetch dashboard stats.
     const fetchDashboardStats = async () => {
         try {
             const token = await getToken();
