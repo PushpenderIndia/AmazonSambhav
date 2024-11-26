@@ -11,7 +11,7 @@ function App() {
       {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${token}`, // Replace 'YOUR_AUTH_TOKEN' with the actual JWT token
+          Authorization: `Bearer ${token}`, 
           "Content-Type": "application/json",
         },
       }
