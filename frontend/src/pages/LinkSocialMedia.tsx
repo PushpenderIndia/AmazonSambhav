@@ -17,7 +17,7 @@ type ProductData = {
 };
 const LinkSocialMedia: React.FC = () => {
     // Code for Social media connection : start
-    const { isLoaded, getToken } = useAuth();
+    const { isLoaded, getToken, signOut } = useAuth();
 
     const [helloUser, setHelloUser] = useState(""); // State to store the hello user message
     const [error, setError] = useState<string | null>(null);
@@ -565,11 +565,11 @@ const LinkSocialMedia: React.FC = () => {
                                                         </Link>
                                                     </li>
                                                     <li>
-                                                        <Link to="login.html" className="user-item">
+                                                        <Link to="#" className="user-item">
                                                             <div className="icon">
                                                                 <i className="icon-log-out"></i>
                                                             </div>
-                                                            <div className="body-title-2">Log out</div>
+                                                            <div className="body-title-2" onClick={() => signOut()}>Log out</div>
                                                         </Link>
                                                     </li>
                                                 </ul>
