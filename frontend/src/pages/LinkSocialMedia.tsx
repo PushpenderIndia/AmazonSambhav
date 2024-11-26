@@ -503,6 +503,12 @@ const LinkSocialMedia: React.FC = () => {
                             <div className="center">
                                 <div className="center-item">
                                     <ul className="menu-list">
+                                    <li className="menu-item">
+                                            <Link to="/" className="menu-item-button">
+                                                <div className="icon"><i className="icon-home"></i></div>
+                                                <div className="text">Home</div>
+                                            </Link>
+                                        </li>
                                         <li className="menu-item">
                                             <Link to="/dashboard" className="menu-item-button">
                                                 <div className="icon"><i className="icon-grid"></i></div>
