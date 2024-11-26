@@ -928,7 +928,7 @@ const LinkSocialMedia: React.FC = () => {
                                                                             {product.product_title || "Unknown Product"}
                                                                         </h5>
                                                                         <p className="card-text">
-                                                                            Price: {product.price ? `₹${product.price}` : "N/A"}
+                                                                            Price: {product.price ? product.price : "N/A"}
                                                                         </p>
                                                                         <p className="card-text">
                                                                             Brand: {product.product_details?.Brand || "N/A"}
