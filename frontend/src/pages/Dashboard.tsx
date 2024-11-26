@@ -8,7 +8,7 @@ const Dashboard: React.FC = () => {
     const [error, setError] = useState(null); // State to handle errors
     const [profile_img, setProfileImg] = useState(null); // State to store the profile image
 
-    // Function to fetch user data
+    // Function to fetch user data.
     const getUsername = async () => {
         try {
             const token = await getToken();
