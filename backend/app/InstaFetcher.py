@@ -40,13 +40,17 @@ class InstaFetcher:
             for post in all_posts_data:
                 post_code = post["code"]
                 if post["is_video"] == False:
-                    video_list = []
-                    images_data = post["image_versions"]["items"]
-                    for image in images_data:
-                        video_list.append(image["url"])
+                    images_list = []
+                    if "carousel_media" not in post:
+                        images_list.append(post["image_versions"]["items"][0]["url"])
+                    else:
+                        images_data = post["carousel_media"]
+                        for image in images_data:
+                            images_list.append(image["image_versions"]["items"][0]["url"])
+                            
                     posts.append({
                         "post_link": f"https://www.instagram.com/{username}/p/{post_code}/",
-                        "image_url": video_list,
+                        "image_url": images_list,
                         "description": post["caption"]["text"],
                     })
             return posts
