@@ -13,7 +13,7 @@ const Dashboard: React.FC = () => {
         try {
             const token = await getToken();
             const response = await fetch(
-                `${import.meta.env.VITE_BACKEND_API_URL}/profile_data`,
+                `${import.meta.env.VITE_BACKEND_API_URL}/api/profile_data`,
                 {
                     method: "GET",
                     headers: {
@@ -84,15 +84,7 @@ const Dashboard: React.FC = () => {
             <div id="wrapper">
 
                 <div id="page" className="">
-                    {/* layout-wrap  */}
                     <div className="layout-wrap">
-                        {/* preload  */}
-                        {/* <div id="preload" className="preload-container">
-                        <div className="preloading">
-                            <span></span>
-                        </div>
-                    </div>  */}
-                        {/* preload section-menu-left  */}
                         <div className="section-menu-left">
                             <div className="box-logo">
                                 <Link to="index.html" id="site-logo-inner">

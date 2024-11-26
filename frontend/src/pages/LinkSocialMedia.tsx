@@ -275,43 +275,6 @@ const LinkSocialMedia: React.FC = () => {
         });
     };
 
-    // // Handle product details changes (for nested object properties)
-    // const handleProductDetailsChange = (key: string, value: string) => {
-    //     setFormData({
-    //         ...formData,
-    //         product_details: {
-    //             ...formData.product_details,
-    //             [key]: value,
-    //         },
-    //     });
-    // };
-
-    // // Handle adding/removing images
-    // const handleAddImage = () => {
-    //     setFormData({
-    //         ...formData,
-    //         images_list: [...formData.images_list, ""],
-    //     });
-    // };
-
-    // const handleRemoveImage = (index: number) => {
-    //     const updatedImagesList = formData.images_list.filter((_, i) => i !== index);
-    //     setFormData({
-    //         ...formData,
-    //         images_list: updatedImagesList,
-    //     });
-    // };
-
-    // const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
-    //     const updatedImagesList = formData.images_list.map((image, i) =>
-    //         i === index ? e.target.value : image
-    //     );
-    //     setFormData({
-    //         ...formData,
-    //         images_list: updatedImagesList,
-    //     });
-    // };
-
     // Handle form submission
     const handleFormSubmit = async () => {
         try {

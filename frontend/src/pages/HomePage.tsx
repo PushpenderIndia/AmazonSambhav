@@ -30,22 +30,6 @@ const Home: React.FC = () => {
     navigate("/dashboard"); // Redirect to /dashboard route
   };
 
-  // const getAllPosts = async () => {
-  //   const token = await getToken();
-  //   const response = await fetch(
-  //     `${import.meta.env.VITE_BACKEND_API_URL}/posts`,
-  //     {
-  //       method: "GET",
-  //       headers: {
-  //         Authorization: `Bearer ${token}`, // Replace 'YOUR_AUTH_TOKEN' with the actual JWT token
-  //         "Content-Type": "application/json",
-  //       },
-  //     }
-  //   );
-  //   const data = await response.json();
-  //   console.log(data);
-  // };
-
   return (
     <div className="flex flex-col min-h-screen bg-white text-blue-900">
       <header className="px-4 lg:px-6 h-14 flex items-center border-b border-blue-200">

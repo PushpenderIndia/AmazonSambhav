@@ -24,30 +24,13 @@ const Modal = ({ product }: ProductModalProps) => {
 
     return (
         <>
-
-            {/* sp:feature:head-start */}
             <meta charSet="utf-8" />
-            {/* sp:end-feature:head-start */}
-            {/* sp:feature:csm:head-open-part1 */}
-            {/* sp:end-feature:csm:head-open-part1 */}
-            {/* sp:feature:cs-optimization */}
             <meta httpEquiv="x-dns-prefetch-control" content="on" />
             <link rel="stylesheet" href="/style.css" />
-            {/* htmlBeginMarker */}
-            {/*&&&Portal&Delimite*/}
-            {/*&&&Portal&Delimiter&&&*/}
-            {/* sp:end-feature:host-assets */}
-            {/* sp:feature:encrypted-slate-token */}
             <meta
                 name="encrypted-slate-token"
                 content="AnYx82xy1x7yuO5f19iAHnNiCPSB/+puixjzZkLdSBlpps2FuStJX/4tq/PC6RO/sjP+idPPLiIKHnaI052/oxmMRYHa2MALSu2Wx869Pk6WOcBTYkMEV8aNqv9tNB5MtDaiNWeHRj8t1OxisnQUGYkMUduaX2BU+EHeQtzvx4XXwTQkdUJAUO1PhWEmY2Z/OrQF/Zhz4C4MbDixEGyFs2EmS9LjCU8llNj1Uag5grFzNb+Qj9bULnWVlRpmntbfKhVxSTMzb8/kAhIjrr+C"
             />
-            {/* sp:end-feature:encrypted-slate-token */}
-            {/* sp:feature:csm:head-close */}
-            {/* sp:end-feature:csm:head-close */}
-            {/* sp:feature:head-close */}
-            {/* sp:end-feature:head-close */}
-            {/* sp:feature:start-body */}
             <div id="ap_container" />
             <iframe
                 frameBorder={0}
@@ -86,23 +69,11 @@ const Modal = ({ product }: ProductModalProps) => {
                 }}
             />
             <div id="a-page">
-                {/* sp:end-feature:start-body */}
-                {/* sp:feature:csm:body-open */}
-                {/* sp:end-feature:csm:body-open */}
-                {/* sp:feature:nav-inline-js */}
-                {/* NAVYAAN JS */}
                 <img
                     src="https://m.media-amazon.com/images/G/31/gno/sprites/nav-sprite-global-1x-reorg-privacy._CB541718031_.png"
                     style={{ display: "none" }}
                     alt=""
                 />
-                {/* sp:end-feature:nav-inline-js */}
-                {/* sp:feature:nav-skeleton */}
-                {/* sp:end-feature:nav-skeleton */}
-                {/* sp:feature:navbar */}
-                {/*Pilu */}
-                {/* NAVYAAN */}
-                {/* navmet initial definition */}
                 <noscript></noscript>
                 <a id="nav-top" />
                 <header
