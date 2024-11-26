@@ -416,7 +416,12 @@ const LinkSocialMedia: React.FC = () => {
     // Code for viewing previous listing : end
 
     // Code for adding data in the databse
-    const [instagramLinks, setInstagramLinks] = useState([]);
+    type InstagramPost = {
+        post_link: string;
+        image_url: string[];
+        description: string;
+    };
+    const [instagramLinks, setInstagramLinks] = useState<InstagramPost[]>([]);
     const [loadingPosts, setLoadingPosts] = useState(false);
     const [convertingLink, setConvertingLink] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -453,7 +458,7 @@ const LinkSocialMedia: React.FC = () => {
         }
     };
 
-    const convertToProductListing = async (post_link: string, image_url: string[], description: string) => {
+    const convertToProductListing = async (post_link: string |null, image_url: string[], description: string) => {
         setConvertingLink(post_link);
         setError(null);
         setSuccessMessage(null);
@@ -860,7 +865,7 @@ const LinkSocialMedia: React.FC = () => {
                                                                         }}
                                                                     >
                                                                         {/* Pass productData to Modal component */}
-                                                                        <Modal product={productData} onClose={() => setIsPreviewModalOpen(false)} />
+                                                                        <Modal product={productData || {product_id: "",created_at: "",images_list: [],product_title: "",price: "",product_details: {},about_this_item: "",product_description: "",approved: false,}}onClose={() => setIsPreviewModalOpen(false)}/>
                                                                     </div>
                                                                 </div>
                                                             </div>
