@@ -13,7 +13,7 @@ const Dashboard: React.FC = () => {
         try {
             const token = await getToken();
             const response = await fetch(
-                `${import.meta.env.VITE_BACKEND_API_URL}/api/profile_data`,
+                `${import.meta.env.VITE_BACKEND_API_URL}/profile_data`,
                 {
                     method: "GET",
                     headers: {
