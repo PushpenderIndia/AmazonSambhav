@@ -2,40 +2,40 @@ import React from 'react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { ArrowRight, CheckCircle, Facebook, Instagram, Twitter, ShoppingCart, Zap, Globe, BarChart } from 'lucide-react'
+import { ArrowRight, CheckCircle, Facebook, Instagram, Twitter, ShoppingCart, Zap, Globe, BarChart, Menu } from 'lucide-react'
 import { Link } from 'react-router-dom';
 import { SignedIn, SignedOut, useAuth } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
 
 const Home: React.FC = () => {
-  // const { isLoaded, getToken, signOut } = useAuth();
   const { signOut } = useAuth();
+  const navigate = useNavigate();
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
-  // Trigger sign-in flow on button click
   const handleGetStarted = () => {
     navigate("/dashboard"); // Redirect to /dashboard route
   };
 
-  // Handle Sign Out
   const handleSignOut = () => {
-    signOut(); // Sign out the user
+    signOut();
   };
 
-  const navigate = useNavigate(); // Initialize navigate
-
-  // Function to handle navigation to the dashboard
   const handleDashboardClick = () => {
-    navigate("/dashboard"); // Redirect to /dashboard route
+    navigate("/dashboard");
+  };
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
   };
 
   return (
     <div className="flex flex-col min-h-screen bg-white text-blue-900">
-      <header className="px-4 lg:px-6 h-14 flex items-center border-b border-blue-200">
+      <header className="px-4 lg:px-6 h-16 flex items-center border-b border-blue-200">
         <Link className="flex items-center justify-center" to="#">
           <ShoppingCart className="h-6 w-6 text-blue-600" />
           <span className="ml-2 text-xl font-bold text-blue-600">Social2Amazon</span>
         </Link>
-        <nav className="ml-auto flex gap-4 sm:gap-6">
+        <nav className={`ml-auto ${isMenuOpen ? 'flex' : 'hidden'} md:flex flex-col md:flex-row absolute md:relative top-16 md:top-0 left-0 right-0 bg-white md:bg-transparent z-50 md:z-auto gap-4 p-4 md:p-0 md:h-16 md:items-center`}>
           <Link className="text-sm font-medium hover:text-blue-600 hover:underline underline-offset-4" to="#features">
             Features
           </Link>
@@ -49,19 +49,20 @@ const Home: React.FC = () => {
             Contact
           </Link>
           <SignedIn>
-            {/* Render Sign Out button when signed in */}
             <Button onClick={handleSignOut} className="bg-red-600 text-white hover:bg-red-700">
               Sign Out
             </Button>
             <Button 
-              variant="outline" 
-              className="text-blue-600 border-blue-600 hover:bg-blue-50" 
-              onClick={handleDashboardClick} // Trigger navigation on click
+              className="bg-blue-600 text-white hover:bg-blue-700" 
+              onClick={handleDashboardClick}
             >
               Dashboard
             </Button>
           </SignedIn>
         </nav>
+        <Button className="ml-auto md:hidden h-10 w-10" variant="ghost" size="icon" onClick={toggleMenu}>
+          <Menu className="h-6 w-6" />
+        </Button>
       </header>
       <main className="flex-1">
         <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-blue-50">
@@ -75,7 +76,6 @@ const Home: React.FC = () => {
                   Automatically create Amazon listings from your social media profiles using AI. Streamline your e-commerce business today.
                 </p>
               </div>
-
               <SignedOut>
                 <div className="space-x-4">
                   <Button onClick={handleGetStarted} className="bg-blue-600 text-white hover:bg-blue-700">
@@ -90,7 +90,7 @@ const Home: React.FC = () => {
         <section id="features" className="w-full py-12 md:py-24 lg:py-32 bg-white">
           <div className="container px-4 md:px-6">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-center mb-12 text-blue-600">Features</h2>
-            <div className="grid gap-6 lg:grid-cols-3 lg:gap-12">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-12">
               <Card className="bg-blue-50 border-blue-200">
                 <CardHeader>
                   <Zap className="h-8 w-8 mb-2 text-blue-600" />
@@ -118,7 +118,7 @@ const Home: React.FC = () => {
         <section id="how-it-works" className="w-full py-12 md:py-24 lg:py-32 bg-blue-50">
           <div className="container px-4 md:px-6">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-center mb-12 text-blue-600">How It Works</h2>
-            <div className="grid gap-6 lg:grid-cols-3 lg:gap-12">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-12">
               <div className="flex flex-col items-center text-center">
                 <div className="mb-4 text-4xl font-bold text-blue-600">1</div>
                 <h3 className="text-xl font-bold mb-2 text-blue-800">Connect Your Profiles</h3>
@@ -147,7 +147,7 @@ const Home: React.FC = () => {
         <section className="w-full py-12 md:py-24 lg:py-32 bg-white">
           <div className="container px-4 md:px-6">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-center mb-12 text-blue-600">Testimonials</h2>
-            <div className="grid gap-6 lg:grid-cols-3 lg:gap-12">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-12">
               <Card className="bg-blue-50 border-blue-200">
                 <CardHeader>
                   <div className="flex items-center space-x-4">
@@ -205,7 +205,7 @@ const Home: React.FC = () => {
         <section id="pricing" className="w-full py-12 md:py-24 lg:py-32 bg-blue-50">
           <div className="container px-4 md:px-6">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-center mb-12 text-blue-600">Pricing Plans</h2>
-            <div className="grid gap-6 lg:grid-cols-3 lg:gap-12">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-12">
               <Card>
                 <CardHeader>
                   <CardTitle className="text-blue-600">Basic</CardTitle>
@@ -246,7 +246,8 @@ const Home: React.FC = () => {
                   <CardDescription>For large businesses</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-4xl font-bold mb-2 text-blue-600">Custom</div>
+                  <div className="text-4xl font-bold mb-2 text-blue-600">Custom
+</div>
                   <ul className="space-y-2">
                     <li className="flex items-center"><CheckCircle className="mr-2 h-4 w-4 text-blue-600" /> Unlimited Social Media Accounts</li>
                     <li className="flex items-center"><CheckCircle className="mr-2 h-4 w-4 text-blue-600" /> Unlimited Listings</li>
@@ -293,3 +294,4 @@ const Home: React.FC = () => {
 }
 
 export default Home
+
