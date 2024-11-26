@@ -37,7 +37,7 @@ const Dashboard: React.FC = () => {
         }
     };
 
-    //   Fetch Dashboard stats
+    // Fetch Dashboard stats
     const [dashboardStats, setDashboardStats] = useState({
         total_listings: "Loading...",
         approved_listings: "Loading...",
