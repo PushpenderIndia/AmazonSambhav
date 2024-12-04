@@ -9607,9 +9607,9 @@ const Modal = ({ product }: ProductModalProps) => {
                         >
                             <div id="aplus" className="a-section a-spacing-large bucket">
                                 <hr className="bucketDivider" />
-                                <div style={{ fontSize: "xx-large" }}>Product Description</div>
+                                <div className="mb-30" style={{ fontSize: "xx-large" }}>Product Description</div>
                                 <div
-                                    className="aplus-v2 desktop celwidget"
+                                    className=""
 
                                     data-csa-c-id="oelk5v-uuht24-tzeht5-y0rnm"
                                     data-cel-widget="aplus"
@@ -9621,10 +9621,16 @@ const Modal = ({ product }: ProductModalProps) => {
                                         data-cel-widget="aplus-3p-module-b"
                                     >
                                         <div className="aplus-module-wrapper aplus-3p-fixed-width">
-                                            <p style={{ fontSize: "large" }}>
-                                                {product.product_description || "No description available."}
-                                            </p>
+                                            <p
+                                                style={{ fontSize: "large" }}
+                                                dangerouslySetInnerHTML={{
+                                                    __html: product.product_description
+                                                        ? product.product_description.replace(/\.\s*/g, '.<br><br>')
+                                                        : "No description available.",
+                                                }}
+                                            ></p>
                                         </div>
+
                                     </div>
                                 </div>
                             </div>

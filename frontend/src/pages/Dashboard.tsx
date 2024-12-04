@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import { Link } from 'react-router-dom';
+import { Pie } from "react-chartjs-2";
+import {
+    Chart as ChartJS,
+    ArcElement,
+    Tooltip,
+    Legend,
+} from "chart.js";
+
+ChartJS.register(ArcElement, Tooltip, Legend);
+
 
 const Dashboard: React.FC = () => {
     const { isLoaded, getToken, signOut } = useAuth();
@@ -14,12 +24,12 @@ const Dashboard: React.FC = () => {
     // Handle the button click to toggle the maximize state
     const handleMaximizeClick = () => {
         if (isMaximized) {
-          document.exitFullscreen();
+            document.exitFullscreen();
         } else {
-          const elem = document.documentElement;
-          if (elem.requestFullscreen) {
-            elem.requestFullscreen();
-          }
+            const elem = document.documentElement;
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            }
         }
         setIsMaximized((prevState) => !prevState);
     };
@@ -58,7 +68,7 @@ const Dashboard: React.FC = () => {
         total_listings: "Loading...",
         approved_listings: "Loading...",
         disapproved_listings: "Loading...",
-        connected_social_media: "Loading...",
+        connected_social_media: 0,
     });
 
     // Function to fetch dashboard stats.
@@ -95,6 +105,35 @@ const Dashboard: React.FC = () => {
         }
     }, [isLoaded]);
 
+    // Data for the pie charts
+    const listingsChartData = {
+        labels: ["Approved Listings", "Disapproved Listings"],
+        datasets: [
+            {
+                data: [
+                    dashboardStats.approved_listings,
+                    dashboardStats.disapproved_listings,
+                ],
+                backgroundColor: ["#36A2EB", "#FF6384"],
+                hoverBackgroundColor: ["#36A2EB", "#FF6384"],
+            },
+        ],
+    };
+
+    const socialMediaChartData = {
+        labels: ["Connected", "Not Connected"],
+        datasets: [
+            {
+                data: [
+                    dashboardStats.connected_social_media||0,
+                    3 - dashboardStats.connected_social_media||0, // Assuming total is 3
+                ],
+                backgroundColor: ["#4BC0C0", "#FFCE56"],
+                hoverBackgroundColor: ["#4BC0C0", "#FFCE56"],
+            },
+        ],
+    };
+
     return (
         <>
             <div id="wrapper">
@@ -113,7 +152,7 @@ const Dashboard: React.FC = () => {
                             <div className="center">
                                 <div className="center-item">
                                     <ul className="menu-list">
-                                    <li className="menu-item">
+                                        <li className="menu-item">
                                             <Link to="/" className="menu-item-button">
                                                 <div className="icon"><i className="icon-home"></i></div>
                                                 <div className="text">Home</div>
@@ -144,7 +183,7 @@ const Dashboard: React.FC = () => {
                                 <div className="wrap">
                                     <div className="header-left">
                                         <Link to="index.html">
-                                            <img className="logo"  src="images/logo/logo.png" />
+                                            <img className="logo" src="images/logo/logo.png" />
                                         </Link>
                                         <div className="button-show-hide">
                                             <i className="icon-menu-left"></i>
@@ -272,7 +311,22 @@ const Dashboard: React.FC = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        
+
+                                        {/* Dashboard Stats Graph */}
+                                        <div className="wg-box mb-30">
+                                            {error && <p className="error">{error}</p>}
+                                            <div style={{ display: "flex", justifyContent: "space-evenly" }}>
+                                                <div style={{ width: "30%" }}>
+                                                    <h3>Listings Overview</h3>
+                                                    <Pie data={listingsChartData} />
+                                                </div>
+                                                <div style={{ width: "30%" }}>
+                                                    <h3>Social Media Connections</h3>
+                                                    <Pie data={socialMediaChartData} />
+                                                </div>
+                                            </div>
+                                        </div>
+
                                         {/* Recently viewed  */}
 
                                         {/* main-content-wrap  */}
