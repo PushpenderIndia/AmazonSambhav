@@ -7,6 +7,7 @@ from .serializers import ConnectedSocialMediaSerializer, ProductListingsSerializ
 from .Social2Amazon import Social2Amazon
 from .InstaFetcher import InstaFetcher
 from .FacebookFetcher import FacebookFetcher
+from .VideoFrameExtractor import VideoFrameExtractor
 import backend.settings as settings
 
 post_data = [
@@ -189,6 +190,24 @@ class FetchFaceBookPostAPI(APIView):
                         return Response({
                             "message": "Failed to fetch posts"
                         })
+
+class ConvertVideoToImagesAPI(APIView):
+    permission_classes = [ClerkAuthenticated]
+    def post(self, request):
+        video_url = request.data.get('video_url', '')
+        if not video_url:
+            return Response({
+                "message": "Please provide a valid video URL"
+            })
+        else:
+            extractor = VideoFrameExtractor(video_url)
+            frame_files = extractor.extract_frames()
+            get_quality = ImageQualityChecker(frame_files)
+            quality_images = get_quality.start()
+            return Response({
+                "message": "Video converted to images successfully",
+                "quality_images": quality_images
+            })
 
 class Social2AmazonAPI(APIView):
     permission_classes = [ClerkAuthenticated]
