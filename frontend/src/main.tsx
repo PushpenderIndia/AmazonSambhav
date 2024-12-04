@@ -5,10 +5,9 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/HomePage.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
 import LinkSocialMedia from "./pages/LinkSocialMedia.tsx";
-import PrivateRoute from "./PrivateRoute"; // Import the PrivateRoute component
+import PrivateRoute from "./PrivateRoute"; 
 import "./index.css";
 
-// Import your publishable key
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
 if (!PUBLISHABLE_KEY) {
