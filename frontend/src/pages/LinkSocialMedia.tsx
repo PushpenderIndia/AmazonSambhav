@@ -2,6 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import Modal from "./Modal";
 import { Link } from 'react-router-dom';
+import {
+    enable as enableDarkMode,
+    disable as disableDarkMode,
+    auto as followSystemColorScheme,
+    exportGeneratedCSS as collectCSS,
+    isEnabled as isDarkReaderEnabled,
+} from 'darkreader';
+
 // Define the type for the product data
 
 type ProductData = {
@@ -445,7 +453,7 @@ const LinkSocialMedia: React.FC = () => {
         description: string;
     };
     const [facebookLinks, setFacebookLinks] = useState<FacebookPost[]>([]);
-    const [loadingFBPosts, setFBLoadingPosts] = useState(false);  
+    const [loadingFBPosts, setFBLoadingPosts] = useState(false);
     const [errorFB, setFBError] = useState<string | null>(null);
     const [successFBMessage, setFBSuccessMessage] = useState<string | null>(null);
 
@@ -481,7 +489,7 @@ const LinkSocialMedia: React.FC = () => {
         }
     };
 
-    const convertToProductListing = async (post_link: string |null, image_url: string[], description: string) => {
+    const convertToProductListing = async (post_link: string | null, image_url: string[], description: string) => {
         setConvertingLink(post_link);
         setError(null);
         if (post_link?.includes("instagram")) {
@@ -528,6 +536,34 @@ const LinkSocialMedia: React.FC = () => {
             setConvertingLink(null);
         }
     };
+    // Dark mode function
+    const [darkMode, setDarkMode] = useState(false);
+    const [collectedCSS, setCollectedCSS] = useState('');
+
+
+    const toggleDarkMode = () => {
+        if (darkMode) {
+            enableDarkMode({
+                brightness: 100,
+                contrast: 90,
+                sepia: 10,
+            });
+        } else {
+            disableDarkMode();
+        }
+        setDarkMode(!darkMode);
+    };
+
+    const handleCollectCSS = async () => {
+        const css = await collectCSS();
+        setCollectedCSS(css); // Optionally, store the generated CSS
+        console.log(css); // Log or handle the generated CSS
+    };
+
+    const checkDarkModeStatus = () => {
+        const isEnabled = isDarkReaderEnabled();
+        console.log('Is Dark Mode enabled:', isEnabled);
+    };
 
     return (
         <>
@@ -545,7 +581,7 @@ const LinkSocialMedia: React.FC = () => {
                         {/* preload section-menu-left  */}
                         <div className="section-menu-left">
                             <div className="box-logo">
-                                <Link to="index.html" id="site-logo-inner">
+                                <Link to="#" id="site-logo-inner">
                                     <img className="logo" src="images\logo\logo.png" alt="" />
                                 </Link>
                                 <div className="button-show-hide">
@@ -591,6 +627,29 @@ const LinkSocialMedia: React.FC = () => {
                                         <div className="button-show-hide">
                                             <i className="icon-menu-left"></i>
                                         </div>
+                                    </div>
+                                    <div className="btn d-inline-flex align-items-center justify-content-center shadow-sm rounded-full">
+                                        <button onClick={toggleDarkMode}>
+                                            {darkMode ? (
+                                                <img
+                                                    src="https://cdn-icons-png.flaticon.com/256/4445/4445942.png"
+                                                    alt=""
+                                                    className="w-8 h-8 rounded-full"
+                                                />
+                                            ) : (
+                                                <img
+                                                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_xqmYro3MAiVCYxvtXyjyx_MC4VYmNKVRqQ&s"
+                                                    alt=""
+                                                    className="w-8 h-8 rounded-full"
+                                                />
+                                            )}
+                                        </button>
+
+                                        <button onClick={handleCollectCSS}></button>
+                                        <button onClick={checkDarkModeStatus}></button>
+
+                                        {/* Optionally display the collected CSS */}
+                                        {/* <pre>{collectedCSS}</pre> */}
                                     </div>
                                     <div className="header-grid">
                                         <div className="header-item button-zoom-maximize" onClick={handleMaximizeClick}>
@@ -696,11 +755,12 @@ const LinkSocialMedia: React.FC = () => {
                                                     </div>
                                                 </div>
                                             </div>
-                                            
+
                                             {/* Add insta posts to database */}
                                             <div className="wg-box mb-30">
-                                                <h1 className="text-lg font-bold text-center mb-6">
-                                                    Convert Instagram Posts to Product Listings
+                                                <h1 className="text-lg font-bold text-center mb-6 flex items-center justify-center space-x-3">
+                                                    <img className="h-20 w-20" src="https://static.vecteezy.com/system/resources/previews/042/148/632/non_2x/instagram-logo-instagram-social-media-icon-free-png.png" alt="Facebook Logo" />
+                                                    <span>Convert Instagram Posts to Product Listings</span>
                                                 </h1>
 
                                                 <button
@@ -742,8 +802,8 @@ const LinkSocialMedia: React.FC = () => {
                                                                     <td className="border border-gray-300 px-4 py-2 text-center">
                                                                         <button
                                                                             className={`btn btn-primary ${convertingLink === post.post_link
-                                                                                    ? "opacity-50 cursor-not-allowed"
-                                                                                    : ""
+                                                                                ? "opacity-50 cursor-not-allowed"
+                                                                                : ""
                                                                                 }`}
                                                                             onClick={() => convertToProductListing(post.post_link, post.image_url, post.description)}
                                                                             disabled={convertingLink === post.post_link}
@@ -764,9 +824,11 @@ const LinkSocialMedia: React.FC = () => {
 
                                             {/* Facebook to Amazon */}
                                             <div className="wg-box mb-30">
-                                                <h1 className="text-lg font-bold text-center mb-6">
-                                                    Convert Facebook Posts to Product Listings
+                                                <h1 className="text-lg font-bold text-center mb-6 flex items-center justify-center space-x-3">
+                                                    <img className="h-20 w-20" src="https://www.logo.wine/a/logo/Facebook/Facebook-f_Logo-Blue-Logo.wine.svg" alt="Facebook Logo" />
+                                                    <span>Convert Facebook Posts to Product Listings</span>
                                                 </h1>
+
 
                                                 <button
                                                     className={`btn btn-primary w-full mb-4 ${loadingFBPosts ? "opacity-50 cursor-not-allowed" : ""}`}
@@ -806,11 +868,10 @@ const LinkSocialMedia: React.FC = () => {
                                                                     </td>
                                                                     <td className="border border-gray-300 px-4 py-2 text-center">
                                                                         <button
-                                                                            className={`btn btn-primary ${
-                                                                                convertingLink === post.post_link
-                                                                                    ? "opacity-50 cursor-not-allowed"
-                                                                                    : ""
-                                                                            }`}
+                                                                            className={`btn btn-primary ${convertingLink === post.post_link
+                                                                                ? "opacity-50 cursor-not-allowed"
+                                                                                : ""
+                                                                                }`}
                                                                             onClick={() => convertToProductListing(post.post_link, post.image_url, post.description)}
                                                                             disabled={convertingLink === post.post_link}
                                                                         >

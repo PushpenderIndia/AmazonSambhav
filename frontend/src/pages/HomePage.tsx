@@ -1,4 +1,4 @@
-import React from 'react'
+import React,{useEffect} from 'react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -6,6 +6,14 @@ import { ArrowRight, CheckCircle, Facebook, Instagram, Twitter, ShoppingCart, Za
 import { Link } from 'react-router-dom';
 import { SignedIn, SignedOut, useAuth } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
+import {
+  enable as enableDarkMode,
+  disable as disableDarkMode,
+  auto as followSystemColorScheme,
+  exportGeneratedCSS as collectCSS,
+  isEnabled as isDarkReaderEnabled,
+} from 'darkreader';
+import { useState } from "react"
 
 
 const Home: React.FC = () => {
@@ -29,6 +37,39 @@ const Home: React.FC = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+      // Dark mode function
+      const [darkMode, setDarkMode] = useState(false);
+      const [collectedCSS, setCollectedCSS] = useState('');
+  
+      useEffect(() => {
+          // Automatically follow the system color scheme
+          
+      }, []);
+  
+      const toggleDarkMode = () => {
+          if (darkMode) {
+              enableDarkMode({
+                  brightness: 100,
+                  contrast: 90,
+                  sepia: 10,
+              });
+          } else {
+              disableDarkMode();
+          }
+          setDarkMode(!darkMode);
+      };
+  
+      const handleCollectCSS = async () => {
+          const css = await collectCSS();
+          setCollectedCSS(css); // Optionally, store the generated CSS
+          console.log(css); // Log or handle the generated CSS
+      };
+  
+      const checkDarkModeStatus = () => {
+          const isEnabled = isDarkReaderEnabled();
+          console.log('Is Dark Mode enabled:', isEnabled);
+      };
+
   return (
     <div className="flex flex-col min-h-screen bg-white text-blue-900">
       <header className="px-4 lg:px-6 h-16 flex items-center border-b border-blue-200">
@@ -37,6 +78,29 @@ const Home: React.FC = () => {
           <span className="ml-2 text-xl font-bold text-blue-600">Social2Amazon</span>
         </Link>
         <nav className={`ml-auto ${isMenuOpen ? 'flex' : 'hidden'} md:flex flex-col md:flex-row absolute md:relative top-16 md:top-0 left-0 right-0 bg-white md:bg-transparent z-50 md:z-auto gap-4 p-4 md:p-0 md:h-16 md:items-center`}>
+        <div className="btn d-inline-flex align-items-center justify-content-center shadow-sm rounded-full">
+                                        <button onClick={toggleDarkMode}>
+                                            {darkMode ? (
+                                                <img
+                                                    src="https://cdn-icons-png.flaticon.com/256/4445/4445942.png"
+                                                    alt=""
+                                                    className="w-8 h-8 rounded-full"
+                                                />
+                                            ) : (
+                                                <img
+                                                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_xqmYro3MAiVCYxvtXyjyx_MC4VYmNKVRqQ&s"
+                                                    alt=""
+                                                    className="w-8 h-8 rounded-full"
+                                                />
+                                            )}
+                                        </button>
+
+                                        <button onClick={handleCollectCSS}></button>
+                                        <button onClick={checkDarkModeStatus}></button>
+
+                                        {/* Optionally display the collected CSS */}
+                                        {/* <pre>{collectedCSS}</pre> */}
+                                    </div>
           <Link className="text-sm font-medium hover:text-blue-600 hover:underline underline-offset-4" to="#features">
             Features
           </Link>

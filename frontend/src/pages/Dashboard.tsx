@@ -16,6 +16,14 @@ import {
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 import { Line } from "react-chartjs-2";
+import {
+    enable as enableDarkMode,
+    disable as disableDarkMode,
+    auto as followSystemColorScheme,
+    exportGeneratedCSS as collectCSS,
+    isEnabled as isDarkReaderEnabled,
+} from 'darkreader';
+
 
 // Register chart components
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
@@ -248,16 +256,46 @@ const Dashboard: React.FC = () => {
         ],
     };
 
+    // Dark mode function
+    const [darkMode, setDarkMode] = useState(false);
+    const [collectedCSS, setCollectedCSS] = useState('');
 
+    useEffect(() => {
+        // Automatically follow the system color scheme
+
+    }, []);
+
+    const toggleDarkMode = () => {
+        if (darkMode) {
+            enableDarkMode({
+                brightness: 100,
+                contrast: 90,
+                sepia: 10,
+            });
+        } else {
+            disableDarkMode();
+        }
+        setDarkMode(!darkMode);
+    };
+
+    const handleCollectCSS = async () => {
+        const css = await collectCSS();
+        setCollectedCSS(css); // Optionally, store the generated CSS
+        console.log(css); // Log or handle the generated CSS
+    };
+
+    const checkDarkModeStatus = () => {
+        const isEnabled = isDarkReaderEnabled();
+        console.log('Is Dark Mode enabled:', isEnabled);
+    };
     return (
         <>
             <div id="wrapper">
-
                 <div id="page" className="">
                     <div className="layout-wrap">
-                        <div className="section-menu-left">
+                        <div className="section-menu-left dark-sidebar">
                             <div className="box-logo">
-                                <Link to="index.html" id="site-logo-inner">
+                                <Link to="#" id="site-logo-inner">
                                     <img className="logo" src="images\logo\logo.png" alt="" />
                                 </Link>
                                 <div className="button-show-hide">
@@ -294,7 +332,7 @@ const Dashboard: React.FC = () => {
                         {/* section-content-right  */}
                         <div className="section-content-right">
                             {/* header-dashboard  */}
-                            <div className="header-dashboard">
+                            <div className="header-dashboard dark-header">
                                 <div className="wrap">
                                     <div className="header-left">
                                         <Link to="index.html">
@@ -303,6 +341,29 @@ const Dashboard: React.FC = () => {
                                         <div className="button-show-hide">
                                             <i className="icon-menu-left"></i>
                                         </div>
+                                    </div>
+                                    <div className="btn d-inline-flex align-items-center justify-content-center shadow-sm rounded-full">
+                                        <button onClick={toggleDarkMode}>
+                                            {darkMode ? (
+                                                <img
+                                                    src="https://cdn-icons-png.flaticon.com/256/4445/4445942.png"
+                                                    alt=""
+                                                    className="w-8 h-8 rounded-full"
+                                                />
+                                            ) : (
+                                                <img
+                                                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_xqmYro3MAiVCYxvtXyjyx_MC4VYmNKVRqQ&s"
+                                                    alt=""
+                                                    className="w-8 h-8 rounded-full"
+                                                />
+                                            )}
+                                        </button>
+
+                                        <button onClick={handleCollectCSS}></button>
+                                        <button onClick={checkDarkModeStatus}></button>
+
+                                        {/* Optionally display the collected CSS */}
+                                        {/* <pre>{collectedCSS}</pre> */}
                                     </div>
                                     <div className="header-grid">
                                         <div className="header-item button-zoom-maximize" onClick={handleMaximizeClick}>
@@ -350,7 +411,7 @@ const Dashboard: React.FC = () => {
                             </div>
                             {/* header-dashboard  */}
                             {/* main-content  */}
-                            <div className="main-content">
+                            <div className="main-content main-content-dark">
                                 {/* main-content-wrap  */}
                                 <div className="main-content-inner">
                                     {/* main-content-wrap  */}
@@ -428,14 +489,17 @@ const Dashboard: React.FC = () => {
                                         </div>
 
                                         {/* Dashboard Stats Graph */}
-                                        <div className="wg-box mb-30"style={{ height: "500px" }} >
+                                        <div className="wg-box mb-30" style={{ height: "400px" }}>
                                             {error && <div>Error: {error}</div>}
                                             {isProductListLoaded ? (
                                                 <Line data={chartData} options={options} />
                                             ) : (
-                                                <div>Loading...</div>
+                                                <div className="flex justify-center items-center h-full">
+                                                    <span className="loader inline-block w-8 h-8 border-4 border-t-4 border-blue-500 border-solid rounded-full animate-spin"></span>
+                                                </div>
                                             )}
                                         </div>
+
                                         <div className="wg-box mb-30">
                                             {error && <p className="error">{error}</p>}
                                             <div style={{ display: "flex", justifyContent: "space-evenly" }}>
