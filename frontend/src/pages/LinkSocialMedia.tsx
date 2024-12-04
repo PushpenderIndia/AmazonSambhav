@@ -438,9 +438,6 @@ const LinkSocialMedia: React.FC = () => {
         }
     };
 
-<<<<<<< HEAD
-    const convertToProductListing = async (post_link: string | null, image_url: string[], description: string) => {
-=======
     // Code for adding data in the databse
     type FacebookPost = {
         post_link: string;
@@ -485,7 +482,6 @@ const LinkSocialMedia: React.FC = () => {
     };
 
     const convertToProductListing = async (post_link: string |null, image_url: string[], description: string) => {
->>>>>>> c11e8936f3a07b0eb4f1e401b71064c83160ef55
         setConvertingLink(post_link);
         setError(null);
         if (post_link?.includes("instagram")) {
