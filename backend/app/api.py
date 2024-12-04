@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from .serializers import ConnectedSocialMediaSerializer, ProductListingsSerializer
 from .Social2Amazon import Social2Amazon
 from .InstaFetcher import InstaFetcher
+from .FacebookFetcher import FacebookFetcher
 import backend.settings as settings
 
 post_data = [
@@ -153,6 +154,41 @@ class FetchInstagramPostAPI(APIView):
                         "message": "Posts fetched successfully",
                         "post_links": post_links
                     })
+
+class FetchFaceBookPostAPI(APIView):
+    permission_classes = [ClerkAuthenticated]
+    def get(self, request):
+        total_connected_social_media = ConnectedSocialMedia.objects.first()
+        if not total_connected_social_media:
+            return Response({
+                "message": "Please connect your social media accounts"
+            })
+        else:
+            facebook_link = total_connected_social_media.facebook_link
+            if not facebook_link:
+                return Response({
+                    "message": "Please provide a valid Facebook username"
+                })
+            else:
+                username = facebook_link.split(".com/")[1].strip()
+
+                if not username:
+                    return Response({
+                        "message": "Please provide a valid Facebook username"
+                    })
+                else:
+                    FACEBOOK_RAPIDAPI_KEY = settings.FACEBOOK_RAPIDAPI_KEY
+                    scraper = FacebookFetcher(FACEBOOK_RAPIDAPI_KEY)
+                    posts = scraper.fetch_posts_from_profile(facebook_link)
+                    if posts:
+                        return Response({
+                            "message": "Posts fetched successfully",
+                            "post_links": posts
+                        })
+                    else: 
+                        return Response({
+                            "message": "Failed to fetch posts"
+                        })
 
 class Social2AmazonAPI(APIView):
     permission_classes = [ClerkAuthenticated]

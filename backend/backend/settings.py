@@ -37,6 +37,7 @@ ALLOWED_HOSTS = ["*"]
 
 CLERK_SECRET_KEY = os.getenv('CLERK_SECRET_KEY')
 RAPIDAPI_KEY = os.getenv('RAPIDAPI_KEY')
+FACEBOOK_RAPIDAPI_KEY = os.getenv('FACEBOOK_RAPIDAPI_KEY')
 GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
 
 # Application definition
