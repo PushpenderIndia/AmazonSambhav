@@ -29,12 +29,12 @@ const LinkSocialMedia: React.FC = () => {
     // Handle the button click to toggle the maximize state
     const handleMaximizeClick = () => {
         if (isMaximized) {
-          document.exitFullscreen();
+            document.exitFullscreen();
         } else {
-          const elem = document.documentElement;
-          if (elem.requestFullscreen) {
-            elem.requestFullscreen();
-          }
+            const elem = document.documentElement;
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            }
         }
         setIsMaximized((prevState) => !prevState);
     };
@@ -438,15 +438,15 @@ const LinkSocialMedia: React.FC = () => {
         }
     };
 
-    const convertToProductListing = async (post_link: string |null, image_url: string[], description: string) => {
+    const convertToProductListing = async (post_link: string | null, image_url: string[], description: string) => {
         setConvertingLink(post_link);
         setError(null);
         setSuccessMessage(null);
 
         try {
             const token = await getToken(); // Replace with your token retrieval method
-            const requestBody = { 
-                post_link: post_link ,
+            const requestBody = {
+                post_link: post_link,
                 image_url: image_url, // list of string
                 description: description // string
             };
@@ -503,7 +503,7 @@ const LinkSocialMedia: React.FC = () => {
                             <div className="center">
                                 <div className="center-item">
                                     <ul className="menu-list">
-                                    <li className="menu-item">
+                                        <li className="menu-item">
                                             <Link to="/" className="menu-item-button">
                                                 <div className="icon"><i className="icon-home"></i></div>
                                                 <div className="text">Home</div>
@@ -688,11 +688,10 @@ const LinkSocialMedia: React.FC = () => {
                                                                     </td>
                                                                     <td className="border border-gray-300 px-4 py-2 text-center">
                                                                         <button
-                                                                            className={`btn btn-primary ${
-                                                                                convertingLink === post.post_link
+                                                                            className={`btn btn-primary ${convertingLink === post.post_link
                                                                                     ? "opacity-50 cursor-not-allowed"
                                                                                     : ""
-                                                                            }`}
+                                                                                }`}
                                                                             onClick={() => convertToProductListing(post.post_link, post.image_url, post.description)}
                                                                             disabled={convertingLink === post.post_link}
                                                                         >
@@ -851,7 +850,7 @@ const LinkSocialMedia: React.FC = () => {
                                                                         }}
                                                                     >
                                                                         {/* Pass productData to Modal component */}
-                                                                        <Modal product={productData || {product_id: "",created_at: "",images_list: [],product_title: "",price: "",product_details: {},about_this_item: "",product_description: "",approved: false,}}onClose={() => setIsPreviewModalOpen(false)}/>
+                                                                        <Modal product={productData || { product_id: "", created_at: "", images_list: [], product_title: "", price: "", product_details: {}, about_this_item: "", product_description: "", approved: false, }} onClose={() => setIsPreviewModalOpen(false)} />
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -962,22 +961,26 @@ const LinkSocialMedia: React.FC = () => {
                                                                         </p>
                                                                     </div>
                                                                     <div className="card-footer d-flex justify-content-between">
-                                                                        <button
-                                                                            className="btn btn-info"
-                                                                            onClick={() => {
-                                                                                setSelectedProduct(product);
-                                                                                setIsProductModalOpen(true);
-                                                                            }}
-                                                                        >
-                                                                            View Details
-                                                                        </button>
-                                                                        <button
-                                                                            className={`btn ${product.approved ? "btn-success" : "btn-warning"
-                                                                                }`}
-                                                                            onClick={() => toggleApprovalStatus(product)}
-                                                                        >
-                                                                            {product.approved ? "Listing Status: Approved" : "Listing Status: Disapproved"}
-                                                                        </button>
+                                                                        <div>
+                                                                            <button
+                                                                                className="btn btn-info"
+                                                                                onClick={() => {
+                                                                                    setSelectedProduct(product);
+                                                                                    setIsProductModalOpen(true);
+                                                                                }}
+                                                                            >
+                                                                                Preview
+                                                                            </button>
+                                                                        </div>
+                                                                        <div className="text-center">
+                                                                            <span className="text-s">Listing Status : </span>
+                                                                            <button
+                                                                                className={`btn ${product.approved ? "btn-success" : "btn-warning"}`}
+                                                                                onClick={() => toggleApprovalStatus(product)}
+                                                                            >
+                                                                                {product.approved ? "Approved" : "Disapproved"}
+                                                                            </button>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             </div>

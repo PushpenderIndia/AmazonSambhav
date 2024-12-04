@@ -259,3 +259,11 @@
 .scroll {
   scroll-behavior: smooth;
 }
+
+.menu-item{
+  
+}
+
+.menu-item :hover{
+  text-decoration: none;
+}

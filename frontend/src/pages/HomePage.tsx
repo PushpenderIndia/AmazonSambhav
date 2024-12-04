@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { SignedIn, SignedOut, useAuth } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
 
+
 const Home: React.FC = () => {
   const { signOut } = useAuth();
   const navigate = useNavigate();

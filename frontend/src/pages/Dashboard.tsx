@@ -7,9 +7,32 @@ import {
     ArcElement,
     Tooltip,
     Legend,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
 } from "chart.js";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
+import { Line } from "react-chartjs-2";
+
+// Register chart components
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+
+// Define the interface for ProductData
+interface ProductData {
+    product_id: string;
+    created_at: string;
+    images_list: string[];
+    product_title: string;
+    price: string;
+    product_details: Record<string, any>;
+    about_this_item: string;
+    product_description: string;
+    updated_at: string;
+    approved: boolean;
+}
 
 
 const Dashboard: React.FC = () => {
@@ -125,14 +148,106 @@ const Dashboard: React.FC = () => {
         datasets: [
             {
                 data: [
-                    dashboardStats.connected_social_media||0,
-                    3 - dashboardStats.connected_social_media||0, // Assuming total is 3
+                    dashboardStats.connected_social_media || 0,
+                    3 - dashboardStats.connected_social_media || 0, // Assuming total is 3
                 ],
                 backgroundColor: ["#4BC0C0", "#FFCE56"],
                 hoverBackgroundColor: ["#4BC0C0", "#FFCE56"],
             },
         ],
     };
+
+    // Function for Line graph
+
+    const [productList, setProductList] = useState<ProductData[]>([]);
+    const [isProductListLoaded, setIsProductListLoaded] = useState<boolean>(false);
+
+    const fetchPreviousListings = async () => {
+        try {
+            const token = await getToken(); // Replace with your authentication method
+            const response = await fetch(
+                `${import.meta.env.VITE_BACKEND_API_URL}/previous_listing_data`,
+                {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("Failed to fetch product listings");
+            }
+
+            const data = await response.json();
+            setProductList(data);
+            setIsProductListLoaded(true);
+        } catch (err: any) {
+            setError(err.message);
+        }
+    };
+
+    useEffect(() => {
+        fetchPreviousListings();
+    }, []);
+
+    // Process data to count listings per day
+    const processData = () => {
+        const listingsPerDay: Record<string, number> = {};
+
+        productList.forEach((product) => {
+            const date = new Date(product.updated_at).toLocaleDateString(); // Extract date from updated_at
+            listingsPerDay[date] = (listingsPerDay[date] || 0) + 1;
+        });
+
+        // Convert the data into chart-friendly format
+        const labels = Object.keys(listingsPerDay).reverse();
+        const data = Object.values(listingsPerDay).reverse();
+
+        return {
+            labels,
+            data,
+        };
+    };
+
+    // Prepare chart data
+    const { labels, data } = processData();
+
+    // Chart options
+    const options = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: "top" as const, // Explicitly specify the valid string literal type
+            },
+            title: {
+                display: true,
+                text: "Listings Over Time",
+            },
+            scales: {
+                x: {
+                    reverse: true, // Reverse the X-axis to display from latest to oldest
+                },
+            },
+        },
+    };
+
+    // Chart data
+    const chartData = {
+        labels,
+        datasets: [
+            {
+                label: "Product Listings",
+                data,
+                borderColor: "rgba(75, 192, 192, 1)",
+                backgroundColor: "rgba(75, 192, 192, 0.2)",
+                borderWidth: 1,
+            },
+        ],
+    };
+
 
     return (
         <>
@@ -313,6 +428,14 @@ const Dashboard: React.FC = () => {
                                         </div>
 
                                         {/* Dashboard Stats Graph */}
+                                        <div className="wg-box mb-30"style={{ height: "500px" }} >
+                                            {error && <div>Error: {error}</div>}
+                                            {isProductListLoaded ? (
+                                                <Line data={chartData} options={options} />
+                                            ) : (
+                                                <div>Loading...</div>
+                                            )}
+                                        </div>
                                         <div className="wg-box mb-30">
                                             {error && <p className="error">{error}</p>}
                                             <div style={{ display: "flex", justifyContent: "space-evenly" }}>
