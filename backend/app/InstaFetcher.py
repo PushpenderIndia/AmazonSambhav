@@ -135,25 +135,6 @@ class InstaFetcher:
         self.api_host = "instagram-scraper-api2.p.rapidapi.com"
         self.api_key = api_key
 
-    def download_video(self, url: str):
-        """
-        Download a video from a URL and save it to a file.
-        
-        :param url: URL of the video to download
-        :param filename: Name of the file to save the video to
-        """
-        random_alphanumeric_file_name = ''.join(random.choices(string.ascii_lowercase + string.digits, k=10))
-        filename = f"static/video_{random_alphanumeric_file_name}.mp4"
-        try:
-            response = requests.get(url)
-            response.raise_for_status()
-            with open(filename, "wb") as file:
-                file.write(response.content)
-            print(f"Video downloaded and saved as: {filename}")
-            return filename
-        except requests.exceptions.RequestException as e:
-            print(f"An error occurred")
-
     def get_user_posts(self, username: str, count: int = 5):
         """
         Fetch user posts from the Instagram API.
@@ -177,7 +158,7 @@ class InstaFetcher:
             username = all_data["data"]["user"]["username"]
             all_posts_data = all_data["data"]["items"]
             posts = []
-            for post in all_posts_data[:5]:
+            for post in all_posts_data:
                 post_code = post["code"]
                 if post["is_video"] == False:
                     images_list = []
@@ -195,14 +176,14 @@ class InstaFetcher:
                     })
                 else:
                     video_url = post["video_url"]
-                    video_file_path = self.download_video(video_url)
-                    extractor = VideoFrameExtractor(video_file_path)
-                    frame_files = extractor.extract_frames()
-                    get_quality = ImageQualityChecker(frame_files)
-                    quality_images = get_quality.start()
+                    # video_file_path = self.download_video(video_url)
+                    # extractor = VideoFrameExtractor(video_file_path)
+                    # frame_files = extractor.extract_frames()
+                    # get_quality = ImageQualityChecker(frame_files)
+                    # quality_images = get_quality.start()
                     posts.append({
                         "post_link": f"https://www.instagram.com/{username}/p/{post_code}/",
-                        "image_url": quality_images,
+                        "video_url": video_url,
                         "description": post["caption"]["text"],
                     })
             return posts

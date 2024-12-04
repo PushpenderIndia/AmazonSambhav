@@ -2,17 +2,35 @@ import cv2
 import os
 
 class VideoFrameExtractor:
-    def __init__(self, video_path, output_folder="static"):
+    def __init__(self, video_url, output_folder="static"):
         """
         Initializes the VideoFrameExtractor.
 
         :param video_path: Path to the video file.
         :param output_folder: Directory where extracted frames will be saved.
         """
-        self.video_path = video_path
+        self.video_url = video_url
+        self.video_path = ""
         self.output_folder = output_folder
-        self._validate_video_path()
-        self._create_output_folder()
+
+    def download_video(self, url: str):
+        """
+        Download a video from a URL and save it to a file.
+        
+        :param url: URL of the video to download
+        :param filename: Name of the file to save the video to
+        """
+        random_alphanumeric_file_name = ''.join(random.choices(string.ascii_lowercase + string.digits, k=10))
+        filename = f"static/video_{random_alphanumeric_file_name}.mp4"
+        try:
+            response = requests.get(url)
+            response.raise_for_status()
+            with open(filename, "wb") as file:
+                file.write(response.content)
+            print(f"Video downloaded and saved as: {filename}")
+            return filename
+        except requests.exceptions.RequestException as e:
+            print(f"An error occurred")
 
     def _validate_video_path(self):
         """Validates the existence of the video file."""
@@ -29,6 +47,9 @@ class VideoFrameExtractor:
 
         :return: List of file paths to the extracted frames.
         """
+        self.video_path = self.download_video(self.video_url)
+        self._validate_video_path()
+        self._create_output_folder()
         cap = cv2.VideoCapture(self.video_path)
         if not cap.isOpened():
             raise Exception("Failed to open the video file.")
