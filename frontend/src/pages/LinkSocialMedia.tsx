@@ -520,7 +520,6 @@ const LinkSocialMedia: React.FC = () => {
             } else {
                 setFBSuccessMessage(`Successfully converted to product listing: ${post_link}`);
             }
-            setSuccessMessage(`Successfully converted to product listing: ${post_link}`);
         } catch (err: any) {
             console.error("Error converting to product listing:", err.message);
             setError(`Error converting to product listing for link: ${post_link}`);
