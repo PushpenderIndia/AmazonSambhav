@@ -438,10 +438,61 @@ const LinkSocialMedia: React.FC = () => {
         }
     };
 
+<<<<<<< HEAD
     const convertToProductListing = async (post_link: string | null, image_url: string[], description: string) => {
+=======
+    // Code for adding data in the databse
+    type FacebookPost = {
+        post_link: string;
+        image_url: string[];
+        description: string;
+    };
+    const [facebookLinks, setFacebookLinks] = useState<FacebookPost[]>([]);
+    const [loadingFBPosts, setFBLoadingPosts] = useState(false);  
+    const [errorFB, setFBError] = useState<string | null>(null);
+    const [successFBMessage, setFBSuccessMessage] = useState<string | null>(null);
+
+    const fetchFacebookPosts = async () => {
+        setFBLoadingPosts(true);
+        setFBError(null);
+        setSuccessMessage(null);
+
+        try {
+            const token = await getToken(); // Replace with your token retrieval method
+            const response = await fetch(
+                `${import.meta.env.VITE_BACKEND_API_URL}/fetch_latest_facebook_post`,
+                {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("Failed to fetch Facebook posts");
+            }
+
+            const data = await response.json();
+            setFacebookLinks(data.post_links || []); // Assuming API returns an array of URLs
+        } catch (err: any) {
+            console.error("Error fetching Facebook posts:", err.message);
+            setFBError(err.message || "An error occurred while fetching Facebook posts.");
+        } finally {
+            setFBLoadingPosts(false);
+        }
+    };
+
+    const convertToProductListing = async (post_link: string |null, image_url: string[], description: string) => {
+>>>>>>> c11e8936f3a07b0eb4f1e401b71064c83160ef55
         setConvertingLink(post_link);
         setError(null);
-        setSuccessMessage(null);
+        if (post_link?.includes("instagram")) {
+            setSuccessMessage(null);
+        } else {
+            setFBSuccessMessage(null);
+        }
 
         try {
             const token = await getToken(); // Replace with your token retrieval method
@@ -468,6 +519,11 @@ const LinkSocialMedia: React.FC = () => {
             }
             fetchPreviousListings();
             fetchProductData();
+            if (post_link?.includes("instagram")) {
+                setSuccessMessage(`Successfully converted to product listing: ${post_link}`);
+            } else {
+                setFBSuccessMessage(`Successfully converted to product listing: ${post_link}`);
+            }
             setSuccessMessage(`Successfully converted to product listing: ${post_link}`);
         } catch (err: any) {
             console.error("Error converting to product listing:", err.message);
@@ -644,6 +700,7 @@ const LinkSocialMedia: React.FC = () => {
                                                     </div>
                                                 </div>
                                             </div>
+                                            
                                             {/* Add insta posts to database */}
                                             <div className="wg-box mb-30">
                                                 <h1 className="text-lg font-bold text-center mb-6">
@@ -708,6 +765,73 @@ const LinkSocialMedia: React.FC = () => {
                                                     </table>
                                                 )}
                                             </div>
+
+                                            {/* Facebook to Amazon */}
+                                            <div className="wg-box mb-30">
+                                                <h1 className="text-lg font-bold text-center mb-6">
+                                                    Convert Facebook Posts to Product Listings
+                                                </h1>
+
+                                                <button
+                                                    className={`btn btn-primary w-full mb-4 ${loadingFBPosts ? "opacity-50 cursor-not-allowed" : ""}`}
+                                                    onClick={fetchFacebookPosts}
+                                                    disabled={loadingFBPosts}
+                                                >
+                                                    {loadingFBPosts ? (
+                                                        <span className="loader inline-block mr-2"></span>
+                                                    ) : (
+                                                        "Fetch Latest Facebook Posts"
+                                                    )}
+                                                </button>
+
+                                                {errorFB && <p className="text-red-500 text-center mt-2">{errorFB}</p>}
+                                                {successFBMessage && <p className="text-green-500 text-center mt-2">{successFBMessage}</p>}
+
+                                                {facebookLinks.length > 0 && (
+                                                    <table className="table-auto w-full border-collapse border border-gray-300 mt-6">
+                                                        <thead>
+                                                            <tr className="bg-gray-100 text-gray-700">
+                                                                <th className="border border-gray-300 px-4 py-2">Instagram Post Link</th>
+                                                                <th className="border border-gray-300 px-4 py-2">Action</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {facebookLinks.map((post, index) => (
+                                                                <tr key={index} className="hover:bg-gray-50">
+                                                                    <td className="border border-gray-300 px-4 py-2">
+                                                                        <a
+                                                                            href={post.post_link}
+                                                                            target="_blank"
+                                                                            rel="noopener noreferrer"
+                                                                            className="text-blue-500 underline"
+                                                                        >
+                                                                            {post.post_link}
+                                                                        </a>
+                                                                    </td>
+                                                                    <td className="border border-gray-300 px-4 py-2 text-center">
+                                                                        <button
+                                                                            className={`btn btn-primary ${
+                                                                                convertingLink === post.post_link
+                                                                                    ? "opacity-50 cursor-not-allowed"
+                                                                                    : ""
+                                                                            }`}
+                                                                            onClick={() => convertToProductListing(post.post_link, post.image_url, post.description)}
+                                                                            disabled={convertingLink === post.post_link}
+                                                                        >
+                                                                            {convertingLink === post.post_link ? (
+                                                                                <span className="loader inline-block mr-2"></span>
+                                                                            ) : (
+                                                                                "Convert to Product Listing"
+                                                                            )}
+                                                                        </button>
+                                                                    </td>
+                                                                </tr>
+                                                            ))}
+                                                        </tbody>
+                                                    </table>
+                                                )}
+                                            </div>
+
                                             <div className="wg-box mb-30 shadow-sm featured-content">
                                                 <div className="">
                                                     <div className="row">
