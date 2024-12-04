@@ -19,7 +19,6 @@ import { Line } from "react-chartjs-2";
 import {
     enable as enableDarkMode,
     disable as disableDarkMode,
-    auto as followSystemColorScheme,
     exportGeneratedCSS as collectCSS,
     isEnabled as isDarkReaderEnabled,
 } from 'darkreader';
@@ -258,7 +257,6 @@ const Dashboard: React.FC = () => {
 
     // Dark mode function
     const [darkMode, setDarkMode] = useState(false);
-    const [collectedCSS, setCollectedCSS] = useState('');
 
     useEffect(() => {
         // Automatically follow the system color scheme
@@ -280,7 +278,6 @@ const Dashboard: React.FC = () => {
 
     const handleCollectCSS = async () => {
         const css = await collectCSS();
-        setCollectedCSS(css); // Optionally, store the generated CSS
         console.log(css); // Log or handle the generated CSS
     };
 

@@ -1,4 +1,4 @@
-import React,{useEffect} from 'react'
+import React from 'react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -9,7 +9,6 @@ import { useNavigate } from "react-router-dom";
 import {
   enable as enableDarkMode,
   disable as disableDarkMode,
-  auto as followSystemColorScheme,
   exportGeneratedCSS as collectCSS,
   isEnabled as isDarkReaderEnabled,
 } from 'darkreader';
@@ -39,12 +38,6 @@ const Home: React.FC = () => {
 
       // Dark mode function
       const [darkMode, setDarkMode] = useState(false);
-      const [collectedCSS, setCollectedCSS] = useState('');
-  
-      useEffect(() => {
-          // Automatically follow the system color scheme
-          
-      }, []);
   
       const toggleDarkMode = () => {
           if (darkMode) {
@@ -61,7 +54,6 @@ const Home: React.FC = () => {
   
       const handleCollectCSS = async () => {
           const css = await collectCSS();
-          setCollectedCSS(css); // Optionally, store the generated CSS
           console.log(css); // Log or handle the generated CSS
       };
   

@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom';
 import {
     enable as enableDarkMode,
     disable as disableDarkMode,
-    auto as followSystemColorScheme,
     exportGeneratedCSS as collectCSS,
     isEnabled as isDarkReaderEnabled,
 } from 'darkreader';
@@ -537,8 +536,6 @@ const LinkSocialMedia: React.FC = () => {
     };
     // Dark mode function
     const [darkMode, setDarkMode] = useState(false);
-    const [collectedCSS, setCollectedCSS] = useState('');
-
 
     const toggleDarkMode = () => {
         if (darkMode) {
@@ -555,7 +552,6 @@ const LinkSocialMedia: React.FC = () => {
 
     const handleCollectCSS = async () => {
         const css = await collectCSS();
-        setCollectedCSS(css); // Optionally, store the generated CSS
         console.log(css); // Log or handle the generated CSS
     };
 
