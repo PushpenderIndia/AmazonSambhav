@@ -177,7 +177,7 @@ class InstaFetcher:
             username = all_data["data"]["user"]["username"]
             all_posts_data = all_data["data"]["items"]
             posts = []
-            for post in all_posts_data:
+            for post in all_posts_data[:5]:
                 post_code = post["code"]
                 if post["is_video"] == False:
                     images_list = []
