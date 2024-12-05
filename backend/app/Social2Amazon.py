@@ -157,6 +157,9 @@ class Social2Amazon:
         post_description = data['description']
         media_files = []
         for i, url in enumerate(data['image_url']):
+            if url.contains('static/frame_'):
+                media_files.append(url)
+                continue
             try:
                 random_alphanumeric_file_name = ''.join(random.choices('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', k=10))
                 file_path = os.path.join(self.base_folder, f"media_{random_alphanumeric_file_name}.jpg")
