@@ -158,7 +158,10 @@ class Social2Amazon:
         media_files = []
         for i, url in enumerate(data['image_url']):
             if 'static/frame_' in url:
-                media_files.append(url)
+                file_name = url.split('/')[-1]
+                os.rename(url, os.path.join(self.base_folder, file_name))
+                new_file_path = os.path.join(self.base_folder, file_name)
+                media_files.append(new_file_path)
                 continue
             try:
                 random_alphanumeric_file_name = ''.join(random.choices('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', k=10))
@@ -316,18 +319,22 @@ The "product_details" field is dynamic, and its keys will vary depending on the 
         print("Downloading Instagram post...")
         post_description, media_files = self.download_post(url)
         media_files = [file for file in media_files if file.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.tiff'))]
+        print("Media files:", media_files)
 
         # Step 2: Perform OCR
         print("Performing OCR on images...")
         ocr_text = self.perform_ocr()
+        print("OCR text:", ocr_text)
 
         # Step 3: Analyze media with Gemini
         print("Analyzing media with Gemini...")
         gemini_results = self.analyze_with_gemini(media_files)
+        print("Gemini results:", gemini_results)
 
         # Step 4: Process Gemini text-only input
         print("Processing data with Gemini text model...")
         final_results = self.process_gemini_text(post_description, ocr_text, gemini_results, media_files)
+        print("Result: ", final_results)
 
         return final_results
 
