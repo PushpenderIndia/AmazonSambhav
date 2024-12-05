@@ -1,5 +1,8 @@
 import cv2
 import os
+import random
+import requests
+import string
 
 class VideoFrameExtractor:
     def __init__(self, video_url, output_folder="static"):

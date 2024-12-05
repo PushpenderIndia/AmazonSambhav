@@ -406,6 +406,7 @@ const LinkSocialMedia: React.FC = () => {
     type InstagramPost = {
         post_link: string;
         image_url: string[];
+        video_url: string;
         description: string;
     };
     const [instagramLinks, setInstagramLinks] = useState<InstagramPost[]>([]);
@@ -444,6 +445,46 @@ const LinkSocialMedia: React.FC = () => {
             setLoadingPosts(false);
         }
     };
+
+    // Convert Instagram post video link to images_list
+    const ConvertVideoInstatoProjectListing = async (post_link: string | null, video_url: string, description: string) => {
+        setConvertingLink(post_link);
+        setError(null);
+        try {
+            const token = await getToken(); 
+            const requestBody = {
+                video_url: video_url
+            };
+
+            const response = await fetch(
+                `${import.meta.env.VITE_BACKEND_API_URL}/convert_video_to_images`,
+                {
+                    method: "POST",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(requestBody),
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("Failed to convert Instagram post to product listing");
+            } 
+
+            const data = await response.json();
+            const image_url = data.quality_images;
+            convertToProductListing(post_link, image_url, description);
+            fetchPreviousListings();
+            fetchProductData();
+            setSuccessMessage(`Successfully converted to product listing: ${post_link}`);
+        } catch (err: any) {
+            console.error("Error converting to product listing:", err.message);
+            setError(`Error converting to product listing for link: ${post_link}`);
+        } finally {
+            setConvertingLink(null);
+        }
+    }
 
     // Code for adding data in the databse
     type FacebookPost = {
@@ -753,9 +794,8 @@ const LinkSocialMedia: React.FC = () => {
 
                                             {/* Add insta posts to database */}
                                             <div className="wg-box mb-30">
-                                                <h1 className="text-lg font-bold text-center mb-6 flex items-center justify-center space-x-3">
-                                                    <img className="h-20 w-20" src="https://static.vecteezy.com/system/resources/previews/042/148/632/non_2x/instagram-logo-instagram-social-media-icon-free-png.png" alt="Facebook Logo" />
-                                                    <span>Convert Instagram Posts to Product Listings</span>
+                                                <h1 className="text-lg font-bold text-center mb-6">
+                                                    Convert Instagram Posts to Product Listings
                                                 </h1>
 
                                                 <button
@@ -799,14 +839,20 @@ const LinkSocialMedia: React.FC = () => {
                                                                             className={`btn btn-primary ${convertingLink === post.post_link
                                                                                 ? "opacity-50 cursor-not-allowed"
                                                                                 : ""
-                                                                                }`}
-                                                                            onClick={() => convertToProductListing(post.post_link, post.image_url, post.description)}
+                                                                            }`}
+                                                                            onClick={() => {
+                                                                                if (post.video_url) {
+                                                                                    ConvertVideoInstatoProjectListing(post.post_link, post.video_url, post.description);
+                                                                                } else {
+                                                                                    convertToProductListing(post.post_link, post.image_url, post.description);
+                                                                                }
+                                                                            }}
                                                                             disabled={convertingLink === post.post_link}
                                                                         >
                                                                             {convertingLink === post.post_link ? (
                                                                                 <span className="loader inline-block mr-2"></span>
                                                                             ) : (
-                                                                                "Convert to Product Listing"
+                                                                                post.video_url ? "Convert to Product Listing (Video)" : "Convert to Product Listing"
                                                                             )}
                                                                         </button>
                                                                     </td>
@@ -816,6 +862,7 @@ const LinkSocialMedia: React.FC = () => {
                                                     </table>
                                                 )}
                                             </div>
+
 
                                             {/* Facebook to Amazon */}
                                             <div className="wg-box mb-30">
