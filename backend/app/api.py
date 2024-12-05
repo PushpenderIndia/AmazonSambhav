@@ -8,6 +8,7 @@ from .Social2Amazon import Social2Amazon
 from .InstaFetcher import InstaFetcher
 from .FacebookFetcher import FacebookFetcher
 from .VideoFrameExtractor import VideoFrameExtractor
+from .ImageQualityChecker import ImageQualityChecker
 import backend.settings as settings
 
 post_data = [
