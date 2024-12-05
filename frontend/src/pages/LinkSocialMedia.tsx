@@ -451,7 +451,7 @@ const LinkSocialMedia: React.FC = () => {
         setConvertingLink(post_link);
         setError(null);
         try {
-            const token = await getToken(); 
+            const token = await getToken();
             const requestBody = {
                 video_url: video_url
             };
@@ -470,7 +470,7 @@ const LinkSocialMedia: React.FC = () => {
 
             if (!response.ok) {
                 throw new Error("Failed to convert Instagram post to product listing");
-            } 
+            }
 
             const data = await response.json();
             const image_url = data.quality_images;
@@ -794,8 +794,9 @@ const LinkSocialMedia: React.FC = () => {
 
                                             {/* Add insta posts to database */}
                                             <div className="wg-box mb-30">
-                                                <h1 className="text-lg font-bold text-center mb-6">
-                                                    Convert Instagram Posts to Product Listings
+                                                <h1 className="text-lg font-bold text-center mb-6 flex items-center justify-center space-x-3">
+                                                    <img className="h-20 w-20" src="https://png.pngtree.com/png-clipart/20180626/ourmid/pngtree-instagram-icon-instagram-logo-png-image_3584853.png" alt="Facebook Logo" />
+                                                    <span>Convert Instagram Posts to Product Listings</span>
                                                 </h1>
 
                                                 <button
@@ -839,7 +840,7 @@ const LinkSocialMedia: React.FC = () => {
                                                                             className={`btn btn-primary ${convertingLink === post.post_link
                                                                                 ? "opacity-50 cursor-not-allowed"
                                                                                 : ""
-                                                                            }`}
+                                                                                }`}
                                                                             onClick={() => {
                                                                                 if (post.video_url) {
                                                                                     ConvertVideoInstatoProjectListing(post.post_link, post.video_url, post.description);
@@ -852,7 +853,15 @@ const LinkSocialMedia: React.FC = () => {
                                                                             {convertingLink === post.post_link ? (
                                                                                 <span className="loader inline-block mr-2"></span>
                                                                             ) : (
-                                                                                post.video_url ? "Convert to Product Listing (Video)" : "Convert to Product Listing"
+                                                                                post.video_url ? (
+                                                                                    <>
+                                                                                        <i className="bi bi-camera-video me-2"></i> Convert to Product Listing
+                                                                                    </>
+                                                                                ) : (
+                                                                                    <>
+                                                                                        <i className="bi bi-file-earmark-post me-2"></i> Convert to Product Listing
+                                                                                    </>
+                                                                                )
                                                                             )}
                                                                         </button>
                                                                     </td>
