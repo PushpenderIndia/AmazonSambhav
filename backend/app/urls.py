@@ -4,6 +4,7 @@ from django.urls import path
 from .api import ConnectedSocialMediaAPI, UpdateConnectedSocialMediaAPI, RecentFetchedPostAPI, UpdateListingAPI, PreviousListingAPI, DashboardStatsAPI, ProfileDataAPI, Social2AmazonAPI
 from .api import FetchInstagramPostAPI
 from .api import FetchFaceBookPostAPI
+from .api import ConvertVideoToImagesAPI
 
 router = routers.SimpleRouter()
 router.register(r'posts', PostViewset, basename="posts")
@@ -20,4 +21,5 @@ urlpatterns += [
     path('social2amazon', Social2AmazonAPI.as_view()),
     path('fetch_latest_instagram_post', FetchInstagramPostAPI.as_view()),
     path('fetch_latest_facebook_post', FetchFaceBookPostAPI.as_view()),
+    path('convert_video_to_images', ConvertVideoToImagesAPI.as_view())
 ]
