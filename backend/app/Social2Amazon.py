@@ -157,7 +157,7 @@ class Social2Amazon:
         post_description = data['description']
         media_files = []
         for i, url in enumerate(data['image_url']):
-            if url.contains('static/frame_'):
+            if 'static/frame_' in url:
                 media_files.append(url)
                 continue
             try:
