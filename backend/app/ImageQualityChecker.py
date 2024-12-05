@@ -59,7 +59,8 @@ class ImageQualityChecker:
         """
         self.process_images()
         self.sort_images_by_quality()
-        return self.get_sorted_images()[:3]
+        top_3_images = self.get_sorted_images()[:3]
+        return [image[0] for image in top_3_images]
 
 # Example usage
 if __name__ == "__main__":
