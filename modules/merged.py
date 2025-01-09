@@ -293,7 +293,7 @@ if __name__ == "__main__":
     url = input("Enter the Instagram post URL: ")
     import shutil
     shutil.rmtree('insta', ignore_errors=True)
-    processor = InstagramProcessor(GOOGLE_API_KEY="AIzaSyD9yTukD5YLJYm8r8d3nd0yNSF65Afb4JA")
+    processor = InstagramProcessor(GOOGLE_API_KEY="AIzaSyD9yTXXXXXXXd0yNSF65Afb4JA")
     results = processor.process_post(url)
     print("\nProcessing complete. Results:")
     print(results)
