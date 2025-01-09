@@ -88,7 +88,7 @@ class FacebookScraper:
 
 # Example usage:
 if __name__ == "__main__":
-    api_key = "01775ad35amsh438e2ccad6415c1p1c6a88jsn7156243a3153"
+    api_key = "01775adXXXXXXX5c1p1c6a88jsn7156243a3153"
     scraper = FacebookScraper(api_key)
     
     profile_link = "https://www.facebook.com/boat.lifestyle"
